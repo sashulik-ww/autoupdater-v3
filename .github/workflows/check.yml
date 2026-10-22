@@ -1,0 +1,65 @@
+name: Check proxies
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # каждый час
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: proxy-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -q -r requirements.txt
+
+      - name: Check proxies
+        env:
+          TIMEOUT: "8"
+          CONCURRENCY: "200"
+        run: python checker.py
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A results
+          if git diff --cached --quiet; then
+            echo "Нет изменений"
+            exit 0
+          fi
+
+          git commit -m "Update proxies: $(date -u +'%Y-%m-%d %H:%M') UTC"
+
+          for i in 1 2 3 4 5; do
+            echo "Попытка пуша №$i..."
+            git fetch origin main
+            if git rebase -X theirs --autostash origin/main; then
+              if git push origin HEAD:main; then
+                echo "Успешно запушено"
+                exit 0
+              fi
+            fi
+            git rebase --abort 2>/dev/null || true
+            sleep $((i * 4))
+          done
+
+          echo "Не удалось запушить"
+          exit 1
