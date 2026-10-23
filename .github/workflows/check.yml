@@ -15,7 +15,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,15 +24,22 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
 
-      - name: Install dependencies
-        run: pip install -q -r requirements.txt
+      - name: Install Xray-core
+        run: |
+          mkdir -p "$HOME/xray" && cd "$HOME/xray"
+          curl -fsSL --retry 3 -o xray.zip \
+            "https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip"
+          unzip -q -o xray.zip xray
+          chmod +x xray
+          ./xray version
+          echo "XRAY_BIN=$HOME/xray/xray" >> "$GITHUB_ENV"
 
       - name: Check proxies
         env:
           TIMEOUT: "8"
           CONCURRENCY: "200"
+          XRAY_WORKERS: "100"
         run: python checker.py
 
       - name: Commit results
