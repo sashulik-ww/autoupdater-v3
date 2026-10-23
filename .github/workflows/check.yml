@@ -2,7 +2,7 @@ name: Check proxies
 
 on:
   schedule:
-    - cron: "0 * * * *"   # каждый час
+    - cron: "0 */2 * * *"   # каждые 2 часа
   workflow_dispatch:
 
 permissions:
