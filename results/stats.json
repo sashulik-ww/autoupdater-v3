@@ -1,72 +1,72 @@
 {
-  "checked_at_utc": "2026-10-23T18:51:44+00:00",
+  "checked_at_utc": "2026-10-23T20:50:16+00:00",
   "sources": [
     "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt"
   ],
   "xray_used": true,
-  "total_configs": 13734,
-  "alive_or_unchecked": 3201,
+  "total_configs": 14019,
+  "alive_or_unchecked": 3613,
   "by_method": {
     "unchecked": 209,
-    "xray": 2969,
+    "xray": 3381,
     "tcp": 23
   },
   "xray_by_protocol": {
     "http": {
-      "dead": 903,
-      "ok": 297
+      "dead": 885,
+      "ok": 328
     },
     "https": {
       "refused": 23
     },
     "hysteria2": {
-      "refused": 111,
+      "refused": 186,
       "dead": 16,
-      "ok": 20
+      "ok": 23
     },
     "socks5": {
-      "dead": 851,
-      "ok": 71
+      "dead": 658,
+      "ok": 158
     },
     "ss": {
-      "dead": 56,
-      "ok": 147,
-      "refused": 21
+      "dead": 45,
+      "ok": 159,
+      "refused": 23
     },
     "trojan": {
-      "refused": 121,
-      "dead": 498,
-      "ok": 138
+      "refused": 123,
+      "dead": 495,
+      "ok": 201
     },
     "vless": {
-      "dead": 2122,
-      "refused": 322,
-      "ok": 2109
+      "dead": 2054,
+      "refused": 344,
+      "ok": 2303
     },
     "vmess": {
-      "dead": 187,
       "refused": 14,
-      "ok": 187
+      "dead": 179,
+      "ok": 209
     }
   },
   "xray_fallback_protocols": [
     "https"
   ],
-  "all_txt": 221,
-  "white_checked_txt": 153,
+  "all_txt": 230,
+  "white_checked_txt": 161,
   "xray_checked_txt": 600,
-  "xray_checked_speed_mbps_median": 8.81,
+  "xray_checked_speed_mbps_median": 13.04,
   "by_protocol": {
-    "http": 181,
-    "https": 21,
+    "http": 192,
+    "https": 22,
     "hysteria": 1,
-    "hysteria2": 14,
-    "socks5": 40,
-    "ss": 82,
-    "trojan": 66,
+    "hysteria2": 15,
+    "socks5": 61,
+    "ss": 84,
+    "trojan": 72,
     "tuic": 1,
-    "vless": 397,
-    "vmess": 56
+    "vless": 411,
+    "vmess": 62
   },
   "limits": {
     "all_txt": {
@@ -83,9 +83,9 @@
     }
   },
   "geo": {
-    "unique_ips": 1411,
-    "labels_corrected": 546,
-    "labels_filled_from_ip": 836,
+    "unique_ips": 1514,
+    "labels_corrected": 688,
+    "labels_filled_from_ip": 932,
     "servers_without_geo": 0,
     "geo_strict": true
   },
