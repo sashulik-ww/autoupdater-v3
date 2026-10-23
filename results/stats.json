@@ -1,21 +1,21 @@
 {
-  "checked_at_utc": "2026-10-23T02:23:05+00:00",
+  "checked_at_utc": "2026-10-23T03:24:39+00:00",
   "sources": [
     "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt"
   ],
   "total_configs": 14023,
-  "alive_or_unchecked": 6797,
+  "alive_or_unchecked": 6748,
   "unchecked_udp": 152,
   "all_txt": 250,
   "white_checked_txt": 222,
   "by_protocol": {
-    "http": 97,
+    "http": 89,
     "https": 6,
     "hysteria": 1,
-    "hysteria2": 48,
-    "socks5": 44,
+    "hysteria2": 47,
+    "socks5": 41,
     "ss": 60,
-    "trojan": 76,
+    "trojan": 78,
     "tuic": 1,
     "vless": 211,
     "vmess": 46
