@@ -1,24 +1,72 @@
 {
-  "checked_at_utc": "2026-10-23T10:29:03+00:00",
+  "checked_at_utc": "2026-10-23T12:00:03+00:00",
   "sources": [
     "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt"
   ],
+  "xray_used": true,
   "total_configs": 14522,
-  "alive_or_unchecked": 6778,
-  "unchecked_udp": 155,
-  "all_txt": 250,
-  "white_checked_txt": 175,
+  "alive_or_unchecked": 3370,
+  "by_method": {
+    "unchecked": 205,
+    "xray": 3142,
+    "tcp": 23
+  },
+  "xray_by_protocol": {
+    "http": {
+      "dead": 820,
+      "ok": 249
+    },
+    "https": {
+      "refused": 23
+    },
+    "hysteria2": {
+      "refused": 111,
+      "dead": 23,
+      "ok": 19
+    },
+    "socks5": {
+      "dead": 687,
+      "ok": 168
+    },
+    "ss": {
+      "dead": 43,
+      "ok": 157,
+      "refused": 18
+    },
+    "trojan": {
+      "refused": 112,
+      "dead": 331,
+      "ok": 296
+    },
+    "vless": {
+      "dead": 2266,
+      "refused": 323,
+      "ok": 2039
+    },
+    "vmess": {
+      "refused": 13,
+      "dead": 167,
+      "ok": 214
+    }
+  },
+  "xray_fallback_protocols": [
+    "https"
+  ],
+  "all_txt": 211,
+  "white_checked_txt": 151,
+  "xray_checked_txt": 600,
+  "xray_checked_speed_mbps_median": 8.73,
   "by_protocol": {
-    "http": 160,
+    "http": 128,
     "https": 21,
     "hysteria": 1,
-    "hysteria2": 73,
-    "socks5": 53,
-    "ss": 118,
-    "trojan": 143,
+    "hysteria2": 13,
+    "socks5": 52,
+    "ss": 84,
+    "trojan": 89,
     "tuic": 1,
-    "vless": 500,
-    "vmess": 87
+    "vless": 389,
+    "vmess": 67
   },
   "limits": {
     "all_txt": {
@@ -28,17 +76,22 @@
     "by_protocol": {
       "per_country": 20,
       "total": 500
+    },
+    "xray_checked_txt": {
+      "per_country": 600,
+      "total": 600
     }
   },
   "geo": {
-    "unique_ips": 2275,
-    "labels_corrected": 1255,
-    "labels_filled_from_ip": 2596,
+    "unique_ips": 1349,
+    "labels_corrected": 632,
+    "labels_filled_from_ip": 936,
     "servers_without_geo": 0,
     "geo_strict": true
   },
   "test_urls": [
     "http://www.gstatic.com/generate_204",
-    "https://www.cloudflare.com/cdn-cgi/trace"
+    "https://www.cloudflare.com/cdn-cgi/trace",
+    "https://speed.cloudflare.com/__down?bytes=2000000"
   ]
 }
