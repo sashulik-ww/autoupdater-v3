@@ -22,6 +22,7 @@ import re
 import socket
 import sys
 import time
+import urllib.error
 import urllib.request
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -49,9 +50,13 @@ TIMEOUT = float(os.getenv("TIMEOUT", "8"))
 CONCURRENCY = int(os.getenv("CONCURRENCY", "200"))
 OUT_DIR = Path(os.getenv("OUT_DIR", "results"))
 
-# Основные списки (all.txt и файлы по протоколам)
+# all.txt (общий список)
 MAX_PER_COUNTRY = int(os.getenv("MAX_PER_COUNTRY", "4"))
 MAX_TOTAL = int(os.getenv("MAX_TOTAL", "250"))
+
+# by_protocol/*.txt (по одному файлу на протокол)
+PROTO_MAX_PER_COUNTRY = int(os.getenv("PROTO_MAX_PER_COUNTRY", "20"))
+PROTO_MAX_TOTAL = int(os.getenv("PROTO_MAX_TOTAL", "500"))
 
 # white_checked.txt
 WHITE_MAX_PER_IP = int(os.getenv("WHITE_MAX_PER_IP", "2"))
@@ -60,9 +65,15 @@ WHITE_MAX_TOTAL = int(os.getenv("WHITE_MAX_TOTAL", "450"))
 WHITE_REALITY_ONLY = env_bool("WHITE_REALITY_ONLY", True)   # только VLESS Reality
 WHITE_RU_SNI_ONLY = env_bool("WHITE_RU_SNI_ONLY", False)    # только с российским SNI
 
-# Определение страны по IP для серверов с меткой XX (ip-api.com, бесплатно)
-GEO_FALLBACK = env_bool("GEO_FALLBACK", True)
-GEO_MAX_IPS = int(os.getenv("GEO_MAX_IPS", "1500"))
+# Реальные страна и город по IP (ip-api.com, бесплатно). Название сервера
+# строится по ним, а не по метке источника, которая часто врёт.
+GEO_LOOKUP = env_bool("GEO_LOOKUP", True)
+# True: серверы, для которых не удалось определить страну по IP, не попадают в списки
+GEO_STRICT = env_bool("GEO_STRICT", True)
+GEO_TTL_DAYS = int(os.getenv("GEO_TTL_DAYS", "30"))        # сколько хранить кеш IP
+GEO_TIME_LIMIT = int(os.getenv("GEO_TIME_LIMIT", "600"))   # секунд на запросы за один запуск
+GEO_MAX_IPS = int(os.getenv("GEO_MAX_IPS", "20000"))
+GEO_CACHE_NAME = "geo_cache.json"
 
 TEST_GSTATIC = "http://www.gstatic.com/generate_204"
 TEST_CLOUDFLARE = "https://www.cloudflare.com/cdn-cgi/trace"
@@ -477,12 +488,13 @@ def sni_is_ru(sni: str) -> bool:
     return any(sni == d or sni.endswith("." + d) for d in RU_SNI_DOMAINS)
 
 
-def format_clean_proxy(line: str, country: str, latency_ms: int | None) -> str:
-    scheme = get_scheme(line)
-    name = f"{code_to_flag(country)} {country_name(country)} | {scheme}"
-    if latency_ms is not None:
-        name += f" | {latency_ms}ms"
+def format_clean_proxy(line: str, country: str, city: str = "") -> str:
+    """Название сервера: флаг + страна (+ город). Без пинга и протокола."""
+    name = f"{code_to_flag(country)} {country_name(country)}"
+    if city:
+        name += f", {city}"
 
+    scheme = get_scheme(line)
     if scheme == "ssr":
         return line
     if scheme == "vmess":
@@ -596,29 +608,6 @@ async def check_one(line: str, sem: asyncio.Semaphore) -> dict | None:
             return None
 
 
-def geo_lookup(ips: list[str]) -> dict[str, str]:
-    """Страна по IP (ip-api.com, пакетами по 100)."""
-    result: dict[str, str] = {}
-    for i in range(0, len(ips), 100):
-        chunk = ips[i:i + 100]
-        try:
-            req = urllib.request.Request(
-                "http://ip-api.com/batch?fields=status,countryCode,query",
-                data=json.dumps(chunk).encode(),
-                headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
-            )
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                rows = json.loads(resp.read().decode())
-        except Exception as e:
-            print(f"  geo: остановились на пакете {i // 100 + 1}: {e}")
-            break
-        for row in rows:
-            if row.get("status") == "success" and row.get("countryCode") in COUNTRIES:
-                result[row["query"]] = row["countryCode"]
-        time.sleep(4.5)  # лимит бесплатного ip-api
-    return result
-
-
 # ============================ ФИЛЬТРАЦИЯ ============================
 def latency_key(item: dict) -> tuple:
     return (item["latency_ms"] is None, item["latency_ms"] or 0)
@@ -678,6 +667,143 @@ def write_list(path: Path, items: list[dict]) -> None:
     path.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
 
 
+# ============================ ГЕОЛОКАЦИЯ ============================
+def load_geo_cache() -> dict:
+    try:
+        data = json.loads((OUT_DIR / GEO_CACHE_NAME).read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+    cutoff = time.time() - GEO_TTL_DAYS * 86400
+    return {
+        ip: v for ip, v in data.items()
+        if isinstance(v, dict) and v.get("cc") and v.get("ts", 0) >= cutoff
+    }
+
+
+def save_geo_cache(cache: dict) -> None:
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / GEO_CACHE_NAME).write_text(
+        json.dumps(cache, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+        encoding="utf-8",
+    )
+
+
+def _header_int(headers, name: str, default: int) -> int:
+    try:
+        return int(headers.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _geo_request(chunk: list[str]) -> list | None:
+    """Один пакетный запрос к ip-api (до 100 IP). None — ошибка."""
+    url = "http://ip-api.com/batch?fields=status,countryCode,city,query"
+    for _ in range(3):
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(chunk).encode(),
+            headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"},
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                rows = json.loads(resp.read().decode())
+                if resp.headers.get("X-Rl") == "0":   # лимит исчерпан — ждём окно
+                    time.sleep(_header_int(resp.headers, "X-Ttl", 5) + 1)
+                return rows
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                wait = _header_int(e.headers, "X-Ttl", 30) + 1
+                print(f"  geo: лимит запросов, ждём {wait}с")
+                time.sleep(min(wait, 90))
+                continue
+            print(f"  geo: HTTP {e.code}")
+            return None
+        except Exception as e:
+            print(f"  geo: ошибка {e}")
+            return None
+    return None
+
+
+def geo_lookup(ips: list[str]) -> dict[str, dict]:
+    """IP -> {"cc": "DE", "city": "Frankfurt am Main"}."""
+    result: dict[str, dict] = {}
+    started = time.monotonic()
+    for n, i in enumerate(range(0, len(ips), 100), start=1):
+        if time.monotonic() - started > GEO_TIME_LIMIT:
+            print("  geo: лимит времени, остальное доопределится в следующий запуск")
+            break
+        rows = _geo_request(ips[i:i + 100])
+        if rows is None:
+            break
+        for row in rows:
+            cc = row.get("countryCode")
+            if row.get("status") == "success" and cc in COUNTRIES:
+                result[row["query"]] = {"cc": cc, "city": row.get("city") or ""}
+        if n % 10 == 0:
+            print(f"  geo: {min(i + 100, len(ips))}/{len(ips)}", flush=True)
+        time.sleep(4.5)  # бесплатный лимит ip-api: 15 пакетных запросов в минуту
+    return result
+
+
+def apply_geo(working: list[dict]) -> tuple[list[dict] | None, dict]:
+    """Ставит каждому серверу реальные страну и город по IP."""
+    cache = load_geo_cache()
+
+    # Лучшие (быстрые) серверы определяем первыми
+    best: dict[str, tuple] = {}
+    for item in working:
+        if is_ip(item["ip"]):
+            key = latency_key(item)
+            if item["ip"] not in best or key < best[item["ip"]]:
+                best[item["ip"]] = key
+    need_all = sorted((ip for ip in best if ip not in cache), key=lambda ip: best[ip])
+    need = need_all[:GEO_MAX_IPS]
+    print(f"Геолокация: уникальных IP {len(best)}, в кеше {len(best) - len(need_all)}, запрашиваем {len(need)}")
+
+    if need:
+        fresh = geo_lookup(need)
+        now = int(time.time())
+        for ip, info in fresh.items():
+            cache[ip] = {**info, "ts": now}
+        print(f"  определено: {len(fresh)} из {len(need)}")
+    save_geo_cache(cache)
+
+    fixed_wrong = fixed_unknown = no_geo = 0
+    result: list[dict] = []
+    for item in working:
+        label = item["country"]
+        info = cache.get(item["ip"])
+        item["city"] = ""
+        if info:
+            if label == "XX":
+                fixed_unknown += 1
+            elif label != info["cc"]:
+                fixed_wrong += 1
+            item["country"] = info["cc"]
+            item["city"] = info.get("city", "")
+            result.append(item)
+        else:
+            no_geo += 1
+            if not GEO_STRICT:
+                result.append(item)
+
+    stats = {
+        "unique_ips": len(best),
+        "labels_corrected": fixed_wrong,
+        "labels_filled_from_ip": fixed_unknown,
+        "servers_without_geo": no_geo,
+        "geo_strict": GEO_STRICT,
+    }
+    print(
+        f"Названия по IP: исправлено неверных меток {fixed_wrong}, "
+        f"заполнено неизвестных {fixed_unknown}, без геоданных {no_geo}"
+        f"{' (исключены)' if GEO_STRICT else ''}"
+    )
+    if GEO_STRICT and not result:
+        return None, stats
+    return result, stats
+
+
 # ============================ MAIN ============================
 async def main_async() -> int:
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -730,23 +856,21 @@ async def main_async() -> int:
         print("Нет рабочих серверов — результаты не меняем")
         return 0
 
-    # 3. Страны для меток XX
-    if GEO_FALLBACK:
-        unknown = sorted({i["ip"] for i in working if i["country"] == "XX" and is_ip(i["ip"])})[:GEO_MAX_IPS]
-        if unknown:
-            print(f"Определяем страну по IP для {len(unknown)} адресов...")
-            geo = await asyncio.to_thread(geo_lookup, unknown)
-            for item in working:
-                if item["country"] == "XX" and item["ip"] in geo:
-                    item["country"] = geo[item["ip"]]
-            print(f"  определено: {len(geo)}")
+    # 3. Реальные страна и город по IP
+    geo_stats: dict = {}
+    if GEO_LOOKUP:
+        geo_result, geo_stats = await asyncio.to_thread(apply_geo, working)
+        if geo_result is None:
+            print("Геолокация не сработала ни для одного IP — результаты не меняем")
+            return 0
+        working = geo_result
 
     for item in working:
-        item["proxy"] = format_clean_proxy(item["raw"], item["country"], item["latency_ms"])
+        item["proxy"] = format_clean_proxy(item["raw"], item["country"], item.get("city", ""))
 
     # 4. Списки
     checked = [i for i in working if i["method"] != "unchecked"]
-    main_list = smart_filter(checked)
+    main_list = smart_filter(checked, MAX_PER_COUNTRY, MAX_TOTAL)
     white_list = smart_filter_white(working)
 
     by_scheme: dict[str, list[dict]] = defaultdict(list)
@@ -766,7 +890,7 @@ async def main_async() -> int:
 
     per_file: dict[str, int] = {}
     for scheme, items in sorted(by_scheme.items()):
-        filtered = smart_filter(items)
+        filtered = smart_filter(items, PROTO_MAX_PER_COUNTRY, PROTO_MAX_TOTAL)
         write_list(by_dir / f"{scheme}.txt", filtered)
         per_file[scheme] = len(filtered)
 
@@ -779,6 +903,11 @@ async def main_async() -> int:
         "all_txt": len(main_list),
         "white_checked_txt": len(white_list),
         "by_protocol": per_file,
+        "limits": {
+            "all_txt": {"per_country": MAX_PER_COUNTRY, "total": MAX_TOTAL},
+            "by_protocol": {"per_country": PROTO_MAX_PER_COUNTRY, "total": PROTO_MAX_TOTAL},
+        },
+        "geo": geo_stats,
         "test_urls": [TEST_GSTATIC, TEST_CLOUDFLARE],
     }
     (OUT_DIR / "stats.json").write_text(json.dumps(stats, ensure_ascii=False, indent=2), encoding="utf-8")
