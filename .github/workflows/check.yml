@@ -35,11 +35,27 @@ jobs:
           ./xray version
           echo "XRAY_BIN=$HOME/xray/xray" >> "$GITHUB_ENV"
 
+      - name: Install sing-box
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$HOME/singbox" && cd "$HOME/singbox"
+          URL=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            https://api.github.com/repos/SagerNet/sing-box/releases/latest \
+            | jq -r '.assets[].browser_download_url' | grep -E 'linux-amd64\.tar\.gz$' | head -n1)
+          echo "sing-box: $URL"
+          curl -fsSL --retry 3 -o sb.tar.gz "$URL"
+          tar -xzf sb.tar.gz --strip-components=1
+          chmod +x sing-box
+          ./sing-box version
+          echo "SINGBOX_BIN=$HOME/singbox/sing-box" >> "$GITHUB_ENV"
+
       - name: Check proxies
         env:
           TIMEOUT: "8"
           CONCURRENCY: "200"
           XRAY_WORKERS: "100"
+          SINGBOX_WORKERS: "100"
         run: python checker.py
 
       - name: Commit results
