@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
 """
-Проверка прокси/VPN-конфигов из публичных списков через Xray-core.
+Проверка прокси/VPN-конфигов из публичных списков через Xray-core И sing-box.
 
-Как проверяется «работает» (ВСЕ протоколы, которые умеет Xray-core):
-  vless, vmess, trojan, ss, hysteria2, http, https, socks5, socks4
-  1. Быстрый TCP-пинг порта (отсев мёртвых; для UDP-протокола hysteria2 пропускается).
-  2. Для каждого сервера запускается свой процесс Xray с локальным SOCKS-входом
-     и сервером из ссылки в качестве выхода.
-  3. Через этот туннель: http://www.gstatic.com/generate_204 (должен вернуть 204),
-     затем https://www.cloudflare.com/cdn-cgi/trace (должен вернуть 200).
-  4. Тест скорости: скачивание SPEED_BYTES через туннель с speed.cloudflare.com.
-Списки сортируются по скорости (потом по задержке).
+Как проверяется «работает»:
+  1. Быстрый TCP-пинг порта (отсев мёртвых; для UDP-протоколов пропускается).
+  2. Для каждого сервера запускается свой процесс ядра с локальным SOCKS-входом:
+     - Xray-core: vless, vmess, trojan, ss, hysteria2, http, https, socks5, socks4;
+     - затем sing-box (именно он внутри Karing): те же + tuic и hysteria v1.
+       sing-box проверяет только серверы, прошедшие Xray (или такие, что Xray не умеет).
+  3. Через туннель: http://www.gstatic.com/generate_204 (204) -> cloudflare trace (200)
+     -> тест скорости (скачивание SPEED_BYTES с speed.cloudflare.com).
+Списки сортируются по скорости, затем по задержке. Страны уравновешены:
+EUROPE_SHARE списка — Европа, одна страна — не более MAX_COUNTRY_SHARE списка.
 
-Xray не умеет: tuic, hysteria v1, ssr, ss с плагином, vless/vmess с kcp/quic/h2.
-Такие конфиги попадают только в файл своего протокола и помечены как «unchecked».
+Не умеют оба ядра: ssr, ss с плагином, vless/vmess с kcp/quic. Эти конфиги — «unchecked»,
+только в файлах своих протоколов. XHTTP умеет Xray, но не обычный sing-box.
 
 Проверка идёт с того места, где запущен скрипт (на GitHub — США, не Россия).
-Нужны: бинарник xray (XRAY_BIN или в PATH) и curl. Только стандартная библиотека Python.
+Нужны: xray, sing-box (необязательно) и curl. Только стандартная библиотека Python.
 """
 from __future__ import annotations
 
@@ -67,6 +68,14 @@ XRAY_TIMEOUT = float(os.getenv("XRAY_TIMEOUT", "8"))      # секунд на з
 XRAY_START_TIMEOUT = float(os.getenv("XRAY_START_TIMEOUT", "10"))
 REFUSE_FALLBACK_MIN = int(os.getenv("REFUSE_FALLBACK_MIN", "10"))
 
+# --- sing-box (вторая проверка: на нём работает Karing) ---
+USE_SINGBOX = env_bool("USE_SINGBOX", True)
+SINGBOX_BIN = os.getenv("SINGBOX_BIN", "") or shutil.which("sing-box") or ""
+SINGBOX_WORKERS = int(os.getenv("SINGBOX_WORKERS", "100"))
+SINGBOX_BASE_PORT = int(os.getenv("SINGBOX_BASE_PORT", "22000"))
+# True: в основные списки попадают только серверы, прошедшие и sing-box
+REQUIRE_SINGBOX = env_bool("REQUIRE_SINGBOX", True)
+
 TEST_GSTATIC = os.getenv("TEST_GSTATIC", "http://www.gstatic.com/generate_204")
 TEST_CLOUDFLARE = os.getenv("TEST_CLOUDFLARE", "https://www.cloudflare.com/cdn-cgi/trace")
 
@@ -90,6 +99,15 @@ PROTO_MAX_TOTAL = int(os.getenv("PROTO_MAX_TOTAL", "500"))
 XRAY_FILE_MAX_TOTAL = int(os.getenv("XRAY_FILE_MAX_TOTAL", "600"))
 XRAY_FILE_MAX_PER_COUNTRY = int(os.getenv("XRAY_FILE_MAX_PER_COUNTRY", "600"))  # 600 = без лимита
 
+# --- singbox_checked.txt и ru_servers.txt ---
+SINGBOX_FILE_MAX_TOTAL = int(os.getenv("SINGBOX_FILE_MAX_TOTAL", "600"))
+RU_MAX_PER_IP = int(os.getenv("RU_MAX_PER_IP", "2"))
+RU_MAX_TOTAL = int(os.getenv("RU_MAX_TOTAL", "250"))
+
+# --- Баланс стран (проверка идёт из США, поэтому США/Канада быстрее всех) ---
+EUROPE_SHARE = float(os.getenv("EUROPE_SHARE", "0.7"))             # доля Европы в списке, 0 = выкл.
+MAX_COUNTRY_SHARE = float(os.getenv("MAX_COUNTRY_SHARE", "0.1"))   # одна страна — не более 10% списка
+
 # --- white_checked.txt ---
 WHITE_MAX_PER_IP = int(os.getenv("WHITE_MAX_PER_IP", "2"))
 WHITE_MAX_PER_COUNTRY = int(os.getenv("WHITE_MAX_PER_COUNTRY", "5"))
@@ -111,6 +129,8 @@ SUPPORTED = {
     "socks5", "socks4", "http", "https",
 }
 XRAY_SCHEMES = {"vless", "vmess", "trojan", "ss", "hysteria2", "http", "https", "socks5", "socks4"}
+SB_SCHEMES = XRAY_SCHEMES | {"hysteria", "tuic"}
+UDP_SCHEMES = {"hysteria2", "hysteria", "tuic"}
 DEFAULT_PORT = {"http": 80, "socks5": 1080, "socks4": 1080}
 
 # SNI для белых списков. Любой домен на .ru считается российским + эти:
@@ -118,6 +138,14 @@ RU_SNI_DOMAINS = (
     "vk.com", "vk-cdn.net", "userapi.com", "vkuser.net", "mycdn.me",
     "yandex.net", "yandex.com", "yastatic.net",
 )
+
+# Европа (для баланса списков)
+EUROPE = {
+    "AD", "AL", "AT", "AX", "BA", "BE", "BG", "BY", "CH", "CY", "CZ", "DE", "DK", "EE", "ES", "FI",
+    "FO", "FR", "GB", "GG", "GI", "GR", "HR", "HU", "IE", "IM", "IS", "IT", "JE", "LI", "LT", "LU",
+    "LV", "MC", "MD", "ME", "MK", "MT", "NL", "NO", "PL", "PT", "RO", "RS", "RU", "SE", "SI", "SJ",
+    "SK", "SM", "UA", "VA", "XK",
+}
 
 # ============================ СТРАНЫ ============================
 COUNTRIES_RAW = """AD Andorra
@@ -798,6 +826,224 @@ def xray_config(port: int, outbound: dict) -> dict:
     }
 
 
+# ============================ SING-BOX: ССЫЛКА -> OUTBOUND ============================
+def _int(value, default: int) -> int:
+    try:
+        return int(re.sub(r"\D", "", str(value)) or default)
+    except ValueError:
+        return default
+
+
+def sb_transport(p: dict) -> tuple[dict | None, bool]:
+    """(transport, поддерживается). XHTTP, kcp, quic и tcp+http-обфускацию обычный sing-box не умеет."""
+    net = (p.get("type") or "tcp").lower()
+    host = p.get("host", "")
+    path = p.get("path", "") or "/"
+    if net in ("tcp", "raw"):
+        return (None, (p.get("headertype") or "").lower() != "http")
+    if net in ("ws", "websocket"):
+        t = {"type": "ws", "path": path}
+        if host:
+            t["headers"] = {"Host": host}
+        return t, True
+    if net in ("grpc", "gun"):
+        return {"type": "grpc", "service_name": p.get("servicename") or p.get("path", "")}, True
+    if net == "httpupgrade":
+        t = {"type": "httpupgrade", "path": path}
+        if host:
+            t["host"] = host
+        return t, True
+    if net in ("h2", "http"):
+        t = {"type": "http", "path": path}
+        if host:
+            t["host"] = [h for h in host.split(",") if h]
+        return t, True
+    return None, False
+
+
+def sb_tls(p: dict, address: str, default_security: str = "none") -> tuple[dict | None, bool]:
+    sec = (p.get("security") or default_security or "none").lower()
+    if sec == "xtls":
+        sec = "tls"
+    if sec in ("none", ""):
+        return None, True
+    if sec not in ("tls", "reality"):
+        return None, False
+    tls: dict = {"enabled": True, "server_name": p.get("sni") or p.get("peer") or p.get("host") or address}
+    if as_bool(p.get("allowinsecure")) or as_bool(p.get("insecure")):
+        tls["insecure"] = True
+    if p.get("alpn"):
+        tls["alpn"] = [a for a in p["alpn"].split(",") if a]
+    if p.get("fp") or sec == "reality":
+        tls["utls"] = {"enabled": True, "fingerprint": p.get("fp") or "chrome"}
+    if sec == "reality":
+        if not p.get("pbk"):
+            return None, False
+        tls["reality"] = {"enabled": True, "public_key": p["pbk"], "short_id": p.get("sid", "")}
+    return tls, True
+
+
+def _sb_stream(ob: dict, p: dict, host: str, default_security: str = "none") -> dict | None:
+    tls, ok_tls = sb_tls(p, host, default_security)
+    transport, ok_tr = sb_transport(p)
+    if not ok_tls or not ok_tr:
+        return None
+    if tls:
+        ob["tls"] = tls
+    if transport:
+        ob["transport"] = transport
+    return ob
+
+
+def build_sb_vless(line: str) -> dict | None:
+    host, port = extract_host_port(line)
+    uid, p = split_userinfo(line), query_params(line)
+    if not host or not uid or (p.get("encryption") or "none") != "none":
+        return None
+    ob = {"type": "vless", "server": host, "server_port": port, "uuid": uid}
+    if p.get("flow"):
+        ob["flow"] = p["flow"]
+    return _sb_stream(ob, p, host)
+
+
+def build_sb_vmess(line: str) -> dict | None:
+    try:
+        d = json.loads(b64decode_loose(line.split("://", 1)[1].split("#", 1)[0]))
+        host, port, uid = d.get("add"), int(d.get("port") or 443), d.get("id")
+    except Exception:
+        return None
+    if not host or not uid:
+        return None
+    net = str(d.get("net") or "tcp").lower()
+    p = {
+        "type": net, "host": d.get("host") or "", "path": d.get("path") or "",
+        "sni": d.get("sni") or "", "alpn": d.get("alpn") or "", "fp": d.get("fp") or "",
+        "security": "tls" if str(d.get("tls", "")).lower() == "tls" else "none",
+        "headertype": d.get("type") or "",
+        "servicename": d.get("path") or "" if net == "grpc" else "",
+        "allowinsecure": d.get("allowInsecure") or d.get("insecure") or "",
+    }
+    scy = str(d.get("scy") or "auto").lower()
+    if scy not in ("auto", "aes-128-gcm", "chacha20-poly1305"):
+        scy = "auto"
+    ob = {"type": "vmess", "server": host, "server_port": port, "uuid": uid, "security": scy, "alter_id": 0}
+    return _sb_stream(ob, p, host)
+
+
+def build_sb_trojan(line: str) -> dict | None:
+    host, port = extract_host_port(line)
+    password, p = split_userinfo(line), query_params(line)
+    if not host or not password:
+        return None
+    ob = {"type": "trojan", "server": host, "server_port": port, "password": password}
+    return _sb_stream(ob, p, host, default_security="tls")
+
+
+def build_sb_ss(line: str) -> dict | None:
+    host, port = extract_host_port(line)
+    creds = parse_ss_credentials(line)
+    if not host or creds is None:
+        return None
+    return {"type": "shadowsocks", "server": host, "server_port": port, "method": creds[0], "password": creds[1]}
+
+
+def build_sb_hysteria2(line: str) -> dict | None:
+    host, port = extract_host_port(line)
+    auth, p = split_userinfo(line), query_params(line)
+    if not host or not auth:
+        return None
+    tls = {"enabled": True, "server_name": p.get("sni") or host, "alpn": ["h3"]}
+    if as_bool(p.get("insecure")) or as_bool(p.get("allowinsecure")):
+        tls["insecure"] = True
+    ob = {"type": "hysteria2", "server": host, "server_port": port, "password": auth, "tls": tls}
+    if (p.get("obfs") or "").lower() == "salamander":
+        ob["obfs"] = {"type": "salamander", "password": p.get("obfs-password", "")}
+    return ob
+
+
+def build_sb_hysteria(line: str) -> dict | None:
+    """hysteria v1: hysteria://host:port?auth=..&peer=sni&insecure=1&upmbps=..&downmbps=.."""
+    host, port = extract_host_port(line)
+    p = query_params(line)
+    auth = p.get("auth") or p.get("auth_str") or split_userinfo(line)
+    if not host or not auth or (p.get("protocol") or "udp").lower() != "udp":
+        return None
+    tls = {"enabled": True, "server_name": p.get("peer") or p.get("sni") or host,
+           "alpn": [a for a in (p.get("alpn") or "h3").split(",") if a]}
+    if as_bool(p.get("insecure")) or as_bool(p.get("allowinsecure")):
+        tls["insecure"] = True
+    ob = {
+        "type": "hysteria", "server": host, "server_port": port, "auth_str": auth, "tls": tls,
+        "up_mbps": _int(p.get("upmbps") or p.get("up"), 100),
+        "down_mbps": _int(p.get("downmbps") or p.get("down"), 100),
+    }
+    obfs = p.get("obfsparam") or p.get("obfs")
+    if obfs and obfs.lower() != "none":
+        ob["obfs"] = obfs
+    return ob
+
+
+def build_sb_tuic(line: str) -> dict | None:
+    host, port = extract_host_port(line)
+    uuid, _, password = split_userinfo(line).partition(":")
+    p = query_params(line)
+    if not host or not uuid:
+        return None
+    tls = {"enabled": True, "server_name": p.get("sni") or host,
+           "alpn": [a for a in (p.get("alpn") or "h3").split(",") if a]}
+    if as_bool(p.get("allow_insecure")) or as_bool(p.get("insecure")) or as_bool(p.get("allowinsecure")):
+        tls["insecure"] = True
+    ob = {
+        "type": "tuic", "server": host, "server_port": port, "uuid": uuid, "password": password,
+        "congestion_control": p.get("congestion_control") or "bbr", "tls": tls,
+    }
+    if (p.get("udp_relay_mode") or "") in ("native", "quic"):
+        ob["udp_relay_mode"] = p["udp_relay_mode"]
+    return ob
+
+
+def build_sb_http_like(line: str) -> dict | None:
+    scheme = get_scheme(line)
+    host, port = extract_host_port(line)
+    if not host or not port:
+        return None
+    ob: dict = {"server": host, "server_port": port}
+    userinfo = split_userinfo(line)
+    if userinfo:
+        user, _, password = userinfo.partition(":")
+        ob["username"], ob["password"] = user, password
+    if scheme in ("socks5", "socks4"):
+        return {"type": "socks", "version": "4" if scheme == "socks4" else "5", **ob}
+    ob = {"type": "http", **ob}
+    if scheme == "https":
+        ob["tls"] = {"enabled": True, "server_name": host, "insecure": True}
+    return ob
+
+
+def build_sb_outbound(line: str) -> dict | None:
+    builders = {
+        "vless": build_sb_vless, "vmess": build_sb_vmess, "trojan": build_sb_trojan, "ss": build_sb_ss,
+        "hysteria2": build_sb_hysteria2, "hysteria": build_sb_hysteria, "tuic": build_sb_tuic,
+        "http": build_sb_http_like, "https": build_sb_http_like,
+        "socks5": build_sb_http_like, "socks4": build_sb_http_like,
+    }
+    builder = builders.get(get_scheme(line))
+    try:
+        return builder(line) if builder else None
+    except Exception:
+        return None
+
+
+def singbox_config(port: int, outbound: dict) -> dict:
+    return {
+        "log": {"disabled": True},
+        "dns": {"servers": [{"type": "local", "tag": "local"}]},
+        "inbounds": [{"type": "socks", "tag": "in", "listen": "127.0.0.1", "listen_port": port}],
+        "outbounds": [{**outbound, "tag": "out"}],
+        "route": {"final": "out", "default_domain_resolver": "local"},
+    }
+
+
 # ============================ ПРОВЕРКИ ============================
 _speed_sem: asyncio.Semaphore | None = None
 
@@ -813,20 +1059,20 @@ def speed_url() -> str:
     return SPEED_URL.format(bytes=SPEED_BYTES)
 
 
-def xray_available() -> bool:
-    if not USE_XRAY:
-        print("Xray отключён (USE_XRAY=false) — только TCP-проверка")
+def check_binary(label: str, path: str, enabled: bool) -> bool:
+    if not enabled:
+        print(f"{label}: отключён")
         return False
-    if not XRAY_BIN or not CURL_BIN:
-        print(f"ВНИМАНИЕ: нет xray ({XRAY_BIN or '—'}) или curl ({CURL_BIN or '—'}) — только TCP-проверка")
+    if not path or not CURL_BIN:
+        print(f"ВНИМАНИЕ: {label} недоступен (бинарник: {path or '—'}, curl: {CURL_BIN or '—'})")
         return False
     try:
-        res = subprocess.run([XRAY_BIN, "version"], capture_output=True, text=True, timeout=15)
+        res = subprocess.run([path, "version"], capture_output=True, text=True, timeout=15)
     except Exception as e:
-        print(f"ВНИМАНИЕ: не удалось запустить xray: {e} — только TCP-проверка")
+        print(f"ВНИМАНИЕ: не удалось запустить {label}: {e}")
         return False
     first = (res.stdout or res.stderr or "").strip().splitlines()
-    print(f"Xray: {first[0] if first else 'ok'}")
+    print(f"{label}: {first[0] if first else 'ok'}")
     return res.returncode == 0
 
 
@@ -871,7 +1117,7 @@ async def curl_probe(args: list[str], url: str, timeout: float):
         return None
 
 
-async def probe_via(args: list[str]) -> dict | None:
+async def probe_via(args: list[str], want_speed: bool = True) -> dict | None:
     """gstatic -> cloudflare -> (тест скорости). None — сервер не работает."""
     r = await curl_probe(args, TEST_GSTATIC, XRAY_TIMEOUT)
     if not r or r[0] != 204:
@@ -881,7 +1127,7 @@ async def probe_via(args: list[str]) -> dict | None:
     if not r or r[0] != 200:
         return None
     speed = None
-    if SPEED_TEST:
+    if SPEED_TEST and want_speed:
         async with speed_sem():
             r = await curl_probe(args, speed_url(), SPEED_TIMEOUT)
         if r and r[3] > 0:
@@ -893,7 +1139,7 @@ async def wait_port(port: int, proc, limit: float) -> bool:
     deadline = time.monotonic() + limit
     while time.monotonic() < deadline:
         if proc.returncode is not None:
-            return False  # Xray отказался от конфига и завершился
+            return False  # ядро отказалось от конфига и завершилось
         try:
             _, writer = await asyncio.open_connection("127.0.0.1", port)
         except OSError:
@@ -908,18 +1154,39 @@ async def wait_port(port: int, proc, limit: float) -> bool:
     return False
 
 
-async def xray_check_item(item: dict, port: int, tmpdir: Path):
+ENGINES = {
+    "xray": {
+        "label": "Xray", "bin": XRAY_BIN, "config": xray_config, "ob": "xray_ob", "status": "xray_status",
+        "workers": XRAY_WORKERS, "base": XRAY_BASE_PORT,
+    },
+    "singbox": {
+        "label": "sing-box", "bin": SINGBOX_BIN, "config": singbox_config, "ob": "sb_ob", "status": "sb_status",
+        "workers": SINGBOX_WORKERS, "base": SINGBOX_BASE_PORT,
+    },
+}
+
+
+def merge_metrics(item: dict, m: dict) -> None:
+    if item.get("lat_src") != "tunnel" and m.get("latency_ms") is not None:
+        item["latency_ms"], item["lat_src"] = m["latency_ms"], "tunnel"
+    if item.get("speed_mbps") is None and m.get("speed_mbps") is not None:
+        item["speed_mbps"] = m["speed_mbps"]
+
+
+async def engine_check_item(engine: str, item: dict, port: int, tmpdir: Path):
     """-> ("ok", метрики) | ("dead", None) | ("refused", None)"""
-    path = tmpdir / f"{port}.json"
-    path.write_text(json.dumps(xray_config(port, item["outbound"])), encoding="utf-8")
+    spec = ENGINES[engine]
+    path = tmpdir / f"{engine}_{port}.json"
+    path.write_text(json.dumps(spec["config"](port, item[spec["ob"]])), encoding="utf-8")
     proc = await asyncio.create_subprocess_exec(
-        XRAY_BIN, "run", "-c", str(path),
+        spec["bin"], "run", "-c", str(path),
         stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL,
     )
     try:
         if not await wait_port(port, proc, XRAY_START_TIMEOUT):
             return "refused", None
-        metrics = await probe_via(["-x", f"socks5h://127.0.0.1:{port}"])
+        want_speed = item.get("speed_mbps") is None
+        metrics = await probe_via(["-x", f"socks5h://127.0.0.1:{port}"], want_speed)
         return ("ok", metrics) if metrics else ("dead", None)
     finally:
         if proc.returncode is None:
@@ -930,49 +1197,63 @@ async def xray_check_item(item: dict, port: int, tmpdir: Path):
         await proc.wait()
 
 
-async def xray_phase(pending: list[dict]):
-    """Пул процессов Xray: у каждого воркера свой порт."""
-    tmpdir = Path(tempfile.mkdtemp(prefix="xray_cfg_"))
+async def engine_phase(engine: str, pending: list[dict]) -> dict[str, Counter]:
+    """Пул процессов ядра: у каждого воркера свой порт. Результат пишется в item[<status>]."""
+    spec = ENGINES[engine]
+    tmpdir = Path(tempfile.mkdtemp(prefix=f"{engine}_cfg_"))
     queue: asyncio.Queue = asyncio.Queue()
     for item in pending:
         queue.put_nowait(item)
     stats: dict[str, Counter] = defaultdict(Counter)
-    ok_items: list[dict] = []
-    refused_items: list[dict] = []
-    total = len(pending)
-    done = 0
+    total, done, ok_n = len(pending), 0, 0
 
     async def worker(port: int) -> None:
-        nonlocal done
+        nonlocal done, ok_n
         while True:
             try:
                 item = queue.get_nowait()
             except asyncio.QueueEmpty:
                 return
             try:
-                outcome, metrics = await xray_check_item(item, port, tmpdir)
+                outcome, metrics = await engine_check_item(engine, item, port, tmpdir)
             except Exception:
                 outcome, metrics = "dead", None
+            item[spec["status"]] = outcome
             stats[item["scheme"]][outcome] += 1
             if outcome == "ok":
-                item.update(metrics)
-                item["method"] = "xray"
-                ok_items.append(item)
-            elif outcome == "refused":
-                refused_items.append(item)
+                ok_n += 1
+                merge_metrics(item, metrics)
             done += 1
             if done % 500 == 0 or done == total:
-                print(f"  Xray: проверено {done}/{total} | работают: {len(ok_items)}", flush=True)
+                print(f"  {spec['label']}: проверено {done}/{total} | работают: {ok_n}", flush=True)
 
     try:
-        await asyncio.gather(*(worker(XRAY_BASE_PORT + i) for i in range(max(1, min(XRAY_WORKERS, total)))))
+        await asyncio.gather(*(worker(spec["base"] + i) for i in range(max(1, min(spec["workers"], total)))))
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
-    return ok_items, refused_items, stats
+    return stats
 
 
-async def check_light(line: str, sem: asyncio.Semaphore, xray_ok: bool) -> dict | None:
-    """Быстрая стадия: TCP-пинг и подготовка конфига для Xray."""
+def apply_refuse_fallback(engine: str, items: list[dict], stats: dict[str, Counter]) -> list[str]:
+    """Ядро отвергло ВСЕ конфиги протокола -> вероятно, формат не подходит версии ядра."""
+    spec = ENGINES[engine]
+    by_scheme: dict[str, list[dict]] = defaultdict(list)
+    for item in items:
+        if item[spec["status"]] == "refused":
+            by_scheme[item["scheme"]].append(item)
+    fallback: list[str] = []
+    for scheme, lst in by_scheme.items():
+        started = stats[scheme]["ok"] + stats[scheme]["dead"]
+        if started == 0 and len(lst) >= REFUSE_FALLBACK_MIN:
+            print(f"ВНИМАНИЕ: {spec['label']} отверг все {len(lst)} конфигов {scheme} — оставляем по TCP-пингу")
+            fallback.append(scheme)
+            for item in lst:
+                item[spec["status"]] = "na_fallback"
+    return fallback
+
+
+async def check_light(line: str, sem: asyncio.Semaphore, xray_av: bool, sb_av: bool) -> dict | None:
+    """Быстрая стадия: TCP-пинг и подготовка конфигов для ядер."""
     async with sem:
         try:
             scheme = get_scheme(line)
@@ -982,33 +1263,49 @@ async def check_light(line: str, sem: asyncio.Semaphore, xray_ok: bool) -> dict 
 
             item = {
                 "raw": line, "proxy": line, "ip": "", "country": detect_country(line),
-                "scheme": scheme, "latency_ms": None, "speed_mbps": None,
+                "scheme": scheme, "latency_ms": None, "speed_mbps": None, "lat_src": "",
                 "method": "unchecked", "is_reality": False, "sni": "",
+                "xray_status": "na", "sb_status": "na",
             }
             if scheme == "vless":
                 item.update(parse_vless_params(line))
 
-            outbound = build_outbound(line) if scheme in XRAY_SCHEMES else None
-            if outbound is not None:
-                if scheme != "hysteria2":  # hysteria2 — UDP, TCP-пинг бессмыслен
+            xob = build_outbound(line) if scheme in XRAY_SCHEMES else None
+            sob = build_sb_outbound(line) if scheme in SB_SCHEMES else None
+            if xob is not None or sob is not None:
+                if scheme not in UDP_SCHEMES:  # у UDP-протоколов TCP-пинг бессмыслен
                     tcp = await tcp_check(host, port)
                     if tcp is None:
                         return None
                     item["latency_ms"] = tcp
-                if xray_ok:
-                    item["method"] = "xray_pending"
-                    item["outbound"] = outbound
-                elif scheme != "hysteria2":
-                    item["method"] = "tcp"
+                item["method"] = "pending"
+                if xob is not None and xray_av:
+                    item["xray_status"], item["xray_ob"] = "pending", xob
+                if sob is not None and sb_av:
+                    item["sb_status"], item["sb_ob"] = "pending", sob
 
             ip = await resolve_to_ip(host)
             item["ip"] = ip
-            needs_ip = item["method"] == "unchecked" or scheme == "hysteria2"
-            if needs_ip and not is_ip(ip):
+            if (item["method"] == "unchecked" or scheme in UDP_SCHEMES) and not is_ip(ip):
                 return None  # непроверяемый сервер, чей хост даже не резолвится
             return item
         except Exception:
             return None
+
+
+def finalize_item(item: dict) -> bool:
+    """Итог по результатам ядер. False — сервер отбрасываем."""
+    xs, ss = item["xray_status"], item["sb_status"]
+    if "ok" in (xs, ss):
+        item["method"] = "verified"
+        return True
+    if any(s in ("dead", "refused") for s in (xs, ss)):
+        return False
+    if item["method"] == "unchecked":
+        return True
+    # ядра недоступны или отвергли весь протокол: остаётся результат TCP-пинга
+    item["method"] = "unchecked" if item["scheme"] in UDP_SCHEMES else "tcp"
+    return True
 
 
 # ============================ ФИЛЬТРАЦИЯ ============================
@@ -1019,57 +1316,80 @@ def rank_key(item: dict) -> tuple:
 
 
 def passes_speed(item: dict) -> bool:
-    if MIN_SPEED_MBPS <= 0 or item["method"] != "xray":
+    if MIN_SPEED_MBPS <= 0 or item["method"] != "verified":
         return True
     return (item.get("speed_mbps") or 0) >= MIN_SPEED_MBPS
 
 
-def smart_filter(
+def in_pool(item: dict, sb_required: bool) -> bool:
+    """Годится ли сервер для основных списков."""
+    if item["method"] == "unchecked":
+        return False
+    if item["method"] == "tcp" or not sb_required:
+        return True
+    return item["sb_status"] == "ok"  # прошёл sing-box (и Xray, если тот умеет этот конфиг)
+
+
+def select_servers(
     items: list[dict],
-    max_per_country: int = MAX_PER_COUNTRY,
-    max_total: int = MAX_TOTAL,
-    unique_ip: bool = True,
+    max_per_country: int,
+    max_total: int,
+    max_per_ip: int = 1,
+    europe_share: float | None = None,
+    key=None,
+    share_cap: bool = True,
 ) -> list[dict]:
-    seen_ips: set[str] = set()
-    per_country: dict[str, int] = defaultdict(int)
-    result: list[dict] = []
-    for item in sorted(items, key=rank_key):
-        if len(result) >= max_total:
-            break
-        ip, country = item["ip"], item["country"]
-        if unique_ip and ip in seen_ips:
-            continue
-        if per_country[country] >= max_per_country:
-            continue
-        seen_ips.add(ip)
-        per_country[country] += 1
-        result.append(item)
-    return result
+    """Лучшие по скорости серверы с лимитами по IP и странам.
+
+    europe_share — доля списка, которую в первую очередь отдаём Европе;
+    share_cap — одна страна не может занять больше MAX_COUNTRY_SHARE списка.
+    """
+    share = EUROPE_SHARE if europe_share is None else europe_share
+    key = key or rank_key
+    cap = max_per_country
+    if share_cap:
+        cap = min(max_per_country, max(2, round(max_total * MAX_COUNTRY_SHARE)))
+
+    ranked = sorted(items, key=key)
+    ip_n: dict[str, int] = defaultdict(int)
+    cc_n: dict[str, int] = defaultdict(int)
+    chosen: list[dict] = []
+    used: set[int] = set()
+
+    def take(pool: list[dict], limit: int) -> None:
+        for it in pool:
+            if len(chosen) >= limit:
+                return
+            if id(it) in used or ip_n[it["ip"]] >= max_per_ip or cc_n[it["country"]] >= cap:
+                continue
+            used.add(id(it))
+            ip_n[it["ip"]] += 1
+            cc_n[it["country"]] += 1
+            chosen.append(it)
+
+    if share > 0:
+        eu = [i for i in ranked if i["country"] in EUROPE]
+        other = [i for i in ranked if i["country"] not in EUROPE]
+        take(eu, round(max_total * share))
+        take(other, max_total)
+        take(eu, max_total)
+    else:
+        take(ranked, max_total)
+    chosen.sort(key=key)
+    return chosen
 
 
 def smart_filter_white(items: list[dict]) -> list[dict]:
     """VLESS (по умолчанию только Reality); российский SNI — в начало очереди."""
-    cand = [i for i in items if i["scheme"] == "vless" and i["method"] != "unchecked"]
+    cand = [i for i in items if i["scheme"] == "vless"]
     if WHITE_REALITY_ONLY:
         cand = [i for i in cand if i["is_reality"]]
     if WHITE_RU_SNI_ONLY:
         cand = [i for i in cand if sni_is_ru(i["sni"])]
-    cand.sort(key=lambda i: (not i["is_reality"], not sni_is_ru(i["sni"]), *rank_key(i)))
-
-    per_ip: dict[str, int] = defaultdict(int)
-    per_country: dict[str, int] = defaultdict(int)
-    result: list[dict] = []
-    for item in cand:
-        if len(result) >= WHITE_MAX_TOTAL:
-            break
-        if per_ip[item["ip"]] >= WHITE_MAX_PER_IP:
-            continue
-        if per_country[item["country"]] >= WHITE_MAX_PER_COUNTRY:
-            continue
-        per_ip[item["ip"]] += 1
-        per_country[item["country"]] += 1
-        result.append(item)
-    return result
+    return select_servers(
+        cand, WHITE_MAX_PER_COUNTRY, WHITE_MAX_TOTAL, max_per_ip=WHITE_MAX_PER_IP,
+        key=lambda i: (not i["is_reality"], not sni_is_ru(i["sni"]), *rank_key(i)),
+    )
 
 
 def write_list(path: Path, items: list[dict]) -> None:
@@ -1215,12 +1535,17 @@ def apply_geo(working: list[dict]) -> tuple[list[dict] | None, dict]:
 
 
 # ============================ MAIN ============================
+def stats_dict(stats: dict[str, Counter]) -> dict:
+    return {s: dict(c) for s, c in stats.items()}
+
+
 async def main_async() -> int:
     global _speed_sem
     _speed_sem = None
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[{stamp}] Источников: {len(SOURCE_URLS)}")
-    xray_ok = xray_available()
+    xray_av = check_binary("Xray", XRAY_BIN, USE_XRAY)
+    sb_av = check_binary("sing-box", SINGBOX_BIN, USE_SINGBOX)
 
     # 1. Скачиваем и разбираем
     texts = []
@@ -1252,7 +1577,7 @@ async def main_async() -> int:
 
     # 2. Быстрая стадия: TCP-пинг
     sem = asyncio.Semaphore(CONCURRENCY)
-    tasks = [asyncio.create_task(check_light(c, sem, xray_ok)) for c in configs]
+    tasks = [asyncio.create_task(check_light(c, sem, xray_av, sb_av)) for c in configs]
     light: list[dict] = []
     done = 0
     for fut in asyncio.as_completed(tasks):
@@ -1263,40 +1588,45 @@ async def main_async() -> int:
         if done % 2000 == 0 or done == len(tasks):
             print(f"  TCP: проверено {done}/{len(tasks)} | живых: {len(light)}", flush=True)
 
-    pending = [i for i in light if i["method"] == "xray_pending"]
-    working = [i for i in light if i["method"] != "xray_pending"]
+    # 3. Xray
+    xray_stats: dict = {}
+    fallback = {"xray": [], "singbox": []}
+    x_pending = [i for i in light if i["xray_status"] == "pending"]
+    if x_pending:
+        print(f"Xray: проверяем {len(x_pending)} серверов ({XRAY_WORKERS} параллельно)...")
+        stats = await engine_phase("xray", x_pending)
+        xray_stats = stats_dict(stats)
+        fallback["xray"] = apply_refuse_fallback("xray", x_pending, stats)
 
-    # 3. Xray: реальная проверка + скорость
-    xray_stats: dict[str, dict] = {}
-    fallback_schemes: list[str] = []
-    if pending:
-        print(f"Xray: проверяем {len(pending)} серверов ({XRAY_WORKERS} параллельно)...")
-        ok_items, refused_items, stats = await xray_phase(pending)
-        working += ok_items
-        xray_stats = {s: dict(c) for s, c in stats.items()}
+    # 4. sing-box: только серверы, не упавшие на Xray
+    for item in light:
+        if item["sb_status"] == "pending" and item["xray_status"] == "dead":
+            item["sb_status"] = "skipped"
+    sb_stats: dict = {}
+    sb_broken = False
+    s_pending = [i for i in light if i["sb_status"] == "pending"]
+    if s_pending:
+        print(f"sing-box: проверяем {len(s_pending)} серверов ({SINGBOX_WORKERS} параллельно)...")
+        stats = await engine_phase("singbox", s_pending)
+        sb_stats = stats_dict(stats)
+        fallback["singbox"] = apply_refuse_fallback("singbox", s_pending, stats)
+        tested = sum(1 for i in s_pending if i["sb_status"] in ("ok", "dead"))
+        if tested >= 20 and not any(i["sb_status"] == "ok" for i in s_pending):
+            sb_broken = True
+            print("ВНИМАНИЕ: sing-box не пропустил ни одного сервера — похоже, проблема в конфиге; "
+                  "требование sing-box на этот запуск отключено")
+    sb_required = sb_av and REQUIRE_SINGBOX and not sb_broken
 
-        refused_by_scheme: dict[str, list[dict]] = defaultdict(list)
-        for item in refused_items:
-            refused_by_scheme[item["scheme"]].append(item)
-        for scheme, items in refused_by_scheme.items():
-            started = stats[scheme]["ok"] + stats[scheme]["dead"]
-            if started == 0 and len(items) >= REFUSE_FALLBACK_MIN:
-                # Xray не принял НИ ОДНОГО конфига протокола — вероятно, формат не подходит
-                # этой версии Xray. Не теряем серверы: оставляем как были после TCP-пинга.
-                print(f"ВНИМАНИЕ: Xray отверг все {len(items)} конфигов {scheme} — оставляем по TCP-пингу")
-                fallback_schemes.append(scheme)
-                for item in items:
-                    item["method"] = "tcp" if scheme != "hysteria2" else "unchecked"
-                    working.append(item)
+    working = [i for i in light if finalize_item(i)]
     for item in working:
-        item.pop("outbound", None)
-
+        item.pop("xray_ob", None)
+        item.pop("sb_ob", None)
+    working = [i for i in working if passes_speed(i)]
     if not working:
         print("Нет рабочих серверов — результаты не меняем")
         return 0
-    working = [i for i in working if passes_speed(i)]
 
-    # 4. Реальные страна и город по IP
+    # 5. Реальные страна и город по IP
     geo_stats: dict = {}
     if GEO_LOOKUP:
         geo_result, geo_stats = await asyncio.to_thread(apply_geo, working)
@@ -1308,18 +1638,26 @@ async def main_async() -> int:
     for item in working:
         item["proxy"] = format_clean_proxy(item["raw"], item["country"], item.get("city", ""))
 
-    # 5. Списки
-    checked = [i for i in working if i["method"] != "unchecked"]
-    main_list = smart_filter(checked, MAX_PER_COUNTRY, MAX_TOTAL)
-    white_list = smart_filter_white(working)
-    xray_list = smart_filter(
-        [i for i in working if i["method"] == "xray"], XRAY_FILE_MAX_PER_COUNTRY, XRAY_FILE_MAX_TOTAL
+    # 6. Списки
+    pool = [i for i in working if in_pool(i, sb_required)]
+    main_list = select_servers(pool, MAX_PER_COUNTRY, MAX_TOTAL)
+    white_list = smart_filter_white(pool)
+    xray_list = select_servers(
+        [i for i in working if i["xray_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, XRAY_FILE_MAX_TOTAL
+    )
+    sb_list = select_servers(
+        [i for i in working if i["sb_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, SINGBOX_FILE_MAX_TOTAL
+    )
+    ru_list = select_servers(
+        [i for i in working if i["country"] == "RU" and (i in pool or i["method"] == "unchecked")],
+        RU_MAX_TOTAL, RU_MAX_TOTAL, max_per_ip=RU_MAX_PER_IP, europe_share=0, share_cap=False,
     )
     by_scheme: dict[str, list[dict]] = defaultdict(list)
     for item in working:
-        by_scheme[item["scheme"]].append(item)
+        if in_pool(item, sb_required) or item["method"] == "unchecked":
+            by_scheme[item["scheme"]].append(item)
 
-    # 6. Запись (старые файлы по протоколам удаляем, чтобы не оставались устаревшие)
+    # 7. Запись (старые файлы по протоколам удаляем, чтобы не оставались устаревшие)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     by_dir = OUT_DIR / "by_protocol"
     by_dir.mkdir(parents=True, exist_ok=True)
@@ -1330,10 +1668,12 @@ async def main_async() -> int:
     write_list(OUT_DIR / "working_proxies.txt", main_list)
     write_list(OUT_DIR / "white_checked.txt", white_list)
     write_list(OUT_DIR / "xray_checked.txt", xray_list)
+    write_list(OUT_DIR / "singbox_checked.txt", sb_list)
+    write_list(OUT_DIR / "ru_servers.txt", ru_list)
 
     per_file: dict[str, int] = {}
     for scheme, items in sorted(by_scheme.items()):
-        filtered = smart_filter(items, PROTO_MAX_PER_COUNTRY, PROTO_MAX_TOTAL)
+        filtered = select_servers(items, PROTO_MAX_PER_COUNTRY, PROTO_MAX_TOTAL)
         write_list(by_dir / f"{scheme}.txt", filtered)
         per_file[scheme] = len(filtered)
 
@@ -1342,31 +1682,41 @@ async def main_async() -> int:
             "scheme": i["scheme"], "country": i["country"], "city": i.get("city", ""),
             "ip": i["ip"], "latency_ms": i["latency_ms"], "speed_mbps": i["speed_mbps"],
         }
-        for i in xray_list
+        for i in main_list
     ]
     (OUT_DIR / "metrics.json").write_text(
         json.dumps(metrics, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
     )
 
-    speeds = sorted(i["speed_mbps"] for i in xray_list if i["speed_mbps"] is not None)
+    speeds = sorted(i["speed_mbps"] for i in main_list if i["speed_mbps"] is not None)
+    europe_n = sum(1 for i in main_list if i["country"] in EUROPE)
     stats_out = {
         "checked_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "sources": SOURCE_URLS,
-        "xray_used": xray_ok,
+        "xray_used": xray_av,
+        "singbox_used": sb_av,
+        "singbox_required_for_lists": sb_required,
+        "singbox_broken": sb_broken,
         "total_configs": len(configs),
         "alive_or_unchecked": len(working),
         "by_method": dict(Counter(i["method"] for i in working)),
         "xray_by_protocol": xray_stats,
-        "xray_fallback_protocols": fallback_schemes,
-        "all_txt": len(main_list),
-        "white_checked_txt": len(white_list),
-        "xray_checked_txt": len(xray_list),
-        "xray_checked_speed_mbps_median": speeds[len(speeds) // 2] if speeds else None,
-        "by_protocol": per_file,
+        "singbox_by_protocol": sb_stats,
+        "refuse_fallback_protocols": fallback,
+        "files": {
+            "all_txt": len(main_list), "white_checked_txt": len(white_list),
+            "xray_checked_txt": len(xray_list), "singbox_checked_txt": len(sb_list),
+            "ru_servers_txt": len(ru_list), "by_protocol": per_file,
+        },
+        "all_txt_europe_share": round(europe_n / len(main_list), 2) if main_list else None,
+        "all_txt_speed_mbps_median": speeds[len(speeds) // 2] if speeds else None,
         "limits": {
             "all_txt": {"per_country": MAX_PER_COUNTRY, "total": MAX_TOTAL},
             "by_protocol": {"per_country": PROTO_MAX_PER_COUNTRY, "total": PROTO_MAX_TOTAL},
-            "xray_checked_txt": {"per_country": XRAY_FILE_MAX_PER_COUNTRY, "total": XRAY_FILE_MAX_TOTAL},
+            "xray_checked_txt": {"total": XRAY_FILE_MAX_TOTAL},
+            "singbox_checked_txt": {"total": SINGBOX_FILE_MAX_TOTAL},
+            "ru_servers_txt": {"per_ip": RU_MAX_PER_IP, "total": RU_MAX_TOTAL},
+            "europe_share": EUROPE_SHARE, "max_country_share": MAX_COUNTRY_SHARE,
         },
         "geo": geo_stats,
         "test_urls": [TEST_GSTATIC, TEST_CLOUDFLARE, speed_url() if SPEED_TEST else None],
@@ -1374,7 +1724,8 @@ async def main_async() -> int:
     (OUT_DIR / "stats.json").write_text(json.dumps(stats_out, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"Итого: {len(working)} | {dict(Counter(i['method'] for i in working))}")
-    print(f"all.txt: {len(main_list)} | xray_checked.txt: {len(xray_list)} | white_checked.txt: {len(white_list)}")
+    print(f"all.txt: {len(main_list)} (Европа {europe_n}) | xray_checked: {len(xray_list)} | "
+          f"singbox_checked: {len(sb_list)} | ru_servers: {len(ru_list)} | white_checked: {len(white_list)}")
     for scheme, n in per_file.items():
         print(f"  by_protocol/{scheme}.txt -> {n}")
     print("Готово.")
