@@ -11,7 +11,15 @@
   3. Через туннель: http://www.gstatic.com/generate_204 (204) -> cloudflare trace (200)
      -> тест скорости (скачивание SPEED_BYTES с speed.cloudflare.com).
 Списки сортируются по скорости, затем по задержке. Страны уравновешены:
-EUROPE_SHARE списка — Европа, одна страна — не более MAX_COUNTRY_SHARE списка.
+EUROPE_SHARE списка — Европа, одна страна — не более MAX_COUNTRY_SHARE списка,
+для США и Канады лимит уменьшен вдвое.
+
+Общие файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
+  - без http/https (их не поддерживает v2rayNG);
+  - ss и socks — на 80% меньше, чем получилось бы без этого правила;
+  - hysteria2 занимает отдельную долю списка (HYSTERIA2_SHARE) и отбирается только
+    по задержке и уникальному IP (UDP-протокол: ядро подтверждает его не всегда,
+    поэтому достаточно TCP-пинга; подтверждённые ядром идут первыми).
 
 Не умеют оба ядра: ssr, ss с плагином, vless/vmess с kcp/quic. Эти конфиги — «unchecked»,
 только в файлах своих протоколов. XHTTP умеет Xray, но не обычный sing-box.
@@ -25,6 +33,7 @@ import asyncio
 import base64
 import ipaddress
 import json
+import math
 import os
 import re
 import shutil
@@ -107,6 +116,22 @@ RU_MAX_TOTAL = int(os.getenv("RU_MAX_TOTAL", "250"))
 # --- Баланс стран (проверка идёт из США, поэтому США/Канада быстрее всех) ---
 EUROPE_SHARE = float(os.getenv("EUROPE_SHARE", "0.7"))             # доля Европы в списке, 0 = выкл.
 MAX_COUNTRY_SHARE = float(os.getenv("MAX_COUNTRY_SHARE", "0.1"))   # одна страна — не более 10% списка
+
+
+def env_set(name: str, default: str, lower: bool = True) -> set[str]:
+    raw = os.getenv(name, default)
+    return {x.strip().lower() if lower else x.strip().upper() for x in raw.split(",") if x.strip()}
+
+
+# США и Канада: лимит на страну уменьшается в REDUCED_FACTOR раз (во всех списках)
+REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "US,CA", lower=False)
+REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.5"))
+
+# «Общие» файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
+GENERAL_EXCLUDE_SCHEMES = env_set("GENERAL_EXCLUDE_SCHEMES", "http,https")  # v2rayNG их не поддерживает
+LOW_SCHEMES = env_set("LOW_SCHEMES", "ss,socks5,socks4")                    # работают плохо
+LOW_SCHEMES_KEEP = float(os.getenv("LOW_SCHEMES_KEEP", "0.2"))             # оставляем 20% (то есть на 80% меньше)
+HYSTERIA2_SHARE = float(os.getenv("HYSTERIA2_SHARE", "0.2"))               # доля hysteria2 в общих файлах
 
 # --- white_checked.txt ---
 WHITE_MAX_PER_IP = int(os.getenv("WHITE_MAX_PER_IP", "2"))
@@ -1264,7 +1289,7 @@ async def check_light(line: str, sem: asyncio.Semaphore, xray_av: bool, sb_av: b
             item = {
                 "raw": line, "proxy": line, "ip": "", "country": detect_country(line),
                 "scheme": scheme, "latency_ms": None, "speed_mbps": None, "lat_src": "",
-                "method": "unchecked", "is_reality": False, "sni": "",
+                "method": "unchecked", "is_reality": False, "sni": "", "tcp_ms": None,
                 "xray_status": "na", "sb_status": "na",
             }
             if scheme == "vless":
@@ -1272,6 +1297,13 @@ async def check_light(line: str, sem: asyncio.Semaphore, xray_av: bool, sb_av: b
 
             xob = build_outbound(line) if scheme in XRAY_SCHEMES else None
             sob = build_sb_outbound(line) if scheme in SB_SCHEMES else None
+            if scheme == "hysteria2":
+                # По условию hysteria2 достаточно TCP-пинга и уникального IP; ядра могут
+                # подтвердить работу (тогда сервер «verified»), но не отсеивают его.
+                tcp = await tcp_check(host, port)
+                item["tcp_ms"] = tcp
+                if tcp is not None:
+                    item["latency_ms"] = tcp
             if xob is not None or sob is not None:
                 if scheme not in UDP_SCHEMES:  # у UDP-протоколов TCP-пинг бессмыслен
                     tcp = await tcp_check(host, port)
@@ -1299,6 +1331,12 @@ def finalize_item(item: dict) -> bool:
     if "ok" in (xs, ss):
         item["method"] = "verified"
         return True
+    if item["scheme"] == "hysteria2":
+        # не подтверждён ядром — остаётся, если отвечает TCP-пинг (отбор только по задержке и IP)
+        if item.get("tcp_ms") is not None:
+            item["method"] = "tcp"
+            return True
+        return False
     if any(s in ("dead", "refused") for s in (xs, ss)):
         return False
     if item["method"] == "unchecked":
@@ -1330,6 +1368,26 @@ def in_pool(item: dict, sb_required: bool) -> bool:
     return item["sb_status"] == "ok"  # прошёл sing-box (и Xray, если тот умеет этот конфиг)
 
 
+def hy2_key(item: dict) -> tuple:
+    """hysteria2: подтверждённые ядром — вперёд, дальше по задержке."""
+    lat = item.get("latency_ms")
+    return (item["method"] != "verified", lat is None, lat or 0)
+
+
+def select_hysteria2(items: list[dict], max_total: int) -> list[dict]:
+    """Файл hysteria2: только задержка и уникальный IP, без лимитов по странам."""
+    seen: set[str] = set()
+    result: list[dict] = []
+    for item in sorted(items, key=hy2_key):
+        if len(result) >= max_total:
+            break
+        if item["ip"] in seen:
+            continue
+        seen.add(item["ip"])
+        result.append(item)
+    return result
+
+
 def select_servers(
     items: list[dict],
     max_per_country: int,
@@ -1338,45 +1396,76 @@ def select_servers(
     europe_share: float | None = None,
     key=None,
     share_cap: bool = True,
+    general: bool = False,
 ) -> list[dict]:
     """Лучшие по скорости серверы с лимитами по IP и странам.
 
     europe_share — доля списка, которую в первую очередь отдаём Европе;
-    share_cap — одна страна не может занять больше MAX_COUNTRY_SHARE списка.
+    share_cap — одна страна не может занять больше MAX_COUNTRY_SHARE списка;
+    США и Канада (REDUCED_COUNTRIES) получают лимит в REDUCED_FACTOR раз меньше;
+    general — правила общих файлов: без http/https, ss и socks на 80% меньше,
+    отдельная доля HYSTERIA2_SHARE для hysteria2 (отбор по задержке и IP, без лимитов стран).
     """
     share = EUROPE_SHARE if europe_share is None else europe_share
     key = key or rank_key
     cap = max_per_country
     if share_cap:
         cap = min(max_per_country, max(2, round(max_total * MAX_COUNTRY_SHARE)))
+    ranked = sorted(
+        (i for i in items if not (general and i["scheme"] in GENERAL_EXCLUDE_SCHEMES)), key=key
+    )
 
-    ranked = sorted(items, key=key)
-    ip_n: dict[str, int] = defaultdict(int)
-    cc_n: dict[str, int] = defaultdict(int)
-    chosen: list[dict] = []
-    used: set[int] = set()
+    def cap_for(country: str) -> int:
+        return max(1, int(cap * REDUCED_FACTOR)) if country in REDUCED_COUNTRIES else cap
 
-    def take(pool: list[dict], limit: int) -> None:
-        for it in pool:
-            if len(chosen) >= limit:
-                return
-            if id(it) in used or ip_n[it["ip"]] >= max_per_ip or cc_n[it["country"]] >= cap:
-                continue
-            used.add(id(it))
-            ip_n[it["ip"]] += 1
-            cc_n[it["country"]] += 1
-            chosen.append(it)
+    def run(low_quota: int | None) -> list[dict]:
+        ip_n: dict[str, int] = defaultdict(int)
+        cc_n: dict[str, int] = defaultdict(int)
+        chosen: list[dict] = []
+        used: set[int] = set()
+        low_n = 0
 
-    if share > 0:
-        eu = [i for i in ranked if i["country"] in EUROPE]
-        other = [i for i in ranked if i["country"] not in EUROPE]
-        take(eu, round(max_total * share))
-        take(other, max_total)
-        take(eu, max_total)
-    else:
-        take(ranked, max_total)
-    chosen.sort(key=key)
-    return chosen
+        def take(pool: list[dict], limit: int, ignore_cap: bool = False) -> None:
+            nonlocal low_n
+            for it in pool:
+                if len(chosen) >= limit:
+                    return
+                if id(it) in used or ip_n[it["ip"]] >= max_per_ip:
+                    continue
+                if not ignore_cap and cc_n[it["country"]] >= cap_for(it["country"]):
+                    continue
+                is_low = general and it["scheme"] in LOW_SCHEMES
+                if is_low and low_quota is not None and low_n >= low_quota:
+                    continue
+                used.add(id(it))
+                ip_n[it["ip"]] += 1
+                cc_n[it["country"]] += 1
+                low_n += is_low
+                chosen.append(it)
+
+        rest = ranked
+        if general and HYSTERIA2_SHARE > 0:
+            hy = sorted((i for i in ranked if i["scheme"] == "hysteria2"), key=hy2_key)
+            take(hy, round(max_total * HYSTERIA2_SHARE), ignore_cap=True)
+            rest = [i for i in ranked if i["scheme"] != "hysteria2"]
+        if share > 0:
+            slots = max_total - len(chosen)
+            eu = [i for i in rest if i["country"] in EUROPE]
+            other = [i for i in rest if i["country"] not in EUROPE]
+            take(eu, len(chosen) + round(slots * share))
+            take(other, max_total)
+            take(eu, max_total)
+        else:
+            take(rest, max_total)
+        return chosen
+
+    result = run(None)
+    if general and LOW_SCHEMES_KEEP < 1:
+        low = sum(1 for i in result if i["scheme"] in LOW_SCHEMES)
+        if low:
+            result = run(math.ceil(low * LOW_SCHEMES_KEEP))  # ss/socks — на 80% меньше, место займут другие
+    result.sort(key=key)
+    return result
 
 
 def smart_filter_white(items: list[dict]) -> list[dict]:
@@ -1640,17 +1729,19 @@ async def main_async() -> int:
 
     # 6. Списки
     pool = [i for i in working if in_pool(i, sb_required)]
-    main_list = select_servers(pool, MAX_PER_COUNTRY, MAX_TOTAL)
+    main_list = select_servers(pool, MAX_PER_COUNTRY, MAX_TOTAL, general=True)
     white_list = smart_filter_white(pool)
     xray_list = select_servers(
-        [i for i in working if i["xray_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, XRAY_FILE_MAX_TOTAL
+        [i for i in working if i["xray_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, XRAY_FILE_MAX_TOTAL,
+        general=True,
     )
     sb_list = select_servers(
-        [i for i in working if i["sb_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, SINGBOX_FILE_MAX_TOTAL
+        [i for i in working if i["sb_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, SINGBOX_FILE_MAX_TOTAL,
+        general=True,
     )
     ru_list = select_servers(
         [i for i in working if i["country"] == "RU" and (i in pool or i["method"] == "unchecked")],
-        RU_MAX_TOTAL, RU_MAX_TOTAL, max_per_ip=RU_MAX_PER_IP, europe_share=0, share_cap=False,
+        RU_MAX_TOTAL, RU_MAX_TOTAL, max_per_ip=RU_MAX_PER_IP, europe_share=0, share_cap=False, general=True,
     )
     by_scheme: dict[str, list[dict]] = defaultdict(list)
     for item in working:
@@ -1673,7 +1764,10 @@ async def main_async() -> int:
 
     per_file: dict[str, int] = {}
     for scheme, items in sorted(by_scheme.items()):
-        filtered = select_servers(items, PROTO_MAX_PER_COUNTRY, PROTO_MAX_TOTAL)
+        if scheme == "hysteria2":
+            filtered = select_hysteria2(items, PROTO_MAX_TOTAL)
+        else:
+            filtered = select_servers(items, PROTO_MAX_PER_COUNTRY, PROTO_MAX_TOTAL)
         write_list(by_dir / f"{scheme}.txt", filtered)
         per_file[scheme] = len(filtered)
 
@@ -1709,6 +1803,8 @@ async def main_async() -> int:
             "ru_servers_txt": len(ru_list), "by_protocol": per_file,
         },
         "all_txt_europe_share": round(europe_n / len(main_list), 2) if main_list else None,
+        "all_txt_by_protocol": dict(Counter(i["scheme"] for i in main_list)),
+        "all_txt_us_ca": sum(1 for i in main_list if i["country"] in REDUCED_COUNTRIES),
         "all_txt_speed_mbps_median": speeds[len(speeds) // 2] if speeds else None,
         "limits": {
             "all_txt": {"per_country": MAX_PER_COUNTRY, "total": MAX_TOTAL},
@@ -1717,6 +1813,10 @@ async def main_async() -> int:
             "singbox_checked_txt": {"total": SINGBOX_FILE_MAX_TOTAL},
             "ru_servers_txt": {"per_ip": RU_MAX_PER_IP, "total": RU_MAX_TOTAL},
             "europe_share": EUROPE_SHARE, "max_country_share": MAX_COUNTRY_SHARE,
+            "reduced_countries": sorted(REDUCED_COUNTRIES), "reduced_factor": REDUCED_FACTOR,
+            "general_exclude_schemes": sorted(GENERAL_EXCLUDE_SCHEMES),
+            "low_schemes": sorted(LOW_SCHEMES), "low_schemes_keep": LOW_SCHEMES_KEEP,
+            "hysteria2_share": HYSTERIA2_SHARE,
         },
         "geo": geo_stats,
         "test_urls": [TEST_GSTATIC, TEST_CLOUDFLARE, speed_url() if SPEED_TEST else None],
@@ -1724,6 +1824,7 @@ async def main_async() -> int:
     (OUT_DIR / "stats.json").write_text(json.dumps(stats_out, ensure_ascii=False, indent=2), encoding="utf-8")
 
     print(f"Итого: {len(working)} | {dict(Counter(i['method'] for i in working))}")
+    print(f"all.txt по протоколам: {dict(Counter(i['scheme'] for i in main_list))}")
     print(f"all.txt: {len(main_list)} (Европа {europe_n}) | xray_checked: {len(xray_list)} | "
           f"singbox_checked: {len(sb_list)} | ru_servers: {len(ru_list)} | white_checked: {len(white_list)}")
     for scheme, n in per_file.items():
