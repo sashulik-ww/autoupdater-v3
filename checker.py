@@ -21,8 +21,7 @@ EUROPE_SHARE списка — Европа, одна страна — не бо�
 с Россией (NEAR_COUNTRIES).
 
 Общие файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
-  - без http/https (их не поддерживает v2rayNG);
-  - ss и socks — на 80% меньше, чем получилось бы без этого правила;
+  - без http, https, ss и socks (GENERAL_EXCLUDE_SCHEMES); в by_protocol/ они остаются;
   - hysteria2 занимает отдельную долю списка (HYSTERIA2_SHARE) и отбирается только
     по задержке и уникальному IP (UDP-протокол: ядро подтверждает его не всегда,
     поэтому достаточно TCP-пинга; подтверждённые ядром идут первыми).
@@ -31,6 +30,8 @@ EUROPE_SHARE списка — Европа, одна страна — не бо�
 только в файлах своих протоколов. XHTTP умеет Xray, но не обычный sing-box.
 
 Проверка идёт с того места, где запущен скрипт (на GitHub — США, не Россия).
+ru_servers.txt: российские серверы (по IP) без порога скорости (из США их скорость не показательна)
+и без обязательной проверки sing-box; в конец добавляются не подтверждённые ядрами, но отвечающие по TCP.
 Нужны: xray, sing-box (необязательно) и curl. Только стандартная библиотека Python.
 """
 from __future__ import annotations
@@ -135,7 +136,7 @@ REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "US,CA", lower=False)
 REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.5"))
 
 # «Общие» файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
-GENERAL_EXCLUDE_SCHEMES = env_set("GENERAL_EXCLUDE_SCHEMES", "http,https")  # v2rayNG их не поддерживает
+GENERAL_EXCLUDE_SCHEMES = env_set("GENERAL_EXCLUDE_SCHEMES", "http,https,ss,socks5,socks4")  # не нужны / работают плохо
 LOW_SCHEMES = env_set("LOW_SCHEMES", "ss,socks5,socks4")                    # работают плохо
 LOW_SCHEMES_KEEP = float(os.getenv("LOW_SCHEMES_KEEP", "0.2"))             # оставляем 20% (то есть на 80% меньше)
 HYSTERIA2_SHARE = float(os.getenv("HYSTERIA2_SHARE", "0.2"))               # доля hysteria2 в общих файлах
@@ -162,8 +163,15 @@ GEO_SOURCES = [x.strip() for x in os.getenv("GEO_SOURCES", "ipapi,geojs").split(
 GEO_MIN_AGREE = int(os.getenv("GEO_MIN_AGREE", "2"))
 GEO_PRIORITY = ("cf", "ipapi", "geojs")  # при ничьей побеждает источник левее
 
-# XHTTP: Xray его умеет, обычный sing-box нет, но Karing, судя по практике, подключается к таким серверам.
-ALLOW_XHTTP = env_bool("ALLOW_XHTTP", True)
+# XHTTP умеет Xray (v2rayNG), но не sing-box (Karing). False: такие серверы только в xray_checked.txt,
+# в основных списках — лишь те, что открываются в обоих приложениях.
+ALLOW_XHTTP = env_bool("ALLOW_XHTTP", False)
+# Сколько серверов одного протокола на одном IP проверять ядрами (в списки всё равно попадает 1-2 на IP;
+# без лимита проверка тратит час на тысячи портов одного адреса)
+MAX_TESTS_PER_IP = int(os.getenv("MAX_TESTS_PER_IP", "3"))
+# В ru_servers.txt добавлять российские серверы, не подтверждённые ядрами (из США они часто недоступны:
+# к ним достаточно открытого TCP-порта). Идут в конце файла.
+RU_INCLUDE_TCP_ONLY = env_bool("RU_INCLUDE_TCP_ONLY", True)
 
 SCHEME_ALIASES = {"hy2": "hysteria2", "socks": "socks5", "socks5h": "socks5", "socks4a": "socks4"}
 SUPPORTED = {
@@ -1360,6 +1368,7 @@ async def check_light(line: str, sem: asyncio.Semaphore, xray_av: bool, sb_av: b
                     if tcp is None:
                         return None
                     item["latency_ms"] = tcp
+                    item["tcp_ms"] = tcp
                 item["method"] = "pending"
                 if xob is not None and xray_av:
                     item["xray_status"], item["xray_ob"] = "pending", xob
@@ -1375,6 +1384,22 @@ async def check_light(line: str, sem: asyncio.Semaphore, xray_av: bool, sb_av: b
             return None
 
 
+def limit_tests_per_ip(light: list[dict]) -> tuple[list[dict], int]:
+    """Не больше MAX_TESTS_PER_IP серверов одного протокола на IP идёт в ядра (лучшие по TCP-пингу)."""
+    if MAX_TESTS_PER_IP <= 0:
+        return light, 0
+    groups: dict[tuple, list[dict]] = defaultdict(list)
+    for item in light:
+        if item["method"] == "pending":
+            groups[(item["ip"], item["scheme"])].append(item)
+    drop: set[int] = set()
+    for items in groups.values():
+        if len(items) > MAX_TESTS_PER_IP:
+            items.sort(key=lambda i: (i["latency_ms"] is None, i["latency_ms"] or 0))
+            drop.update(id(i) for i in items[MAX_TESTS_PER_IP:])
+    return [i for i in light if id(i) not in drop], len(drop)
+
+
 def finalize_item(item: dict) -> bool:
     """Итог по результатам ядер. False — сервер отбрасываем."""
     xs, ss = item["xray_status"], item["sb_status"]
@@ -1388,6 +1413,10 @@ def finalize_item(item: dict) -> bool:
             return True
         return False
     if any(s in ("dead", "refused") for s in (xs, ss)):
+        # из США российские серверы нередко недоступны, поэтому для них хватает открытого TCP-порта
+        if RU_INCLUDE_TCP_ONLY and item.get("tcp_ms") is not None and item["country"] in ("RU", "XX"):
+            item["method"] = "tcp_only"
+            return True
         return False
     if item["method"] == "unchecked":
         return True
@@ -1411,7 +1440,7 @@ def passes_speed(item: dict) -> bool:
 
 def in_pool(item: dict, sb_required: bool) -> bool:
     """Годится ли сервер для основных списков."""
-    if item["method"] == "unchecked":
+    if item["method"] in ("unchecked", "tcp_only"):
         return False
     if item["method"] == "tcp" or not sb_required:
         return True
@@ -1776,6 +1805,7 @@ def stats_dict(stats: dict[str, Counter]) -> dict:
 async def main_async() -> int:
     global _speed_sem
     _speed_sem = None
+    t_start = time.monotonic()
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[{stamp}] Источников: {len(SOURCE_URLS)}")
     xray_av = check_binary("Xray", XRAY_BIN, USE_XRAY)
@@ -1822,6 +1852,11 @@ async def main_async() -> int:
         if done % 2000 == 0 or done == len(tasks):
             print(f"  TCP: проверено {done}/{len(tasks)} | живых: {len(light)}", flush=True)
 
+    t_tcp = time.monotonic()
+    light, dropped_by_ip = limit_tests_per_ip(light)
+    if dropped_by_ip:
+        print(f"Лимит проверок на IP ({MAX_TESTS_PER_IP} на протокол): пропущено {dropped_by_ip}")
+
     # 3. Xray
     xray_stats: dict = {}
     fallback = {"xray": [], "singbox": []}
@@ -1850,27 +1885,36 @@ async def main_async() -> int:
             print("ВНИМАНИЕ: sing-box не пропустил ни одного сервера — похоже, проблема в конфиге; "
                   "требование sing-box на этот запуск отключено")
     sb_required = sb_av and REQUIRE_SINGBOX and not sb_broken
+    t_cores = time.monotonic()
 
-    working = [i for i in light if finalize_item(i)]
-    for item in working:
+    working_all = [i for i in light if finalize_item(i)]
+    for item in working_all:
         item.pop("xray_ob", None)
         item.pop("sb_ob", None)
-    working = [i for i in working if passes_speed(i)]
-    if not working:
+    if not working_all:
         print("Нет рабочих серверов — результаты не меняем")
         return 0
 
     # 5. Реальные страна и город по IP
     geo_stats: dict = {}
     if GEO_LOOKUP:
-        geo_result, geo_stats = await asyncio.to_thread(apply_geo, working)
+        geo_result, geo_stats = await asyncio.to_thread(apply_geo, working_all)
         if geo_result is None:
             print("Геолокация не сработала ни для одного IP — результаты не меняем")
             return 0
-        working = geo_result
+        working_all = geo_result
+    t_geo = time.monotonic()
 
-    for item in working:
+    for item in working_all:
         item["proxy"] = format_clean_proxy(item["raw"], item["country"], item.get("city", ""))
+
+    # Порог скорости — только если замеры вообще получились (иначе отсеялось бы всё)
+    verified = [i for i in working_all if i["method"] == "verified"]
+    measured = sum(1 for i in verified if i["speed_mbps"] is not None)
+    speed_filter = MIN_SPEED_MBPS > 0 and bool(verified) and measured >= 0.05 * len(verified)
+    if MIN_SPEED_MBPS > 0 and not speed_filter:
+        print("ВНИМАНИЕ: замеры скорости почти не получились — порог скорости на этот запуск отключён")
+    working = [i for i in working_all if not speed_filter or passes_speed(i)]
 
     # 6. Списки
     pool = [i for i in working if in_pool(i, sb_required)]
@@ -1884,9 +1928,15 @@ async def main_async() -> int:
         [i for i in working if i["sb_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, SINGBOX_FILE_MAX_TOTAL,
         general=True,
     )
+
+    def ru_key(i: dict) -> tuple:
+        cls = 0 if i["sb_status"] == "ok" else 1 if i["method"] == "verified" else 2 if i["method"] != "tcp_only" else 3
+        return (cls, *rank_key(i))
+
+    ru_pool = [i for i in working_all if i["country"] == "RU"]   # без порога скорости и требования sing-box
     ru_list = select_servers(
-        [i for i in working if i["country"] == "RU" and (i in pool or i["method"] == "unchecked")],
-        RU_MAX_TOTAL, RU_MAX_TOTAL, max_per_ip=RU_MAX_PER_IP, europe_share=0, share_cap=False, general=True,
+        ru_pool, RU_MAX_TOTAL, RU_MAX_TOTAL, max_per_ip=RU_MAX_PER_IP, europe_share=0, share_cap=False,
+        general=True, key=ru_key,
     )
     by_scheme: dict[str, list[dict]] = defaultdict(list)
     for item in working:
@@ -1964,10 +2014,25 @@ async def main_async() -> int:
             "hysteria2_share": HYSTERIA2_SHARE,
         },
         "geo": geo_stats,
+        "tests_dropped_by_ip_limit": dropped_by_ip,
+        "speed_filter_active": speed_filter,
+        "ru_stage": {
+            "ru_servers_after_geo": len(ru_pool),
+            "by_method": dict(Counter(i["method"] for i in ru_pool)),
+            "by_protocol": dict(Counter(i["scheme"] for i in ru_pool)),
+            "in_file": len(ru_list),
+        },
+        "seconds": {
+            "tcp": round(t_tcp - t_start), "cores": round(t_cores - t_tcp),
+            "geo": round(t_geo - t_cores), "total": round(time.monotonic() - t_start),
+        },
         "test_urls": [TEST_GSTATIC, TEST_CLOUDFLARE, speed_url() if SPEED_TEST else None],
     }
     (OUT_DIR / "stats.json").write_text(json.dumps(stats_out, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    print(f"RU: серверов с российским IP {len(ru_pool)} {dict(Counter(i['method'] for i in ru_pool))} -> в файле {len(ru_list)}")
+    print(f"Время, с: TCP {round(t_tcp - t_start)}, ядра {round(t_cores - t_tcp)}, геолокация {round(t_geo - t_cores)}, "
+          f"всего {round(time.monotonic() - t_start)}")
     print(f"Итого: {len(working)} | {dict(Counter(i['method'] for i in working))}")
     print(f"all.txt по протоколам: {dict(Counter(i['scheme'] for i in main_list))}")
     print(f"all.txt: {len(main_list)} (Европа {europe_n}) | xray_checked: {len(xray_list)} | "
