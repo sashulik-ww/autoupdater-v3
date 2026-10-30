@@ -14,6 +14,12 @@
 EUROPE_SHARE списка — Европа, одна страна — не более MAX_COUNTRY_SHARE списка,
 для США и Канады лимит уменьшен вдвое.
 
+Страна и город в названии определяются по ВЫХОДНОМУ IP (его показывает Cloudflare через
+туннель) голосованием: Cloudflare (loc) + ip-api + geojs; нужно согласие GEO_MIN_AGREE источников,
+спорные серверы исключаются. Скорость — это скорость передачи без учёта установки соединения;
+серверы медленнее MIN_SPEED_MBPS отбрасываются. Из не-европейских стран первыми идут соседние
+с Россией (NEAR_COUNTRIES).
+
 Общие файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
   - без http/https (их не поддерживает v2rayNG);
   - ss и socks — на 80% меньше, чем получилось бы без этого правила;
@@ -45,6 +51,7 @@ import time
 import urllib.error
 import urllib.request
 from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlsplit
@@ -90,11 +97,11 @@ TEST_CLOUDFLARE = os.getenv("TEST_CLOUDFLARE", "https://www.cloudflare.com/cdn-c
 
 # --- Скорость ---
 SPEED_TEST = env_bool("SPEED_TEST", True)
-SPEED_BYTES = int(os.getenv("SPEED_BYTES", "2000000"))
+SPEED_BYTES = int(os.getenv("SPEED_BYTES", "3000000"))
 SPEED_TIMEOUT = float(os.getenv("SPEED_TIMEOUT", "15"))
-SPEED_CONCURRENCY = int(os.getenv("SPEED_CONCURRENCY", "12"))   # одновременных тестов скорости
+SPEED_CONCURRENCY = int(os.getenv("SPEED_CONCURRENCY", "8"))    # одновременных тестов скорости
 SPEED_URL = os.getenv("SPEED_URL", "https://speed.cloudflare.com/__down?bytes={bytes}")
-MIN_SPEED_MBPS = float(os.getenv("MIN_SPEED_MBPS", "0"))        # 0 = не отсеивать по скорости
+MIN_SPEED_MBPS = float(os.getenv("MIN_SPEED_MBPS", "3"))        # Мбит/с; 0 = не отсеивать по скорости
 
 # --- all.txt (общий список) ---
 MAX_PER_COUNTRY = int(os.getenv("MAX_PER_COUNTRY", "4"))
@@ -132,6 +139,8 @@ GENERAL_EXCLUDE_SCHEMES = env_set("GENERAL_EXCLUDE_SCHEMES", "http,https")  # v2
 LOW_SCHEMES = env_set("LOW_SCHEMES", "ss,socks5,socks4")                    # работают плохо
 LOW_SCHEMES_KEEP = float(os.getenv("LOW_SCHEMES_KEEP", "0.2"))             # оставляем 20% (то есть на 80% меньше)
 HYSTERIA2_SHARE = float(os.getenv("HYSTERIA2_SHARE", "0.2"))               # доля hysteria2 в общих файлах
+# Из не-европейских стран первыми берём те, что ближе к России (меньше задержка и лучше скорость оттуда)
+NEAR_COUNTRIES = env_set("NEAR_COUNTRIES", "TR,KZ,AM,GE,AZ,UZ,KG,IL,AE", lower=False)
 
 # --- white_checked.txt ---
 WHITE_MAX_PER_IP = int(os.getenv("WHITE_MAX_PER_IP", "2"))
@@ -147,6 +156,14 @@ GEO_TTL_DAYS = int(os.getenv("GEO_TTL_DAYS", "30"))
 GEO_TIME_LIMIT = int(os.getenv("GEO_TIME_LIMIT", "600"))
 GEO_MAX_IPS = int(os.getenv("GEO_MAX_IPS", "20000"))
 GEO_CACHE_NAME = "geo_cache.json"
+# Источники по IP (ещё один голос — Cloudflare через туннель, он есть всегда у проверенных серверов).
+# Страна принимается, если с ней согласны минимум GEO_MIN_AGREE источников.
+GEO_SOURCES = [x.strip() for x in os.getenv("GEO_SOURCES", "ipapi,geojs").split(",") if x.strip()]
+GEO_MIN_AGREE = int(os.getenv("GEO_MIN_AGREE", "2"))
+GEO_PRIORITY = ("cf", "ipapi", "geojs")  # при ничьей побеждает источник левее
+
+# XHTTP: Xray его умеет, обычный sing-box нет, но Karing, судя по практике, подключается к таким серверам.
+ALLOW_XHTTP = env_bool("ALLOW_XHTTP", True)
 
 SCHEME_ALIASES = {"hy2": "hysteria2", "socks": "socks5", "socks5h": "socks5", "socks4a": "socks4"}
 SUPPORTED = {
@@ -1115,11 +1132,12 @@ async def tcp_check(host: str, port: int) -> int | None:
     return max(1, int((time.monotonic() - started) * 1000))
 
 
-async def curl_probe(args: list[str], url: str, timeout: float):
-    """Один запрос через curl -> (http_code, ttfb_сек, байт/сек, скачано_байт) или None."""
+async def curl_probe(args: list[str], url: str, timeout: float, want_body: bool = False) -> dict | None:
+    """Один запрос через curl -> {code, ttfb, total, size, body} (время в секундах) или None."""
     cmd = [
-        CURL_BIN, "-sS", "-o", os.devnull, "-m", f"{timeout:g}", "--connect-timeout", f"{min(timeout, 10):g}",
-        *args, "-w", "%{http_code} %{time_starttransfer} %{speed_download} %{size_download}", url,
+        CURL_BIN, "-sS", "-o", "-" if want_body else os.devnull, "-m", f"{timeout:g}",
+        "--connect-timeout", f"{min(timeout, 10):g}", *args,
+        "-w", "\n@@%{http_code} %{time_starttransfer} %{time_total} %{size_download}", url,
     ]
     proc = await asyncio.create_subprocess_exec(
         *cmd, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL
@@ -1133,31 +1151,58 @@ async def curl_probe(args: list[str], url: str, timeout: float):
             pass
         await proc.wait()
         return None
-    parts = out.decode(errors="ignore").split()
+    body, _, tail = out.decode(errors="ignore").rpartition("@@")
+    parts = tail.split()
     if len(parts) != 4:
         return None
     try:
-        return int(parts[0]), float(parts[1]), float(parts[2]), float(parts[3])
+        return {
+            "code": int(parts[0]), "ttfb": float(parts[1]), "total": float(parts[2]),
+            "size": float(parts[3]), "body": body.rstrip("\n") if want_body else "",
+        }
     except ValueError:
         return None
 
 
+def parse_trace(body: str) -> dict:
+    """cloudflare.com/cdn-cgi/trace: строки key=value (ip=..., loc=US, ...)."""
+    out = {}
+    for line in body.splitlines():
+        key, _, value = line.partition("=")
+        out[key.strip()] = value.strip()
+    return out
+
+
+def transfer_mbps(r: dict) -> float | None:
+    """Скорость самой передачи (без установки соединения и ожидания первого байта), Мбит/с."""
+    if not r or r["size"] <= 0:
+        return None
+    duration = r["total"] - r["ttfb"]
+    if duration < 0.05:  # слишком быстро для точного замера — считаем по полному времени
+        duration = max(r["total"], 0.05)
+    return round(r["size"] * 8 / 1e6 / duration, 2)
+
+
 async def probe_via(args: list[str], want_speed: bool = True) -> dict | None:
-    """gstatic -> cloudflare -> (тест скорости). None — сервер не работает."""
+    """gstatic -> cloudflare (выходной IP и страна) -> тест скорости. None — сервер не работает."""
     r = await curl_probe(args, TEST_GSTATIC, XRAY_TIMEOUT)
-    if not r or r[0] != 204:
+    if not r or r["code"] != 204:
         return None
-    latency = max(1, int(r[1] * 1000))
-    r = await curl_probe(args, TEST_CLOUDFLARE, XRAY_TIMEOUT)
-    if not r or r[0] != 200:
+    latency = max(1, int(r["ttfb"] * 1000))
+    r = await curl_probe(args, TEST_CLOUDFLARE, XRAY_TIMEOUT, want_body=True)
+    if not r or r["code"] != 200:
         return None
+    trace = parse_trace(r["body"])
+    exit_ip = trace.get("ip", "")
     speed = None
     if SPEED_TEST and want_speed:
         async with speed_sem():
-            r = await curl_probe(args, speed_url(), SPEED_TIMEOUT)
-        if r and r[3] > 0:
-            speed = round(r[2] * 8 / 1e6, 2)  # байт/сек -> Мбит/с
-    return {"latency_ms": latency, "speed_mbps": speed}
+            speed = transfer_mbps(await curl_probe(args, speed_url(), SPEED_TIMEOUT))
+    return {
+        "latency_ms": latency, "speed_mbps": speed,
+        "exit_ip": exit_ip if is_ip(exit_ip) else None,
+        "exit_cc": (trace.get("loc") or "").upper() or None,
+    }
 
 
 async def wait_port(port: int, proc, limit: float) -> bool:
@@ -1196,6 +1241,9 @@ def merge_metrics(item: dict, m: dict) -> None:
         item["latency_ms"], item["lat_src"] = m["latency_ms"], "tunnel"
     if item.get("speed_mbps") is None and m.get("speed_mbps") is not None:
         item["speed_mbps"] = m["speed_mbps"]
+    for key in ("exit_ip", "exit_cc"):  # куда на самом деле выходит трафик
+        if not item.get(key) and m.get(key):
+            item[key] = m[key]
 
 
 async def engine_check_item(engine: str, item: dict, port: int, tmpdir: Path):
@@ -1289,11 +1337,13 @@ async def check_light(line: str, sem: asyncio.Semaphore, xray_av: bool, sb_av: b
             item = {
                 "raw": line, "proxy": line, "ip": "", "country": detect_country(line),
                 "scheme": scheme, "latency_ms": None, "speed_mbps": None, "lat_src": "",
+                "exit_ip": None, "exit_cc": None, "xhttp": False,
                 "method": "unchecked", "is_reality": False, "sni": "", "tcp_ms": None,
                 "xray_status": "na", "sb_status": "na",
             }
             if scheme == "vless":
                 item.update(parse_vless_params(line))
+                item["xhttp"] = (query_params(line).get("type") or "").lower() in ("xhttp", "splithttp")
 
             xob = build_outbound(line) if scheme in XRAY_SCHEMES else None
             sob = build_sb_outbound(line) if scheme in SB_SCHEMES else None
@@ -1365,7 +1415,10 @@ def in_pool(item: dict, sb_required: bool) -> bool:
         return False
     if item["method"] == "tcp" or not sb_required:
         return True
-    return item["sb_status"] == "ok"  # прошёл sing-box (и Xray, если тот умеет этот конфиг)
+    if item["sb_status"] == "ok":  # прошёл sing-box (и Xray, если тот умеет этот конфиг)
+        return True
+    # XHTTP sing-box проверить не может, но Karing его открывает — берём, если прошёл Xray
+    return bool(ALLOW_XHTTP and item.get("xhttp") and item["xray_status"] == "ok" and item["sb_status"] == "na")
 
 
 def hy2_key(item: dict) -> tuple:
@@ -1451,7 +1504,10 @@ def select_servers(
         if share > 0:
             slots = max_total - len(chosen)
             eu = [i for i in rest if i["country"] in EUROPE]
-            other = [i for i in rest if i["country"] not in EUROPE]
+            other = sorted(
+                (i for i in rest if i["country"] not in EUROPE),
+                key=lambda i: (i["country"] not in NEAR_COUNTRIES, key(i)),
+            )
             take(eu, len(chosen) + round(slots * share))
             take(other, max_total)
             take(eu, max_total)
@@ -1496,7 +1552,7 @@ def load_geo_cache() -> dict:
     cutoff = time.time() - GEO_TTL_DAYS * 86400
     return {
         ip: v for ip, v in data.items()
-        if isinstance(v, dict) and v.get("cc") and v.get("ts", 0) >= cutoff
+        if isinstance(v, dict) and v.get("v") == 2 and v.get("ts", 0) >= cutoff
     }
 
 
@@ -1516,7 +1572,7 @@ def _header_int(headers, name: str, default: int) -> int:
 
 
 def _geo_request(chunk: list[str]) -> list | None:
-    """Один пакетный запрос к ip-api (до 100 IP). None — ошибка."""
+    """ip-api: один пакетный запрос (до 100 IP). None — ошибка."""
     url = "http://ip-api.com/batch?fields=status,countryCode,city,query"
     for _ in range(3):
         req = urllib.request.Request(
@@ -1533,24 +1589,24 @@ def _geo_request(chunk: list[str]) -> list | None:
         except urllib.error.HTTPError as e:
             if e.code == 429:
                 wait = _header_int(e.headers, "X-Ttl", 30) + 1
-                print(f"  geo: лимит запросов, ждём {wait}с")
+                print(f"  ip-api: лимит запросов, ждём {wait}с")
                 time.sleep(min(wait, 90))
                 continue
-            print(f"  geo: HTTP {e.code}")
+            print(f"  ip-api: HTTP {e.code}")
             return None
         except Exception as e:
-            print(f"  geo: ошибка {e}")
+            print(f"  ip-api: ошибка {e}")
             return None
     return None
 
 
-def geo_lookup(ips: list[str]) -> dict[str, dict]:
-    """IP -> {"cc": "DE", "city": "Frankfurt am Main"}."""
-    result: dict[str, dict] = {}
+def ipapi_lookup(ips: list[str]) -> dict[str, list]:
+    """IP -> [код страны, город] (ip-api.com, пакетами по 100)."""
+    result: dict[str, list] = {}
     started = time.monotonic()
     for n, i in enumerate(range(0, len(ips), 100), start=1):
         if time.monotonic() - started > GEO_TIME_LIMIT:
-            print("  geo: лимит времени, остальное доопределится в следующий запуск")
+            print("  ip-api: лимит времени, остальное доопределится в следующий запуск")
             break
         rows = _geo_request(ips[i:i + 100])
         if rows is None:
@@ -1558,69 +1614,158 @@ def geo_lookup(ips: list[str]) -> dict[str, dict]:
         for row in rows:
             cc = row.get("countryCode")
             if row.get("status") == "success" and cc in COUNTRIES:
-                result[row["query"]] = {"cc": cc, "city": row.get("city") or ""}
+                result[row["query"]] = [cc, row.get("city") or ""]
         if n % 10 == 0:
-            print(f"  geo: {min(i + 100, len(ips))}/{len(ips)}", flush=True)
+            print(f"  ip-api: {min(i + 100, len(ips))}/{len(ips)}", flush=True)
         time.sleep(4.5)  # бесплатный лимит ip-api: 15 пакетных запросов в минуту
     return result
 
 
+def _get_json(url: str, retries: int = 3):
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                return json.loads(resp.read().decode())
+        except Exception as e:
+            if attempt == retries - 1:
+                print(f"  geojs: ошибка {e}")
+            else:
+                time.sleep(1.5 * (attempt + 1))
+    return None
+
+
+def geojs_lookup(ips: list[str]) -> dict[str, list]:
+    """IP -> [код страны, город] (get.geojs.io, пакетами по 50; ключ не нужен)."""
+    result: dict[str, list] = {}
+    started = time.monotonic()
+    for n, i in enumerate(range(0, len(ips), 50), start=1):
+        if time.monotonic() - started > GEO_TIME_LIMIT:
+            print("  geojs: лимит времени, остальное доопределится в следующий запуск")
+            break
+        rows = _get_json("https://get.geojs.io/v1/ip/geo.json?ip=" + ",".join(ips[i:i + 50]))
+        if rows is None:
+            break
+        if isinstance(rows, dict):
+            rows = [rows]
+        for row in rows:
+            cc = str(row.get("country_code") or "").upper()
+            if cc in COUNTRIES and row.get("ip"):
+                result[row["ip"]] = [cc, row.get("city") or ""]
+        if n % 20 == 0:
+            print(f"  geojs: {min(i + 50, len(ips))}/{len(ips)}", flush=True)
+        time.sleep(0.3)
+    return result
+
+
+GEO_PROVIDERS = {"ipapi": ipapi_lookup, "geojs": geojs_lookup}
+
+
+def decide_country(item: dict, entry: dict) -> dict:
+    """Голосование: Cloudflare (страна выходного IP через туннель) + источники по IP."""
+    votes: list[tuple[str, str, str]] = []
+    if item.get("exit_cc") in COUNTRIES:
+        votes.append(("cf", item["exit_cc"], ""))
+    for source in GEO_SOURCES:
+        value = entry.get(source)
+        if value:
+            votes.append((source, value[0], value[1]))
+    if not votes:
+        return {"cc": None, "city": "", "agree": 0, "total": 0, "ok": False}
+
+    order = {name: n for n, name in enumerate(GEO_PRIORITY)}
+    counts = Counter(cc for _, cc, _ in votes)
+    best = {}
+    for source, cc, _ in votes:
+        best[cc] = min(best.get(cc, 99), order.get(source, 99))
+    top = min(counts, key=lambda cc: (-counts[cc], best[cc]))
+    agree = counts[top]
+    city = next((c for source, cc, c in votes if cc == top and c and source != "cf"), "")
+    ok = agree >= min(GEO_MIN_AGREE, len(votes))
+    return {"cc": top, "city": city, "agree": agree, "total": len(votes), "ok": ok}
+
+
 def apply_geo(working: list[dict]) -> tuple[list[dict] | None, dict]:
-    """Ставит каждому серверу реальные страну и город по IP."""
+    """Ставит каждому серверу страну и город по ВЫХОДНОМУ IP (если известен), иначе по IP сервера."""
     cache = load_geo_cache()
 
     best: dict[str, tuple] = {}  # лучшие серверы определяем первыми
     for item in working:
-        if is_ip(item["ip"]):
-            key = rank_key(item)
-            if item["ip"] not in best or key < best[item["ip"]]:
-                best[item["ip"]] = key
-    need_all = sorted((ip for ip in best if ip not in cache), key=lambda ip: best[ip])
-    need = need_all[:GEO_MAX_IPS]
-    print(f"Геолокация: уникальных IP {len(best)}, в кеше {len(best) - len(need_all)}, запрашиваем {len(need)}")
+        key = item["exit_ip"] if is_ip(item.get("exit_ip") or "") else item["ip"]
+        item["geo_key"] = key if is_ip(key) else ""
+        if item["geo_key"]:
+            rk = rank_key(item)
+            if key not in best or rk < best[key]:
+                best[key] = rk
+    order = sorted(best, key=lambda ip: best[ip])
+    sources = [name for name in GEO_SOURCES if name in GEO_PROVIDERS]
+    need = {
+        name: [ip for ip in order if name not in cache.get(ip, {})][:GEO_MAX_IPS] for name in sources
+    }
+    print(f"Геолокация: уникальных IP {len(order)}; запрашиваем: "
+          + ", ".join(f"{name} {len(ips)}" for name, ips in need.items()))
 
-    if need:
-        fresh = geo_lookup(need)
-        now = int(time.time())
-        for ip, info in fresh.items():
-            cache[ip] = {**info, "ts": now}
-        print(f"  определено: {len(fresh)} из {len(need)}")
+    fresh: dict[str, dict] = {}
+    todo = {name: ips for name, ips in need.items() if ips}
+    if todo:
+        with ThreadPoolExecutor(max_workers=len(todo)) as pool:
+            futures = {name: pool.submit(GEO_PROVIDERS[name], ips) for name, ips in todo.items()}
+            for name, future in futures.items():
+                try:
+                    fresh[name] = future.result()
+                except Exception as e:
+                    print(f"  {name}: сбой {e}")
+                    fresh[name] = {}
+    now = int(time.time())
+    for name, result in fresh.items():
+        for ip, info in result.items():
+            entry = cache.setdefault(ip, {"v": 2})
+            entry[name] = info
+            entry["ts"] = now
+        print(f"  {name}: определено {len(result)} из {len(need[name])}")
     save_geo_cache(cache)
 
-    fixed_wrong = fixed_unknown = no_geo = 0
-    result: list[dict] = []
+    stats = Counter()
+    result_items: list[dict] = []
     for item in working:
         label = item["country"]
-        info = cache.get(item["ip"])
         item["city"] = ""
-        if info:
-            if label == "XX":
-                fixed_unknown += 1
-            elif label != info["cc"]:
-                fixed_wrong += 1
-            item["country"] = info["cc"]
-            item["city"] = info.get("city", "")
-            result.append(item)
-        else:
-            no_geo += 1
+        entry = cache.get(item["geo_key"], {}) if item["geo_key"] else {}
+        d = decide_country(item, entry)
+        if d["total"] == 0:
+            stats["no_data"] += 1
             if not GEO_STRICT:
-                result.append(item)
+                result_items.append(item)
+            continue
+        if not d["ok"]:
+            stats["disputed"] += 1  # источники не сошлись — название было бы ненадёжным
+            if GEO_STRICT:
+                continue
+        elif d["total"] == 1:
+            stats["single_source"] += 1
+        elif d["agree"] == d["total"]:
+            stats["unanimous"] += 1
+        else:
+            stats["majority"] += 1
+        if label == "XX":
+            stats["labels_filled_from_ip"] += 1
+        elif label != d["cc"]:
+            stats["labels_corrected"] += 1
+        if item.get("exit_ip") and item["exit_ip"] != item["ip"]:
+            stats["exit_ip_differs_from_server_ip"] += 1
+        item["country"], item["city"] = d["cc"], d["city"]
+        result_items.append(item)
 
-    stats = {
-        "unique_ips": len(best),
-        "labels_corrected": fixed_wrong,
-        "labels_filled_from_ip": fixed_unknown,
-        "servers_without_geo": no_geo,
-        "geo_strict": GEO_STRICT,
-    }
+    out = {"unique_ips": len(order), "sources": ["cf"] + sources, "min_agree": GEO_MIN_AGREE,
+           "geo_strict": GEO_STRICT, **dict(stats)}
     print(
-        f"Названия по IP: исправлено неверных меток {fixed_wrong}, "
-        f"заполнено неизвестных {fixed_unknown}, без геоданных {no_geo}"
-        f"{' (исключены)' if GEO_STRICT else ''}"
+        f"Страны по голосованию источников: единогласно {stats['unanimous']}, большинством {stats['majority']}, "
+        f"один источник {stats['single_source']}, спорные {stats['disputed']}{' (исключены)' if GEO_STRICT else ''}, "
+        f"без данных {stats['no_data']}; исправлено меток источника: {stats['labels_corrected']}"
     )
-    if GEO_STRICT and not result:
-        return None, stats
-    return result, stats
+    if GEO_STRICT and not result_items:
+        return None, out
+    return result_items, out
 
 
 # ============================ MAIN ============================
