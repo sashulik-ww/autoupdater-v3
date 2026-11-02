@@ -1,0 +1,19 @@
+my_working: 32
+my_bad: 0
+pool_links: 16145
+pool_after_removing_mine_and_bad: 16140
+pool_trimmed_to: 8000
+pool_resolved: 7559
+similar_candidates: 1279
+tcp_ok: 221
+xray_ok: 14
+final_tested: 14
+final_untested: 150
+
+Чему научился (признаки твоих рабочих серверов):
+  pbk: LEziyH-E…×3, OFmJtVi6…×2, QrNs0ew7…×2, 1H1DiBCB…×2, uAoKx_eP…×1
+  net: 217.60.33.0/24×2, 150.40.126.0/24×2, 94.183.152.0/24×1, 195.189.98.0/24×1, 13.143.182.0/24×1
+  asn: 9123×6, 197574×3, 132203×3, 207957×2, 211619×2
+  domain: huahua.wiki×3, bookmai.com×1, jarbook.net×1, golangwikito.cfd×1, pythonmakemigreat.wiki×1
+  sni: www.apple.com×4, www.bing.com×1, api37.betust.net×1, ee.lenvex.cc×1, mother-earth.fyi×1
+  cc: RU×7, DE×5, PL×4, NL×3, EE×2
