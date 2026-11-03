@@ -56,15 +56,14 @@ jobs:
           CONCURRENCY: "200"
           XRAY_WORKERS: "100"
           SINGBOX_WORKERS: "100"
-          SOURCE_URLS: 
-          - "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt"
-          - "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Base64/BLACK_VLESS_RUS_mobile_base64.txt"
-          - "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt" 
-          - "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-SNI-RU-all-base64.txt" 
-          - "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_SS%2BAll_RUS_base64.txt"          
-          - "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt" 
-          - "https://raw.githubusercontent.com/barry-far/V2ray-Config/refs/heads/main/All_Configs_base64_Sub.txt" 
-          
+          SOURCE_URLS: |
+           https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt
+           https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Base64/BLACK_VLESS_RUS_mobile_base64.txt
+           https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt
+           https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-SNI-RU-all-base64.txt
+           https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_SS%2BAll_RUS_base64.txt        
+           https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt
+           https://raw.githubusercontent.com/barry-far/V2ray-Config/refs/heads/main/All_Configs_base64_Sub.txt
         run: python checker.py
 
       - name: Commit results
