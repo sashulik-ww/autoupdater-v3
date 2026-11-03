@@ -29,6 +29,9 @@ EUROPE_SHARE списка — Европа, одна страна — не бо�
 Не умеют оба ядра: ssr, ss с плагином, vless/vmess с kcp/quic. Эти конфиги — «unchecked»,
 только в файлах своих протоколов. XHTTP умеет Xray, но не обычный sing-box.
 
+Источники: ссылки на списки/подписки (SOURCE_URLS, через запятую; обычный текст или base64) и публичные
+Telegram-каналы (TELEGRAM_CHANNELS) — из постов берутся ссылки на конфиги.
+
 Проверка идёт с того места, где запущен скрипт (на GitHub — США, не Россия).
 ru_servers.txt: российские серверы (по IP) без порога скорости (из США их скорость не показательна)
 и без обязательной проверки sing-box; в конец добавляются не подтверждённые ядрами, но отвечающие по TCP.
@@ -38,6 +41,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import html
 import ipaddress
 import json
 import math
@@ -65,6 +69,12 @@ SOURCE_URLS = [
     for u in os.getenv("SOURCE_URLS", os.getenv("SOURCE_URL", DEFAULT_SOURCE)).split(",")
     if u.strip()
 ]
+
+
+# Публичные Telegram-каналы с конфигами: "name1,name2" (можно со ссылкой t.me/...). Читаются из веб-версии
+# t.me/s/<канал>; в каждой — последние TELEGRAM_PAGES страниц (около 20 постов на странице).
+TELEGRAM_CHANNELS = [x.strip() for x in os.getenv("TELEGRAM_CHANNELS", "").split(",") if x.strip()]
+TELEGRAM_PAGES = int(os.getenv("TELEGRAM_PAGES", "5"))
 
 
 def env_bool(name: str, default: bool) -> bool:
@@ -482,6 +492,50 @@ def fetch_url(url: str) -> str:
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=60) as response:
         return response.read().decode("utf-8", errors="ignore")
+
+
+TG_LINK_RE = re.compile(
+    r"(?<![A-Za-z0-9])(?:vless|vmess|trojan|ssr?|hysteria2|hy2|hysteria|tuic|socks5|socks4)://[^\s<>\"']+",
+    re.IGNORECASE,
+)
+TG_POST_RE = re.compile(r'data-post="[^"/]+/(\d+)"')
+
+
+def telegram_name(raw: str) -> str:
+    """'@name', 'https://t.me/name', 'https://t.me/s/name?before=5' -> 'name'."""
+    name = raw.strip().split("?", 1)[0].rstrip("/")
+    for prefix in ("https://", "http://"):
+        name = name.removeprefix(prefix)
+    name = name.removeprefix("t.me/").removeprefix("s/")
+    return name.lstrip("@")
+
+
+def extract_config_links(page: str) -> list[str]:
+    """Ссылки vless:// vmess:// trojan:// ss:// hysteria2:// tuic:// socks5:// из HTML-страницы."""
+    text = html.unescape(page)
+    return [m.group(0).rstrip(".,;)]}»") for m in TG_LINK_RE.finditer(text)]
+
+
+def fetch_telegram(channel: str, pages: int | None = None) -> str:
+    """Конфиги из публичного канала (веб-версия t.me/s/<канал>), несколько страниц вглубь."""
+    name = telegram_name(channel)
+    links: list[str] = []
+    before = None
+    for _ in range(pages if pages is not None else TELEGRAM_PAGES):
+        url = f"https://t.me/s/{name}" + (f"?before={before}" if before else "")
+        try:
+            page = fetch_url(url)
+        except Exception as e:
+            print(f"  Telegram {name}: ошибка {e}")
+            break
+        links += extract_config_links(page)
+        ids = [int(x) for x in TG_POST_RE.findall(page)]
+        if not ids or (before is not None and min(ids) >= before):
+            break  # постов больше нет
+        before = min(ids)
+        time.sleep(0.5)
+    print(f"  Telegram {name}: найдено ссылок {len(links)}")
+    return "\n".join(links)
 
 
 def b64decode_loose(s: str) -> str:
@@ -1807,7 +1861,7 @@ async def main_async() -> int:
     _speed_sem = None
     t_start = time.monotonic()
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    print(f"[{stamp}] Источников: {len(SOURCE_URLS)}")
+    print(f"[{stamp}] Источников: {len(SOURCE_URLS)} ссылок, {len(TELEGRAM_CHANNELS)} Telegram-каналов")
     xray_av = check_binary("Xray", XRAY_BIN, USE_XRAY)
     sb_av = check_binary("sing-box", SINGBOX_BIN, USE_SINGBOX)
 
@@ -1818,6 +1872,11 @@ async def main_async() -> int:
             texts.append(await asyncio.to_thread(fetch_url, url))
         except Exception as e:
             print(f"ОШИБКА скачивания {url}: {e}")
+    for channel in TELEGRAM_CHANNELS:
+        try:
+            texts.append(await asyncio.to_thread(fetch_telegram, channel))
+        except Exception as e:
+            print(f"ОШИБКА чтения Telegram {channel}: {e}")
     if not texts:
         return 1
 
@@ -1982,6 +2041,7 @@ async def main_async() -> int:
     stats_out = {
         "checked_at_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "sources": SOURCE_URLS,
+        "telegram_channels": TELEGRAM_CHANNELS,
         "xray_used": xray_av,
         "singbox_used": sb_av,
         "singbox_required_for_lists": sb_required,
