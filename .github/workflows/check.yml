@@ -56,10 +56,10 @@ jobs:
           CONCURRENCY: "200"
           XRAY_WORKERS: "100"
           SINGBOX_WORKERS: "100"
-          TELEGRAM_CHANNELS: "t.me/OutlineReleasedKey, t.me/V2ray_Collector"
-          SOURCE_URLS: |
+          TELEGRAM_CHANNELS: "t.me/OutlineReleasedKey,t.me/V2ray_Collector"
+          SOURCE_URLS: >-
            https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt
-           https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Base64/BLAC//raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt
+           https://raw.githubusercontent.com/igarec/vpn-configs-for-russia/refs/heads/main/Base64/BLAC//raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt
            https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-SNI-RU-all-base64.txt
            https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_SS%2BAll_RUS_base64.txt        
            https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt
