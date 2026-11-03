@@ -72,7 +72,7 @@ SOURCE_URLS ="https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/hea
 "https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt"
 "https://raw.githubusercontent.com/barry-far/V2ray-Config/refs/heads/main/All_Configs_base64_Sub.txt" [
     u.strip()
-    for u in os.getenv("SOURCE_URLS", os.getenv("SOURCE_URL", DEFAULT_SOURCE)).split(",")
+    for u in os.getenv("SOURCE_URLS", os.getenv("SOURCE_URL", DEFAULT_SOURCE)).split(","):
     if u.strip()
 ]
 
