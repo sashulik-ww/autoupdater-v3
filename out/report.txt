@@ -1,28 +1,27 @@
 repos_manual: 0
 repos_discovered: 60
-files_to_download: 1417
-files_downloaded: 1354
-links_from_files: 273358
+files_to_download: 1558
+files_downloaded: 1514
+links_from_files: 314779
 tg_channels: 0
 links_from_tg: 0
-pool_links_saved: 178377
-links_found: 273358
-reality_suitable_unique: 15623
-by_transport: {'grpc': 1284, 'tcp': 11708, 'xhttp': 770, 'raw': 1809, 'http': 48, 't.me/entrynet': 1, 'tcp#🎡85@oneclickvpnkeys': 1, 'tcp#🎡85@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@107.150.105.84:54657?allowinsecure=1#🎡86@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@us01.duotg.top:46292?allowinsecure=1#🎡87@oneclickvpnkeysvless://9d9a048b-3aea-4b3e-b106-1106bf301feb@54.251.9.130:24146?encryption=none': 1, 'tcp#3🔥@oneclickvpnkeys': 1}
-by_sni_tier: {1: 10383, 3: 4805, 2: 435}
-dns_ok: 14927
-tcp_ok: 2559
-xray_ok: 39
-xray_with_speed: 25
-dropped_per_ip_limit: 2
-final: 37
-final_entry_in_ru: 5
-final_exit_in_ru: 3
-drop_not_reality: 105565
-drop_sni_not_russian: 99748
-drop_bad_host: 253
-drop_vless_encryption: 1841
-drop_no_sni: 1276
-drop_bad_uuid: 5004
-drop_bad_pbk_sid: 4826
-drop_bad_url: 83
+pool_links_saved: 200112
+links_found: 314779
+reality_suitable_unique: 16913
+by_transport: {'raw': 2541, 'tcp': 12021, 'xhttp': 796, 'grpc': 1486, 'http': 64, 'tcp#🎡85@oneclickvpnkeys': 1, 'tcp#3🔥@oneclickvpnkeys': 1, 't.me/entrynet': 1, 'tcp#🎡85@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@107.150.105.84:54657?allowinsecure=1#🎡86@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@us01.duotg.top:46292?allowinsecure=1#🎡87@oneclickvpnkeysvless://9d9a048b-3aea-4b3e-b106-1106bf301feb@54.251.9.130:24146?encryption=none': 1, 'tcp#💡90@oneclickvpnkeys': 1}
+by_sni_tier: {3: 5567, 1: 10846, 2: 500}
+dns_ok: 16190
+tcp_ok: 2798
+xray_ok: 26
+xray_with_speed: 16
+final: 26
+final_entry_in_ru: 1
+final_exit_in_ru: 2
+drop_sni_not_russian: 113999
+drop_not_reality: 122695
+drop_bad_uuid: 6162
+drop_vless_encryption: 2116
+drop_bad_host: 276
+drop_bad_pbk_sid: 5002
+drop_no_sni: 1413
+drop_bad_url: 152
