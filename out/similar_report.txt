@@ -1,19 +1,19 @@
-my_working: 32
+my_working: 46
 my_bad: 0
-pool_links: 11043
-pool_after_removing_mine_and_bad: 11038
+pool_links: 17211
+pool_after_removing_mine_and_bad: 17203
 pool_trimmed_to: 8000
-pool_resolved: 7659
-similar_candidates: 938
-tcp_ok: 222
-xray_ok: 3
-final_tested: 3
+pool_resolved: 7559
+similar_candidates: 1621
+tcp_ok: 212
+xray_ok: 16
+final_tested: 11
 final_untested: 150
 
 Чему научился (признаки твоих рабочих серверов):
-  pbk: LEziyH-E…×3, OFmJtVi6…×2, QrNs0ew7…×2, 1H1DiBCB…×2, uAoKx_eP…×1
-  net: 217.60.33.0/24×2, 150.40.126.0/24×2, 94.183.152.0/24×1, 195.189.98.0/24×1, 13.143.182.0/24×1
-  asn: 9123×6, 197574×3, 132203×3, 207957×2, 211619×2
-  domain: huahua.wiki×3, bookmai.com×1, jarbook.net×1, golangwikito.cfd×1, pythonmakemigreat.wiki×1
-  sni: www.apple.com×4, www.bing.com×1, api37.betust.net×1, ee.lenvex.cc×1, mother-earth.fyi×1
-  cc: RU×7, DE×5, PL×4, NL×3, EE×2
+  pbk: QrNs0ew7…×4, LEziyH-E…×3, OFmJtVi6…×2, 1H1DiBCB…×2, oAX7soFK…×1
+  net: 150.40.126.0/24×2, 217.60.33.0/24×2, 50.7.193.0/24×1, 88.216.70.0/24×1, 84.32.177.0/24×1
+  asn: 9123×7, 197574×5, 59642×3, 132203×3, 213887×2
+  domain: huahua.wiki×3, jarbook.net×2, bookmai.com×1, unit-digital.com×1, betust.net×1
+  sni: www.apple.com×4, cz.pythonmakemigreat.wiki×2, prime.jarbook.net×1, tickets.betust.net×1, app.betust.net×1
+  cc: RU×10, NL×7, PL×7, DE×6, RS×2

@@ -1,27 +1,28 @@
 repos_manual: 0
 repos_discovered: 60
-files_to_download: 1617
-files_downloaded: 1563
-links_from_files: 246155
+files_to_download: 1751
+files_downloaded: 1699
+links_from_files: 342393
 tg_channels: 0
 links_from_tg: 0
-pool_links_saved: 151054
-links_found: 246155
-reality_suitable_unique: 12348
-by_transport: {'tcp': 8293, 'raw': 2228, 'grpc': 1244, 'xhttp': 514, 'http': 64, 'tcp#🎗️83@oneclickvpnkeys': 1, 'tcp#🎗️96@oneclickvpnkeys': 1, 'tcp#3🔥@oneclickvpnkeys': 1, 'tcp#3🔥@oneclickvpnkeysvless://607801ac-dbdd-4938-a167-129015d9978e@91.192.81.214:443?encryption=none': 1, 't.me/entrynet': 1}
-by_sni_tier: {1: 8264, 3: 3668, 2: 416}
-dns_ok: 11941
-tcp_ok: 2790
-xray_ok: 9
-xray_with_speed: 5
-final: 9
-final_entry_in_ru: 1
+pool_links_saved: 230889
+links_found: 342393
+reality_suitable_unique: 19692
+by_transport: {'tcp': 13857, 'raw': 3151, 'grpc': 1703, 'xhttp': 922, 'http': 51, 't.me/entrynet': 1, 'tcp#🎡85@oneclickvpnkeys': 1, 'tcp#🎡85@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@107.150.105.84:54657?allowinsecure=1#🎡86@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@us01.duotg.top:46292?allowinsecure=1#🎡87@oneclickvpnkeysvless://9d9a048b-3aea-4b3e-b106-1106bf301feb@54.251.9.130:24146?encryption=none': 1, 'tcp#3🔥@oneclickvpnkeys': 1, 'tcp#💡90@oneclickvpnkeys': 1, 'tcp#🎗️83@oneclickvpnkeys': 1, 'tcp#🎗️96@oneclickvpnkeys': 1, 'tcp#3🔥@oneclickvpnkeysvless://607801ac-dbdd-4938-a167-129015d9978e@91.192.81.214:443?encryption=none': 1}
+by_sni_tier: {3: 6004, 1: 13162, 2: 526}
+dns_ok: 18896
+tcp_ok: 3478
+xray_ok: 34
+xray_with_speed: 31
+dropped_per_ip_limit: 3
+final: 31
+final_entry_in_ru: 2
 final_exit_in_ru: 1
-drop_not_reality: 123169
-drop_sni_not_russian: 78741
-drop_vless_encryption: 1091
-drop_bad_host: 166
-drop_bad_url: 141
-drop_bad_uuid: 3903
-drop_bad_pbk_sid: 672
-drop_no_sni: 873
+drop_bad_host: 317
+drop_sni_not_russian: 114628
+drop_bad_url: 172
+drop_not_reality: 143686
+drop_vless_encryption: 1892
+drop_bad_uuid: 6198
+drop_bad_pbk_sid: 5020
+drop_no_sni: 1420
