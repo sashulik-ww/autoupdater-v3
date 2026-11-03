@@ -62,14 +62,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, quote, unquote, urlsplit
 
 # ============================ НАСТРОЙКИ ============================
-DEFAULT_SOURCE = "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt", 
-"https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt", 
-"https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Base64/BLACK_VLESS_RUS_mobile_base64.txt", 
-"https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt", 
-"https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-SNI-RU-all-base64.txt", 
-"https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_SS%2BAll_RUS_base64.txt", 
-"https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt"
-"https://raw.githubusercontent.com/barry-far/V2ray-Config/refs/heads/main/All_Configs_base64_Sub.txt
+DEFAULT_SOURCE = "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt"
 # Можно несколько ссылок через запятую: SOURCE_URLS="url1,url2"
 SOURCE_URLS = [
     u.strip()
@@ -80,7 +73,7 @@ SOURCE_URLS = [
 
 # Публичные Telegram-каналы с конфигами: "name1,name2" (можно со ссылкой t.me/...). Читаются из веб-версии
 # t.me/s/<канал>; в каждой — последние TELEGRAM_PAGES страниц (около 20 постов на странице).
-TELEGRAM_CHANNELS = [x.strip() for x in os.getenv("TELEGRAM_CHANNELS", "t.me/V2ray_Collector", "t.me/OutlineReleasedKey").split(",") if x.strip()]
+TELEGRAM_CHANNELS = [x.strip() for x in os.getenv("TELEGRAM_CHANNELS", "").split(",") if x.strip()]
 TELEGRAM_PAGES = int(os.getenv("TELEGRAM_PAGES", "5"))
 
 
