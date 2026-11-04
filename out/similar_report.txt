@@ -1,13 +1,13 @@
 my_working: 68
 my_bad: 0
-pool_links: 13575
-pool_after_removing_mine_and_bad: 13561
+pool_links: 15911
+pool_after_removing_mine_and_bad: 15897
 pool_trimmed_to: 8000
-pool_resolved: 7621
-similar_candidates: 1685
-tcp_ok: 248
-xray_ok: 7
-final_tested: 7
+pool_resolved: 7618
+similar_candidates: 1801
+tcp_ok: 245
+xray_ok: 5
+final_tested: 5
 final_untested: 150
 
 Чему научился (признаки твоих рабочих серверов):
