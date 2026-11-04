@@ -64,6 +64,12 @@ TIER2 = [  # прочие российские сервисы не на .ru
 ]
 RU_TLDS = (".ru", ".su", ".xn--p1ai")  # любой сайт в российской зоне тоже считается подходящим SNI
 
+# Дополнительные SNI-домены от ai_advisor.py (необязательный файл, по одному домену в строке).
+AI_DOMAINS_FILE = ROOT / "ai_domains.txt"
+if AI_DOMAINS_FILE.exists():
+    TIER2 += [d for d in (x.strip().lower() for x in AI_DOMAINS_FILE.read_text(encoding="utf-8").splitlines())
+              if re.fullmatch(r"[a-z0-9][a-z0-9.-]{2,250}", d)]
+
 ALLOWED_TYPES = None    # None = любые транспорты (tcp, grpc, xhttp, ws, h2, httpupgrade, kcp…); иначе например {"tcp", "grpc"}
 
 MAX_TOTAL = 450         # итоговый размер списка
@@ -217,10 +223,9 @@ def parse_vless(link, keep_other=False, why=None):
 
 
 # ───────────────────────────── источники ─────────────────────────────
-def load_sources():
-    src = {"discover": [], "repo": [], "search": [], "url": [], "tg": []}
-    if SOURCES_FILE.exists():
-        for line in SOURCES_FILE.read_text(encoding="utf-8").splitlines():
+def _read_sources(path, src):
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if not line or line.startswith("#") or ":" not in line:
                 continue
@@ -228,10 +233,18 @@ def load_sources():
             kind, val = kind.strip().lower(), val.strip()
             if kind in src and val:
                 src[kind].append(val)
-    if not src["search"]:
+
+
+def load_sources():
+    src = {"discover": [], "repo": [], "search": [], "url": [], "tg": []}
+    _read_sources(SOURCES_FILE, src)
+    if not src["search"]:  # запросы по умолчанию — из основных доменов
         src["search"] = [f'"security=reality" "sni={d}"' for d in DEFAULT_SEARCH_DOMAINS]
     if not src["discover"]:
         src["discover"] = list(DEFAULT_DISCOVER)
+    _read_sources(ROOT / "sources_ai.txt", src)  # источники от ai_advisor.py (необязательный файл)
+    for k in src:
+        src[k] = list(dict.fromkeys(src[k]))
     return src
 
 
