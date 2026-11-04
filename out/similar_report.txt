@@ -1,11 +1,11 @@
 my_working: 68
 my_bad: 0
-pool_links: 11434
-pool_after_removing_mine_and_bad: 11420
+pool_links: 9463
+pool_after_removing_mine_and_bad: 9449
 pool_trimmed_to: 8000
-pool_resolved: 7558
-similar_candidates: 1690
-tcp_ok: 238
+pool_resolved: 7721
+similar_candidates: 1508
+tcp_ok: 270
 xray_ok: 7
 final_tested: 7
 final_untested: 150
