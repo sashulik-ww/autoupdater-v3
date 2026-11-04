@@ -1,0 +1,48 @@
+name: Similar + AI Rank (Groq)
+
+on:
+  workflow_dispatch:          # ручной запуск
+  schedule:
+    - cron: '0 6 * * *'       # каждый день в 6:00 UTC (можно убрать)
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install openai
+          # если у тебя есть requirements.txt — можно так:
+          # pip install -r requirements.txt
+
+      - name: Run collector
+        run: python collector.py --pool-out work/pool.txt || true
+
+      - name: Run similar.py
+        run: |
+          mkdir -p work out
+          python similar.py --any-sni || true
+
+      - name: Run AI Ranker (Groq)
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python ai_ranker.py
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-results
+          path: |
+            out/
+            work/
+          retention-days: 7
