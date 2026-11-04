@@ -1,0 +1,45 @@
+name: ai-advisor
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"      # раз в неделю, по понедельникам (лимиты бесплатных API небольшие)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-advisor
+  cancel-in-progress: false
+
+jobs:
+  advise:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: ИИ-анализ рабочих серверов
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_MODEL: ${{ vars.AI_MODEL }}          # необязательно
+          AI_BASE_URL: ${{ vars.AI_BASE_URL }}    # необязательно (по умолчанию Gemini)
+        run: python ai_advisor.py
+
+      - name: Закоммитить результат
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sources_ai.txt ai_domains.txt out/ai_report.md 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "Без изменений"
+          else
+            git commit -m "update AI suggestions"
+            git pull --rebase --autostash
+            git push
+          fi
