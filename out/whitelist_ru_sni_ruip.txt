@@ -1,1 +1,1 @@
-vless://af9d833d-c08b-4b3f-b65a-97c19a0d1722@46.8.21.97:443?type=xhttp&security=reality&fp=firefox&pbk=kDEc42JBZxig3BrLD3V1ofs3oJZk15-ANWN-rM0JW10&sid=f28145401b4f633a&sni=ligastavok.ru#%F0%9F%87%B3%F0%9F%87%B1%20The%20Netherlands%2C%20Enschede
+vless://7f99eb58-5983-006e-9c02-d8cea49f7074@45.8.99.5:443?path=%2Faqkk8j6ayx76aw67mb&pbk=0omtLHQHyKnV7w05maiOqvL5PvxdCQKw_zDqqgR28X8&security=reality&sid=8d0ff3d6ec629371&sni=ozon.ru&type=xhttp&fp=firefox#%F0%9F%87%A9%F0%9F%87%AA%20Germany%2C%20Frankfurt%20am%20Main
