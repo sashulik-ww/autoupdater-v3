@@ -4,7 +4,7 @@
 Что делает:
   1. Читает my_working.txt (и необязательно my_bad.txt / my_all.txt), считает ОБОБЩЁННУЮ статистику:
      транспорты, порты, SNI, ASN, страны, число провайдеров.
-  2. Отправляет её в бесплатную нейросеть (по умолчанию Google Gemini через OpenAI-совместимый API).
+  2. Отправляет её в бесплатную нейросеть через OpenAI-совместимый API (Groq или Gemini).
      В ИИ НЕ уходят ссылки, UUID, ключи, IP-адреса и имена серверов — только счётчики.
   3. Просит предложить: российские домены для SNI, поисковые запросы для GitHub, репозитории и Telegram-каналы.
   4. Всё, что предложил ИИ, проверяется кодом (формат, существование, свежесть) и только потом записывается:
@@ -14,9 +14,10 @@
   ИИ ничего не запускает и не скачивает: код проверяет и записывает данные сам.
 
 Настройка (переменные окружения):
-  AI_API_KEY   — ключ API (обязателен; для Gemini — из Google AI Studio)
-  AI_BASE_URL  — адрес OpenAI-совместимого API (по умолчанию Gemini)
-  AI_MODEL     — имя модели (по умолчанию gemini-2.5-flash; если её нет, скрипт выберет flash из списка)
+  AI_API_KEY   — ключ API (обязателен). Провайдер определяется по ключу: gsk_… — Groq, AIza… — Gemini
+  AI_PROVIDER  — необязательно: groq или gemini (если по ключу не определилось)
+  AI_BASE_URL  — необязательно: адрес любого OpenAI-совместимого API (OpenRouter и др.)
+  AI_MODEL     — необязательно: модель или несколько через запятую (пробуются по очереди)
   GITHUB_TOKEN — для проверки репозиториев (в Actions есть сам)
 
 Запуск вручную без отправки в ИИ, чтобы увидеть, что именно уйдёт:  python ai_advisor.py --show-prompt
@@ -46,6 +47,10 @@ REPORT = ROOT / "out" / "ai_report.md"
 
 DEFAULT_BASE = "https://generativelanguage.googleapis.com/v1beta/openai"
 DEFAULT_MODEL = "gemini-2.5-flash"
+PRESETS = {  # провайдер определяется по префиксу ключа (gsk_ — Groq, AIza — Gemini) или переменной AI_PROVIDER
+    "gemini": {"base": DEFAULT_BASE, "model": DEFAULT_MODEL},
+    "groq": {"base": "https://api.groq.com/openai/v1", "model": "llama-3.3-70b-versatile,llama-3.1-8b-instant"},
+}
 MAX_REPOS, MAX_TG, MAX_QUERIES, MAX_DOMAINS = 30, 15, 8, 40
 REPO_MAX_AGE_DAYS = 60
 
@@ -96,29 +101,62 @@ def profile(good, bad):
 
 
 # ───────────────────────────── обращение к ИИ ─────────────────────────────
-def chat(base, key, model, system, user, retries=3):
-    """Возвращает (текст, ошибка). Ключ в логи не попадает."""
+def warn(msg):
+    """В лог и в аннотацию GitHub Actions (видна на странице запуска, даже когда шаг «зелёный»)."""
+    C.log(msg)
+    print("::warning title=ai_advisor::" + msg.replace("\n", " ")[:400])
+
+
+def chat(base, key, model, system, user):
+    """Один запрос. Возвращает (текст, HTTP-статус, тело ошибки). Статус 0 — сеть недоступна. Ключ в логи не попадает."""
     url = base.rstrip("/") + "/chat/completions"
     body = json.dumps({"model": model, "temperature": 0.2,
                        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}).encode()
-    err = "нет ответа"
-    for i in range(retries):
-        req = ur.Request(url, data=body, headers={"Content-Type": "application/json",
-                                                  "Authorization": f"Bearer {key}", "User-Agent": C.UA})
-        try:
-            with ur.urlopen(req, timeout=120) as r:
-                data = json.loads(r.read().decode("utf-8", "ignore"))
-            return data["choices"][0]["message"]["content"] or "", None
-        except urllib.error.HTTPError as e:
-            err = f"HTTP {e.code}: {e.read().decode('utf-8', 'ignore')[:300]}"
-            if e.code in (429, 500, 502, 503, 504):
-                time.sleep(20 * (i + 1))
-                continue
-            return None, err
-        except (urllib.error.URLError, TimeoutError, KeyError, IndexError, ValueError) as e:
-            err = f"{type(e).__name__}: {e}"
-            time.sleep(5 * (i + 1))
-    return None, err
+    req = ur.Request(url, data=body, headers={"Content-Type": "application/json",
+                                              "Authorization": f"Bearer {key}", "User-Agent": C.UA})
+    try:
+        with ur.urlopen(req, timeout=120) as r:
+            data = json.loads(r.read().decode("utf-8", "ignore"))
+        return data["choices"][0]["message"]["content"] or "", 200, ""
+    except urllib.error.HTTPError as e:
+        return None, e.code, e.read().decode("utf-8", "ignore")
+    except (urllib.error.URLError, TimeoutError) as e:
+        return None, 0, f"{type(e).__name__}: {e}"
+    except (KeyError, IndexError, ValueError):
+        return None, 200, "неожиданный формат ответа"
+
+
+def quota_info(body):
+    """Разбирает 429 от Gemini: какие лимиты превышены, на какой модели, сколько ждать."""
+    msg = body
+    try:
+        obj = json.loads(body)
+        obj = obj[0] if isinstance(obj, list) and obj else obj
+        msg = (obj.get("error") or obj).get("message", body) if isinstance(obj, dict) else body
+    except ValueError:
+        pass
+    limits = [(int(n), m) for n, m in re.findall(r"limit:\s*(\d+),\s*model:\s*([\w.\-]+)", msg)]
+    d = re.search(r"(?:retry|try again) in (?:(\d+)h)?(?:(\d+)m(?!s))?(\d+(?:\.\d+)?)s", msg)  # Gemini: «retry in 31.0s», Groq: «try again in 1m2.3s»
+    delay = (int(d.group(1) or 0) * 3600 + int(d.group(2) or 0) * 60 + float(d.group(3))) if d else None
+    ms = re.search(r"(?:retry|try again) in (\d+(?:\.\d+)?)ms", msg)
+    if ms:
+        delay = float(ms.group(1)) / 1000
+    return {
+        "zero": any(n == 0 for n, _ in limits),       # на этой модели в бесплатном тарифе квоты нет совсем
+        "daily": bool(re.search(r"PerDay|per day|\(TPD\)|\(RPD\)", body)),  # дневная квота исчерпана — ждать бессмысленно
+        "delay": delay,
+        "limits": limits,
+        "text": " ".join(msg.split())[:350],
+    }
+
+
+def explain(status, body):
+    if status == 429:
+        q = quota_info(body)
+        lim = ", ".join(f"{m}: limit {n}" for n, m in q["limits"][:3])
+        kind = ("квоты нет совсем" if q["zero"] else "дневная квота" if q["daily"] else "лимит в минуту")
+        return f"HTTP 429 ({kind}) {lim}".strip()
+    return f"HTTP {status}: {' '.join(body.split())[:250]}"
 
 
 def list_models(base, key):
@@ -127,16 +165,53 @@ def list_models(base, key):
         with ur.urlopen(req, timeout=30) as r:
             data = json.loads(r.read().decode("utf-8", "ignore"))
         return [m.get("id", "").removeprefix("models/") for m in data.get("data", [])]
-    except (urllib.error.URLError, TimeoutError, ValueError):
+    except Exception:  # список моделей — вспомогательный; любая ошибка не должна ломать запуск
         return []
 
 
-def pick_model(ids):
-    """Самая новая обычная flash-модель без lite/image/tts/live; предпочтительно не preview."""
-    bad = ("lite", "image", "tts", "live", "audio", "embedding", "vision", "robotics", "computer")
-    flash = sorted(i for i in ids if "flash" in i.lower() and not any(b in i.lower() for b in bad))
-    stable = [i for i in flash if "preview" not in i.lower() and "exp" not in i.lower()]
-    return (stable or flash or [""])[-1]
+GEMINI_TEXT = re.compile(r"^gemini-(\d+(?:\.\d+)?)-flash(-lite)?(-preview[\w.-]*)?$")
+
+
+def candidate_models(base, key, preferred, ids=None):
+    """Модель из настроек, затем обычные текстовые Gemini Flash (новее — раньше). У каждой модели своя квота."""
+    out = [m.strip() for m in preferred.split(",") if m.strip()]
+    if "generativelanguage.googleapis.com" in base:
+        ids = list_models(base, key) if ids is None else ids
+        found = []
+        for i in ids:
+            m = GEMINI_TEXT.match(i)
+            if m:  # omni, image, tts, live и прочие специальные модели не подходят
+                found.append((bool(m.group(3)), -float(m.group(1)), bool(m.group(2)), i))
+        out += [t[-1] for t in sorted(found)]
+        if len(found) == 0:
+            out += ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
+    return list(dict.fromkeys(out))[:6]
+
+
+def ask(base, key, preferred, system, user, chat_fn=chat, models=None):
+    """Перебирает модели. Возвращает (текст, модель, ошибка). Не ждёт зря: limit 0 и дневная квота → сразу следующая модель."""
+    models = models or candidate_models(base, key, preferred)
+    last = "нет ответа"
+    for model in models:
+        for attempt in range(2):
+            text, status, body = chat_fn(base, key, model, system, user)
+            if status == 200 and text is not None:
+                return text, model, None
+            last = f"{model}: {explain(status, body)}"
+            C.log("  " + last)
+            if status in (401, 403):
+                return None, model, f"ключ не принят ({explain(status, body)}) — проверь секрет AI_API_KEY"
+            if status == 429:
+                q = quota_info(body)
+                if q["zero"] or q["daily"] or q["delay"] is None or attempt == 1:
+                    break  # ждать бесполезно — пробуем другую модель
+                time.sleep(min(q["delay"] + 2, 65))
+                continue
+            if status in (500, 502, 503, 504, 0) and attempt == 0:
+                time.sleep(10)
+                continue
+            break  # 404/400 и прочее — другая модель
+    return None, models[-1], last
 
 
 def parse_json(text):
@@ -178,6 +253,16 @@ def verify_tg(channel):
     if "vless://" not in html.unescape(page):
         return False, "в последних постах нет vless://"
     return True, ""
+
+
+def resolve_provider(key, env):
+    """(base_url, models). AI_BASE_URL / AI_MODEL из окружения важнее пресета; AI_MODEL может быть списком через запятую."""
+    base, model = env.get("AI_BASE_URL") or "", env.get("AI_MODEL") or ""
+    prov = (env.get("AI_PROVIDER") or "").strip().lower()
+    if not prov and not base:
+        prov = "groq" if key.startswith("gsk_") else "gemini" if key.startswith("AIza") else ""
+    preset = PRESETS.get(prov, {})
+    return base or preset.get("base", ""), model or preset.get("model", "")
 
 
 def validate(raw, existing, token, verify_repo_fn=verify_repo, verify_tg_fn=verify_tg):
@@ -309,19 +394,17 @@ def main():
     if not key:
         C.log("! нет AI_API_KEY — добавь секрет в настройках репозитория (см. инструкцию), шаг пропущен")
         return
-    base = os.environ.get("AI_BASE_URL") or DEFAULT_BASE
-    model = os.environ.get("AI_MODEL") or DEFAULT_MODEL
+    base, model = resolve_provider(key, os.environ)
+    if not base or not model:
+        warn("Не удалось определить провайдера по ключу: задай переменные AI_BASE_URL и AI_MODEL "
+             "(или AI_PROVIDER=groq / gemini).")
+        return
     user_msg = json.dumps(payload, ensure_ascii=False)
 
-    text, err = chat(base, key, model, SYSTEM_PROMPT, user_msg)
-    if err and ("404" in err or "400" in err) and "model" in err.lower():
-        alt = pick_model(list_models(base, key))
-        if alt and alt != model:
-            C.log(f"модель {model} недоступна, пробую {alt}")
-            model = alt
-            text, err = chat(base, key, model, SYSTEM_PROMPT, user_msg)
+    text, model, err = ask(base, key, model, SYSTEM_PROMPT, user_msg)
     if err or not text:
-        C.log(f"! ИИ не ответил: {err}")
+        warn(f"ИИ не ответил: {err}. Если везде «квоты нет совсем» — бесплатный тариф недоступен этому ключу/проекту: "
+             "открой AI Studio → API keys → Rate limit и посмотри лимиты моделей, либо подключи другой API (AI_BASE_URL, AI_MODEL).")
         return
     raw = parse_json(text)
     if not raw:
