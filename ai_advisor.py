@@ -255,12 +255,20 @@ def verify_tg(channel):
     return True, ""
 
 
+def clean_key(raw):
+    """Секреты часто вставляют с пробелом, переносом строки, кавычками или словом Bearer — убираем."""
+    k = (raw or "").strip()
+    if k.lower().startswith("bearer "):
+        k = k[7:].strip()
+    return k.strip("\"'` \t\r\n")
+
+
 def resolve_provider(key, env):
     """(base_url, models). AI_BASE_URL / AI_MODEL из окружения важнее пресета; AI_MODEL может быть списком через запятую."""
     base, model = env.get("AI_BASE_URL") or "", env.get("AI_MODEL") or ""
     prov = (env.get("AI_PROVIDER") or "").strip().lower()
     if not prov and not base:
-        prov = "groq" if key.startswith("gsk_") else "gemini" if key.startswith("AIza") else ""
+        prov = "groq" if key.startswith("gsk_") else "gemini" if key.startswith(("AIza", "AQ.")) else ""
     preset = PRESETS.get(prov, {})
     return base or preset.get("base", ""), model or preset.get("model", "")
 
@@ -390,15 +398,22 @@ def main():
         print(SYSTEM_PROMPT + "\n\n" + json.dumps(payload, ensure_ascii=False, indent=2))
         return
 
-    key = os.environ.get("AI_API_KEY")
-    if not key:
+    raw_key = os.environ.get("AI_API_KEY")
+    if not raw_key:
         C.log("! нет AI_API_KEY — добавь секрет в настройках репозитория (см. инструкцию), шаг пропущен")
+        return
+    key = clean_key(raw_key)
+    C.log(f"Ключ получен: длина {len(key)}" + (" (пробелы/кавычки по краям убраны)" if key != raw_key else ""))
+    if not key or re.search(r"\s", key):
+        warn("В ключе пробелы или перенос строки внутри — создай секрет AI_API_KEY заново и вставь ключ целиком.")
         return
     base, model = resolve_provider(key, os.environ)
     if not base or not model:
-        warn("Не удалось определить провайдера по ключу: задай переменные AI_BASE_URL и AI_MODEL "
-             "(или AI_PROVIDER=groq / gemini).")
+        warn("Провайдер по ключу не определился (ожидаю gsk_… для Groq или AIza…/AQ.… для Gemini). "
+             "Задай переменную AI_PROVIDER = groq (или gemini): Settings → Secrets and variables → Actions → Variables. "
+             "Если ключ точно от Groq, а префикс другой — проверь, что в секрет вставлен именно он.")
         return
+    C.log(f"Провайдер: {base.split('/')[2]}, модели: {model}")
     user_msg = json.dumps(payload, ensure_ascii=False)
 
     text, model, err = ask(base, key, model, SYSTEM_PROMPT, user_msg)
