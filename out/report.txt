@@ -1,28 +1,28 @@
 repos_manual: 0
 repos_discovered: 60
-files_to_download: 1483
-files_downloaded: 1435
-links_from_files: 398478
+files_to_download: 1398
+files_downloaded: 1347
+links_from_files: 302980
 tg_channels: 0
 links_from_tg: 0
-pool_links_saved: 222854
-links_found: 398478
-reality_suitable_unique: 17180
-by_transport: {'tcp': 12700, 'raw': 2184, 'grpc': 1421, 'xhttp': 828, 'http': 41, 't.me/entrynet': 1, 'tcp#🎡85@oneclickvpnkeys': 1, 'tcp#🎡85@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@107.150.105.84:54657?allowinsecure=1#🎡86@oneclickvpnkeystrojan://02cd3bac-2a78-4dbb-82b9-6b64084ddd8e@us01.duotg.top:46292?allowinsecure=1#🎡87@oneclickvpnkeysvless://9d9a048b-3aea-4b3e-b106-1106bf301feb@54.251.9.130:24146?encryption=none': 1, 'tcp#🎗️83@oneclickvpnkeys': 1, 'tcp#🪆95@oneclickvpnkeys': 1, 'tcp#💡90@oneclickvpnkeys': 1}
-by_sni_tier: {3: 5474, 1: 11216, 2: 490}
-dns_ok: 16406
-tcp_ok: 2762
-xray_ok: 29
-xray_with_speed: 14
-dropped_per_ip_limit: 4
-final: 25
-final_entry_in_ru: 1
-final_exit_in_ru: 1
-drop_not_reality: 200496
-drop_sni_not_russian: 119356
-drop_vless_encryption: 1680
-drop_no_sni: 1766
-drop_bad_uuid: 7399
-drop_bad_pbk_sid: 4480
-drop_bad_host: 291
-drop_bad_url: 150
+pool_links_saved: 160314
+links_found: 302980
+reality_suitable_unique: 11020
+by_transport: {'tcp': 7561, 'raw': 1926, 'grpc': 1043, 'xhttp': 453, 'http': 34, 'tcp#🎗️83@oneclickvpnkeys': 1, 't.me/entrynet': 1, 'tcp#🪆95@oneclickvpnkeys': 1}
+by_sni_tier: {3: 3561, 1: 7130, 2: 329}
+dns_ok: 10663
+tcp_ok: 1954
+xray_ok: 32
+xray_with_speed: 22
+dropped_per_ip_limit: 3
+final: 29
+final_entry_in_ru: 3
+final_exit_in_ru: 2
+drop_sni_not_russian: 79720
+drop_not_reality: 184867
+drop_bad_uuid: 5090
+drop_no_sni: 1113
+drop_vless_encryption: 919
+drop_bad_pbk_sid: 702
+drop_bad_url: 129
+drop_bad_host: 203
