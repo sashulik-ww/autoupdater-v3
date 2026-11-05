@@ -56,7 +56,7 @@ jobs:
           CONCURRENCY: "200"
           XRAY_WORKERS: "100"
           SINGBOX_WORKERS: "100"
-          MAX_PER_COUNTRY: "8" 
+          MAX_PER_COUNTRY: "18" 
           MIN_SPEED_MBPS: "1.5" 
           MAX_TESTS_PER_IP: "5"
           TELEGRAM_CHANNELS: "t.me/OutlineReleasedKey,t.me/V2ray_Collector"
