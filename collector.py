@@ -65,10 +65,11 @@ TIER2 = [  # прочие российские сервисы не на .ru
 RU_TLDS = (".ru", ".su", ".xn--p1ai")  # любой сайт в российской зоне тоже считается подходящим SNI
 
 # Дополнительные SNI-домены от ai_advisor.py (необязательный файл, по одному домену в строке).
-AI_DOMAINS_FILE = ROOT / "ai_domains.txt"
-if AI_DOMAINS_FILE.exists():
-    TIER2 += [d for d in (x.strip().lower() for x in AI_DOMAINS_FILE.read_text(encoding="utf-8").splitlines())
-              if re.fullmatch(r"[a-z0-9][a-z0-9.-]{2,250}", d)]
+# и my_domains.txt — домены, которые ты добавляешь вручную (ai_advisor.py этот файл не трогает).
+for _f in (ROOT / "ai_domains.txt", ROOT / "my_domains.txt"):
+    if _f.exists():
+        TIER2 += [d for d in (x.strip().lower() for x in _f.read_text(encoding="utf-8").splitlines())
+                  if re.fullmatch(r"[a-z0-9][a-z0-9.-]{2,250}", d)]
 
 ALLOWED_TYPES = None    # None = любые транспорты (tcp, grpc, xhttp, ws, h2, httpupgrade, kcp…); иначе например {"tcp", "grpc"}
 
