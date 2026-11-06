@@ -41,6 +41,8 @@ OUT = ROOT / "out"
 WEIGHTS = {  # насколько сильно совпадение признака говорит «этот сервер такой же, как мой рабочий»
     "pbk": 5.0,     # тот же ключ Reality — почти наверняка тот же провайдер
     "net": 4.0,     # та же подсеть /24 (IPv6 — /48)
+    "net16": 2.0,   # тот же блок /16: у одного хостера серверы часто лежат в соседних подсетях
+    "sni_dom": 2.5, # SNI на поддомене того же сайта (у оператора это обычно его домен: tickets.x.net, api14.x.net)
     "uuid": 3.0,
     "asn": 3.0,     # тот же хостинг/оператор
     "domain": 2.0,  # тот же домен сервера (если адрес — доменное имя)
@@ -83,6 +85,15 @@ def subnet(ip):
         return ""
 
 
+def subnet16(ip):
+    try:
+        if ipaddress.ip_address(ip).version == 4:
+            return str(ipaddress.ip_network(f"{ip}/16", strict=False))
+    except ValueError:
+        pass
+    return ""
+
+
 def reg_domain(host):
     try:
         ipaddress.ip_address(host)
@@ -94,7 +105,8 @@ def reg_domain(host):
 
 def features(c):
     f = {"pbk": c["q"]["pbk"], "uuid": c["uuid"], "sni": c["sni"], "port": str(c["port"]), "type": c["type"],
-         "net": subnet(c["ip"]), "domain": reg_domain(c["host"]), "asn": c.get("asn", ""), "cc": c.get("cc", "")}
+         "net": subnet(c["ip"]), "net16": subnet16(c["ip"]), "domain": reg_domain(c["host"]),
+         "sni_dom": reg_domain(c["sni"]), "asn": c.get("asn", ""), "cc": c.get("cc", "")}
     return {k: v for k, v in f.items() if v}
 
 
@@ -154,7 +166,7 @@ class Model:
                 total += WEIGHTS[kv[0]] * (p - n) / (p + n + 1) * rarity
         return total
 
-    def top_features(self, kinds=("pbk", "net", "asn", "domain", "sni", "cc"), k=5):
+    def top_features(self, kinds=("pbk", "net", "net16", "asn", "domain", "sni_dom", "sni", "cc"), k=5):
         lines = []
         for kind in kinds:
             items = sorted(((v, p) for (kk, v), p in self.pos.items() if kk == kind), key=lambda x: -x[1])[:k]
