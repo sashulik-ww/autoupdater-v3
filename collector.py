@@ -20,6 +20,9 @@
   whitelist_ru_sni.txt        — основной список, самые быстрые сверху
   whitelist_ru_sni_b64.txt    — то же, base64-подпиской
   whitelist_ru_sni_ruip.txt   — только серверы, чей АДРЕС (вход) находится в РФ
+  candidates_ru_sni.txt       — НЕпроверенные кандидаты: ответили по TCP, но не прошли проверку Xray с раннера США
+                                (сначала с российским адресом). Имя по адресу сервера. Проверь пингом в v2rayNG сам
+  candidates_ru_sni_ruip.txt  — из них только с адресом в РФ
   report.txt                  — сколько серверов отсеялось на каждом шаге и почему
 
 Только стандартная библиотека Python 3.9+ (для проверки нужны xray и curl).
@@ -38,6 +41,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import urllib.error
 import urllib.parse as up
@@ -75,11 +79,13 @@ ALLOWED_TYPES = None    # None = любые транспорты (tcp, grpc, xht
 
 MAX_TOTAL = 450         # итоговый размер списка
 MAX_PER_IP = 2          # не больше стольких серверов на один адрес
-MAX_TEST = 1500         # сколько кандидатов максимум гонять через Xray
-SPEED_WORKERS = 24      # сколько Xray запускать параллельно
+MAX_TEST = 5000         # сколько кандидатов максимум гонять через Xray (все, что ответили по TCP)
+SPEED_WORKERS = 32      # сколько Xray запускать параллельно
+CANDIDATES_MAX = 1500   # размер файла «непроверенных кандидатов» (ответили по TCP, но не прошли проверку Xray с раннера США)
+CANDIDATES_POOL = 2500  # из скольких кандидатов выбирать (для них запрашивается страна по IP)
 SPEED_URL = "https://speed.cloudflare.com/__down?bytes=25000000"
 SPEED_TIMEOUT = 8       # секунд на измерение скорости (среднее за окно)
-EXIT_TIMEOUT = 6        # секунд на запрос «какой у меня IP» через сервер
+EXIT_TIMEOUTS = (8, 5)    # секунд на запрос «какой у меня IP» через сервер: к первому адресу, ко второму
 EXIT_URLS = ["https://www.cloudflare.com/cdn-cgi/trace", "https://api64.ipify.org"]
 TG_PAGES = 5            # страниц истории у каждого канала (~20 постов на страницу)
 TG_MAX_AGE_DAYS = 14    # старые посты пропускаем
@@ -413,8 +419,8 @@ def _curl_text(port, url, timeout):
 
 def _exit_info(port):
     """Через поднятый сервер спрашиваем «какой у меня IP» → (выходной IP, код страны по версии Cloudflare)."""
-    for url in EXIT_URLS:
-        out = _curl_text(port, url, EXIT_TIMEOUT)
+    for url, timeout in zip(EXIT_URLS, EXIT_TIMEOUTS):
+        out = _curl_text(port, url, timeout)
         m = re.search(r"^ip=(\S+)", out, re.M) or re.match(r"^\s*([0-9a-fA-F:.]+)\s*$", out)
         if not m:
             continue
@@ -427,6 +433,30 @@ def _exit_info(port):
     return None, ""
 
 
+# Почему серверы не прошли проверку Xray — попадает в out/report.txt, чтобы было видно, не слишком ли она строгая.
+_lock = threading.Lock()
+PROBE_FAIL = Counter()
+PROBE_ERRORS = []
+
+
+def _redact(text):
+    text = re.sub(r"[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}", "<uuid>", text)
+    return re.sub(r"[A-Za-z0-9_-]{40,}", "<key>", text)
+
+
+def _fail(reason, errfile=None):
+    with _lock:
+        PROBE_FAIL[reason] += 1
+        if errfile is not None and len(PROBE_ERRORS) < 5:
+            try:
+                last = errfile.read_text(errors="ignore").strip().splitlines()[-1:]
+            except OSError:
+                last = []
+            if last and _redact(last[0])[:160] not in PROBE_ERRORS:
+                PROBE_ERRORS.append(_redact(last[0])[:160])
+    return None
+
+
 def probe(c, xray_bin):
     """Поднимает сервер в Xray. Возвращает {'exit_ip', 'exit_cc', 'mbps'} или None, если сервер не работает.
     Сервер считается рабочим, если через него удалось узнать выходной IP; скорость — отдельно (0.0, если
@@ -434,27 +464,27 @@ def probe(c, xray_bin):
     port = next(_ports)
     cfg = xray_config(c, port)
     if cfg is None:
-        return None
+        return _fail("unsupported_transport")
     p = None
     with tempfile.TemporaryDirectory() as d:
-        path = Path(d) / "c.json"
+        path, errfile = Path(d) / "c.json", Path(d) / "err.txt"
         path.write_text(json.dumps(cfg))
         try:
-            p = subprocess.Popen([xray_bin, "run", "-c", str(path)],
-                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            with open(errfile, "wb") as errf:
+                p = subprocess.Popen([xray_bin, "run", "-c", str(path)], stdout=subprocess.DEVNULL, stderr=errf)
             for _ in range(40):  # ждём, пока Xray откроет порт (до 4 с)
                 if p.poll() is not None:
-                    return None
+                    return _fail("xray_exited", errfile)  # Xray отверг конфиг или упал
                 try:
                     socket.create_connection(("127.0.0.1", port), 0.2).close()
                     break
                 except OSError:
                     time.sleep(0.1)
             else:
-                return None
+                return _fail("xray_port_timeout")
             ip, cc = _exit_info(port)
             if not ip:
-                return None
+                return _fail("no_exit_ip")  # Xray запустился, но через сервер ничего не прошло (мёртв, не тот ключ, таймаут)
             mbps = 0.0
             try:
                 r = subprocess.run(
@@ -467,9 +497,11 @@ def probe(c, xray_bin):
                     mbps = float(speed) * 8 / 1e6
             except (subprocess.TimeoutExpired, ValueError, OSError):
                 pass
+            with _lock:
+                PROBE_FAIL["ok"] += 1
             return {"exit_ip": ip, "exit_cc": cc, "mbps": mbps}
         except OSError:
-            return None
+            return _fail("os_error")
         finally:
             if p:
                 p.kill()
@@ -509,10 +541,17 @@ def make_name(g, fallback_cc=""):
 
 
 # ───────────────────────────── сборка списка ─────────────────────────────
-def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, stats=None,
+def ckey(c):
+    return (c["host"], c["port"], c["uuid"], c["sni"], c["type"])
+
+
+def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, stats=None, extra=None,
           resolver=resolve, tcp_fn=tcp_ping, probe_fn=probe, geo_fn=geo_lookup):
+    """extra — словарь, куда кладётся extra['candidates']: ответившие по TCP, но не попавшие в итоговый список."""
     stats = stats if stats is not None else Counter()
     stats["links_found"] = len(raw)
+    PROBE_FAIL.clear()
+    PROBE_ERRORS.clear()
 
     # 1. разбор и дедупликация
     why, cands = Counter(), {}
@@ -545,6 +584,7 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
     for c in cands:
         c.setdefault("ms", 0.0)
     cands.sort(key=lambda c: (c["tier"] == 0, c["ms"], c["base"]))
+    tcp_alive_list = list(cands)
 
     # 4. проверка через Xray: рабочий ли сервер, выходной IP, скорость
     if xray_bin:
@@ -555,6 +595,10 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
         cands = [dict(c, **r) for c, r in zip(batch, res) if r]
         stats["xray_ok"] = len(cands)
         stats["xray_with_speed"] = sum(c["mbps"] > 0 for c in cands)
+        for k, v in sorted(PROBE_FAIL.items()):
+            if k != "ok":
+                stats[f"probe_fail_{k}"] = v
+        stats["xray_error_samples"] = list(PROBE_ERRORS)
     cands.sort(key=lambda c: (c["tier"] == 0, -c.get("mbps", 0.0), c["ms"], c["base"]))
 
     # 5. лимит на адрес и общий потолок
@@ -568,14 +612,34 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
         if len(final) >= MAX_TOTAL:
             break
 
+    # кандидаты: ответили по TCP, но в итоговый список не попали (не прошли Xray с раннера США или не успели)
+    final_keys = {ckey(c) for c in final}
+    rest = [c for c in tcp_alive_list if ckey(c) not in final_keys][:CANDIDATES_POOL]
+
     # 6. страна и город: по ВЫХОДНОМУ IP (если проверяли через Xray), иначе по адресу сервера
-    ips = {c["ip"] for c in final} | {c["exit_ip"] for c in final if c.get("exit_ip")}
+    ips = ({c["ip"] for c in final} | {c["exit_ip"] for c in final if c.get("exit_ip")}
+           | {c["ip"] for c in rest})
     geo = geo_fn(ips) if use_geo and ips else {}
     for c in final:
         place = c.get("exit_ip") or c["ip"]
         c["name"] = make_name(geo.get(place, {}), c.get("exit_cc", ""))
         c["entry_cc"] = geo.get(c["ip"], {}).get("countryCode", "")
         c["exit_country"] = geo.get(place, {}).get("countryCode", "") or c.get("exit_cc", "")
+    for c in rest:
+        c["entry_cc"] = geo.get(c["ip"], {}).get("countryCode", "")
+        c["name"] = make_name(geo.get(c["ip"], {}))  # у непроверенных выход неизвестен: имя по адресу сервера
+    rest.sort(key=lambda c: (c["entry_cc"] != "RU", c["tier"] == 0, c["ms"], c["base"]))
+    per_ip_rest, candidates = Counter(), []
+    for c in rest:
+        if per_ip_rest[c["ip"]] < MAX_PER_IP:
+            per_ip_rest[c["ip"]] += 1
+            candidates.append(c)
+        if len(candidates) >= CANDIDATES_MAX:
+            break
+    if extra is not None:
+        extra["candidates"] = candidates
+    stats["candidates_total"] = len(candidates)
+    stats["candidates_entry_in_ru"] = sum(c["entry_cc"] == "RU" for c in candidates)
     stats["final"] = len(final)
     stats["final_entry_in_ru"] = sum(c["entry_cc"] == "RU" for c in final)
     stats["final_exit_in_ru"] = sum(c["exit_country"] == "RU" for c in final)
@@ -584,9 +648,13 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
     return final, stats
 
 
-def write_outputs(final, stats):
+def write_outputs(final, stats, candidates=None):
     OUT.mkdir(exist_ok=True)
     line = lambda c: f"{c['base']}#{up.quote(c['name'])}"
+    if candidates is not None:  # непроверенные кандидаты: пинговать самому в v2rayNG; имя — по адресу сервера
+        (OUT / "candidates_ru_sni.txt").write_text("".join(line(c) + "\n" for c in candidates), encoding="utf-8")
+        (OUT / "candidates_ru_sni_ruip.txt").write_text(
+            "".join(line(c) + "\n" for c in candidates if c["entry_cc"] == "RU"), encoding="utf-8")
     allp = "\n".join(line(c) for c in final) + "\n"
     (OUT / "whitelist_ru_sni.txt").write_text(allp, encoding="utf-8")
     (OUT / "whitelist_ru_sni_b64.txt").write_text(base64.b64encode(allp.encode()).decode(), encoding="utf-8")
@@ -663,8 +731,9 @@ def main():
         pool.write_text("\n".join(sorted(set(raw))) + "\n", encoding="utf-8")
         stats["pool_links_saved"] = len(set(raw))
 
-    final, stats = build(raw, args.keep_other, not args.no_tcp, xray_bin, not args.no_geo, stats)
-    write_outputs(final, stats)
+    extra = {}
+    final, stats = build(raw, args.keep_other, not args.no_tcp, xray_bin, not args.no_geo, stats, extra)
+    write_outputs(final, stats, extra.get("candidates"))
     log("Итого:\n" + "\n".join(f"  {k}: {v}" for k, v in stats.items()))
     if not final:
         log("! ничего не найдено — файлы перезаписаны пустыми, смотри out/report.txt и sources.txt")
