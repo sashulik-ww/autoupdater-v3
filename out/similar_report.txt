@@ -1,41 +1,21 @@
-working_total: 254
-working_vless: 151
-pool_links: 108241
-pool_valid_unique: 53964
-drop_bad_url: 29
-drop_bad_uuid: 1772
-drop_bad_host: 85
-drop_transport_unsupported: 49
-drop_bad_pbk_sid: 200
-drop_no_sni: 635
-drop_security_unsupported: 145
-features_with_weight: 596
-similar_by_identity_or_network: 9476
-dns_failed: 842
-tcp_checked: 4000
-tcp_ok: 2273
-xray_ok: 156
-probe_fail_no_exit_ip: 702
-probe_fail_xray_exited: 42
-similar_verified: 141
-similar_candidates: 1500
-entry_in_ru: 182
-ru_sni_share_percent: 17
-seconds: 299
+my_working: 97
+my_bad: 0
+pool_links: 14590
+pool_after_removing_mine_and_bad: 14555
+pool_trimmed_to: 8000
+pool_resolved: 7817
+similar_candidates: 5752
+tcp_ok: 262
+xray_ok: 31
+final_tested: 30
+final_untested: 150
 
-самые весомые признаки твоих рабочих серверов (вес, признак):
-  7.44  net24:13.143.189
-  6.97  sni:pl-b1.golangwikito.cfd
-  6.97  net24:66.163.118
-  6.97  net24:217.60.33
-  6.75  net24:217.25.93
-  6.75  net24:216.152.147
-  6.75  net16:66.163
-  6.75  net16:216.152
-  6.46  net24:50.7.216
-  6.46  net24:216.238.105
-  6.46  net24:130.94.51
-  6.46  net24:119.46.51
-  6.46  net16:119.46
-  6.46  host2:ubuntuupdates.com
-  6.46  host2:awsno.com
+Чему научился (признаки твоих рабочих серверов):
+  pbk: NaCZ-sS4…×8, QrNs0ew7…×4, ZJlfiMh4…×3, TRaUsnzF…×3, LEziyH-E…×3
+  net: 217.60.33.0/24×3, 84.32.209.0/24×2, 92.42.201.0/24×2, 45.83.85.0/24×2, 177.1.183.0/24×2
+  net16: 84.32.0.0/16×6, 88.216.0.0/16×4, 217.60.0.0/16×4, 82.148.0.0/16×3, 50.7.0.0/16×3
+  asn: 9123×11, 197574×5, 59642×5, 16125×3, 30058×3
+  domain: fox-lisa.ru×5, betust.net×5, huahua.wiki×3, titun.su×2, jarbook.net×2
+  sni_dom: betust.net×11, fox-lisa.ru×8, bachidze.com×5, plus-hit.ru×4, apple.com×4
+  sni: www.apple.com×4, yoy-api.bachidze.com×3, tickets.betust.net×3, gb1.fox-lisa.ru×2, ru-gr1.fluxnode777.ru×2
+  cc: RU×21, NL×17, DE×12, PL×7, GB×4
