@@ -1,465 +1,317 @@
 #!/usr/bin/env python3
-"""Поиск серверов, ПОХОЖИХ на те, что работают у тебя (my_working.txt).
+"""Подбор серверов, похожих на те, что реально работают у тебя (экспорт из v2rayNG).
 
-Идея: сервера одного оператора настроены одинаково. Если у тебя работает сервер с каким-то ключом
-Reality (pbk), UUID, доменом или подсетью, то другие сервера из пула с теми же признаками
-работают с большой вероятностью — и это проверено ТВОИМ телефоном в России, а не раннером в США.
+Берёт:
+  my_working.txt  — серверы, которые у тебя работают (экспорт из v2rayNG после проверки пинга)
+  my_bad.txt      — (необязательно) серверы, которые у тебя НЕ работают
+  my_all.txt      — (необязательно) всё, что ты проверял до чистки: «не рабочие» = my_all минус my_working
+  work/pool.txt   — все найденные collector.py ссылки (collector.py --pool-out work/pool.txt)
 
-Что делает:
-  1. читает my_working.txt (любые протоколы) и пул work/pool.txt (его делает collector.py --pool-out);
-  2. считает, какие признаки встречаются у рабочих серверов заметно чаще, чем в пуле («лифт» признака):
-       - личность оператора: pbk, uuid, домен адреса, домен SNI;
-       - сеть: подсеть /24 и /16 адреса;
-       - профиль настроек: порт, транспорт, тип защиты, SNI, flow, fingerprint, длина sid;
-  3. оценивает каждый сервер пула (чем больше редких общих признаков, тем выше оценка);
-  4. лучших проверяет: DNS → TCP → (если есть xray) запуск и выходной IP со скоростью;
-  5. имена по IP на английском: «🇩🇪 Germany, Frankfurt» (как в collector.py).
+Как оценивает: запоминает признаки твоих рабочих серверов (ключ Reality pbk, UUID, подсеть /24,
+провайдер/ASN, домен сервера, SNI, порт, транспорт, страна адреса) и даёт каждому кандидату баллы.
+Признаки нерабочих серверов дают штраф. Редкие признаки весят больше частых.
 
 Результат (папка out/):
-  similar_verified.txt    — похожие, прошедшие проверку Xray (самые быстрые сверху)
-  similar_candidates.txt  — похожие, ответившие по TCP, но не прошедшие проверку с раннера США: проверь пингом сам
-  similar_ruip.txt        — из обоих файлов только серверы с адресом в РФ
-  similar_why.txt         — оценка и причины («совпал pbk…») для лучших кандидатов
-  similar_report.txt      — воронка и самые «весомые» признаки твоих рабочих серверов
+  similar_to_mine.txt           — похожие И прошедшие проверку через Xray (имя по выходному IP)
+  similar_to_mine_untested.txt  — похожие, но с раннера США не проверились (могут работать только из РФ);
+                                  имя по адресу сервера, выход неизвестен
+  similar_report.txt            — чему научился скрипт и сколько кандидатов отсеялось
 
-ИИ не нужен: оценка считается формулой, бесплатно и за секунды. Только стандартная библиотека Python;
-лежит рядом с collector.py и использует его функции (сеть, Xray, определение страны).
+Нужен collector.py в той же папке. Только стандартная библиотека Python 3.9+.
 """
 import argparse
-import base64
 import concurrent.futures as cf
 import ipaddress
 import json
-import math
+import os
 import re
 import shutil
 import sys
 import time
-import urllib.parse as up
 from collections import Counter
 from pathlib import Path
 
-import collector as col
+sys.path.insert(0, str(Path(__file__).parent))
+import collector as C  # noqa: E402
 
 ROOT = Path(__file__).parent
-OUT = col.OUT
+OUT = ROOT / "out"
 
-# ───────────────────────────── настройки ─────────────────────────────
-MAX_VERIFIED = 450      # размер similar_verified.txt
-MAX_CANDIDATES = 1500   # размер similar_candidates.txt
-MAX_PER_IP = 2          # не больше стольких серверов на один адрес
-SHORTLIST = 20000       # сколько лучших по оценке берём в DNS
-TCP_MAX = 4000          # сколько лучших проверяем по TCP
-PROBE_MAX = 900         # сколько лучших из ответивших по TCP гоняем через Xray
-W_ID, W_NET, W_PROF = 1.0, 0.7, 0.35  # вклад личности оператора, сети и профиля настроек в оценку
-SUPPORTED_TYPES = {"tcp", "raw", "grpc", "http", "h2", "xhttp", "splithttp", "ws", "httpupgrade", "kcp"}
-MULTI_SUFFIX = {
-    "co.uk", "org.uk", "ac.uk", "com.au", "net.au", "com.br", "com.cn", "com.tr", "co.jp", "co.kr",
-    "co.za", "com.ua", "com.ru", "net.ru", "org.ru", "com.hk", "com.tw", "com.sg", "co.in", "com.mx",
+# ───────────────────────────── НАСТРОЙКИ ─────────────────────────────
+WEIGHTS = {  # насколько сильно совпадение признака говорит «этот сервер такой же, как мой рабочий»
+    "pbk": 5.0,     # тот же ключ Reality — почти наверняка тот же провайдер
+    "net": 4.0,     # та же подсеть /24 (IPv6 — /48)
+    "net16": 2.0,   # тот же блок /16: у одного хостера серверы часто лежат в соседних подсетях
+    "sni_dom": 2.5, # SNI на поддомене того же сайта (у оператора это обычно его домен: tickets.x.net, api14.x.net)
+    "uuid": 3.0,
+    "asn": 3.0,     # тот же хостинг/оператор
+    "domain": 2.0,  # тот же домен сервера (если адрес — доменное имя)
+    "sni": 1.5,
+    "cc": 1.0,      # та же страна адреса
+    "port": 0.7,
+    "type": 0.5,    # транспорт
 }
+MIN_SCORE = 2.0         # ниже — не берём
+TOP_N = 150             # сколько серверов в каждом из двух итоговых файлов
+TEST_TOP = 600          # сколько лучших по баллам проверять TCP и Xray
+MAX_POOL = 8000         # потолок кандидатов (если собрано больше — берём по предварительным баллам)
+MAX_ASN_IPS = 4000      # сколько IP спрашивать у ip-api про ASN
+MAX_PER_PBK = 30        # не больше стольких серверов одного провайдера (pbk) в итоговом файле
+# ─────────────────────────────────────────────────────────────────────
 
 
-def log(*a):
-    col.log(*a)
+def key(c):
+    return (c["host"], c["port"], c["uuid"])
 
 
-# ───────────────────────────── разбор ─────────────────────────────
-def is_ip(host):
+def load(path):
+    p = Path(path) if path else None
+    if not p or not p.exists():
+        return []
+    out, seen = [], set()
+    for link in C.extract_links(p.read_text(encoding="utf-8", errors="ignore")):
+        c = C.parse_vless(link, keep_other=True)  # SNI не фильтруем: свои серверы берём как есть
+        if c and key(c) not in seen:
+            seen.add(key(c))
+            out.append(c)
+    return out
+
+
+def subnet(ip):
     try:
-        ipaddress.ip_address(host)
-        return True
+        a = ipaddress.ip_address(ip)
+        return str(ipaddress.ip_network(f"{ip}/{24 if a.version == 4 else 48}", strict=False))
     except ValueError:
-        return False
+        return ""
+
+
+def subnet16(ip):
+    try:
+        if ipaddress.ip_address(ip).version == 4:
+            return str(ipaddress.ip_network(f"{ip}/16", strict=False))
+    except ValueError:
+        pass
+    return ""
 
 
 def reg_domain(host):
-    """Регистрируемый домен: api.bachidze.com → bachidze.com. Для IP и одиночных имён — None."""
-    host = (host or "").lower().strip(".")
-    if not host or is_ip(host) or "." not in host:
-        return None
-    parts = host.split(".")
-    tail2 = ".".join(parts[-2:])
-    return ".".join(parts[-3:]) if tail2 in MULTI_SUFFIX and len(parts) >= 3 else tail2
-
-
-def link_host(link):
-    """Адрес сервера из ссылки любого протокола (vless, trojan, hysteria2, vmess…)."""
     try:
-        if link.lower().startswith("vmess://"):
-            payload = link.split("://", 1)[1].split("#", 1)[0].replace("-", "+").replace("_", "/")
-            payload += "=" * (-len(payload) % 4)
-            data = json.loads(base64.b64decode(payload).decode("utf-8", "ignore"))
-            return (data.get("add") or "").lower() or None
-        return (up.urlsplit(link).hostname or "").lower() or None
-    except Exception:
-        return None
-
-
-def parse_vless_any(link, why):
-    """Любой vless (Reality, TLS, без защиты; любой SNI и транспорт). None + причина в why, если не годится."""
-    def no(reason):
-        why[reason] += 1
-        return None
-
-    try:
-        u = up.urlsplit(link)
-        port, host = u.port, u.hostname
+        ipaddress.ip_address(host)
+        return ""
     except ValueError:
-        return no("bad_url")
-    if u.scheme != "vless" or not u.username or not port:
-        return no("bad_url")
-    if not col.public_host(host):
-        return no("bad_host")
-    if not col.UUID_RE.match(u.username):
-        return no("bad_uuid")
-    q = {k.lower(): v for k, v in up.parse_qsl(u.query, keep_blank_values=True)}
-    sec = (q.get("security") or "none").lower()
-    if sec not in ("reality", "tls", "none"):
-        return no("security_unsupported")
-    typ = (q.get("type") or "tcp").lower()
-    if typ not in SUPPORTED_TYPES:
-        return no("transport_unsupported")
-    if sec == "reality" and (not col.PBK_RE.match(q.get("pbk", "")) or not col.SID_RE.match(q.get("sid", ""))):
-        return no("bad_pbk_sid")
-    sni = (q.get("sni") or q.get("servername") or q.get("peer") or "").strip().lower()
-    if sec == "reality" and not sni:
-        return no("no_sni")
-    return {
-        "base": link.split("#", 1)[0], "q": q, "type": typ, "host": host.lower(), "port": port,
-        "uuid": u.username.lower(), "sni": sni, "sec": sec, "tier": col.match_tier(sni) if sni else 0,
-    }
+        parts = host.split(".")
+        return ".".join(parts[-2:]) if len(parts) >= 2 else ""
 
 
-def ckey(c):
-    return (c["host"], c["port"], c["uuid"], c["sni"], c["type"])
+def features(c):
+    f = {"pbk": c["q"]["pbk"], "uuid": c["uuid"], "sni": c["sni"], "port": str(c["port"]), "type": c["type"],
+         "net": subnet(c["ip"]), "net16": subnet16(c["ip"]), "domain": reg_domain(c["host"]),
+         "sni_dom": reg_domain(c["sni"]), "asn": c.get("asn", ""), "cc": c.get("cc", "")}
+    return {k: v for k, v in f.items() if v}
 
 
-# ───────────────────────────── признаки ─────────────────────────────
-def net_features(addr):
-    if not addr or ":" in addr or not is_ip(addr):
-        return []
-    a = addr.split(".")
-    return [f"net24:{'.'.join(a[:3])}", f"net16:{'.'.join(a[:2])}"]
+def asn_lookup(ips):
+    """ASN и страна по IP через ip-api.com (пакеты по 100; бесплатный лимит — 15 пакетов в минуту)."""
+    res, ips = {}, list(ips)
+    for i in range(0, len(ips), 100):
+        body = json.dumps([{"query": ip, "fields": "status,countryCode,as,query"} for ip in ips[i:i + 100]]).encode()
+        txt = C.http("http://ip-api.com/batch", headers={"Content-Type": "application/json"}, data=body)
+        try:
+            for r in json.loads(txt or "[]"):
+                if r.get("status") == "success":
+                    m = re.match(r"AS(\d+)", r.get("as", ""))
+                    res[r["query"]] = {"asn": m.group(1) if m else "", "cc": r.get("countryCode", "")}
+        except ValueError:
+            pass
+        time.sleep(4.5)
+    return res
 
 
-def host_features(host, ip=None):
-    """Признаки одного только адреса (для рабочих trojan/vmess/hysteria2 — их в пуле нет, но адрес выдаёт оператора)."""
-    ids = []
-    h2 = reg_domain(host)
-    if h2:
-        ids.append("host2:" + h2)
-    return {"id": ids, "net": net_features(host if is_ip(host or "") else ip), "prof": []}
-
-
-def features(c, ip=None):
-    """Признаки vless-сервера по группам: id — личность оператора, net — сеть, prof — профиль настроек."""
-    q = c["q"]
-    ids = ["uuid:" + c["uuid"]]
-    if q.get("pbk"):
-        ids.append("pbk:" + q["pbk"])
-    for tag, host in (("host2", c["host"]), ("sni2", c["sni"])):
-        d = reg_domain(host)
-        if d:
-            ids.append(f"{tag}:{d}")
-    prof = [f"port:{c['port']}", f"type:{c['type']}", f"sec:{c['sec']}"]
-    if c["sni"]:
-        prof.append("sni:" + c["sni"])
-    if q.get("flow"):
-        prof.append("flow:" + q["flow"])
-    if q.get("fp"):
-        prof.append("fp:" + q["fp"])
-    if c["sec"] == "reality":
-        prof.append(f"sidlen:{len(q.get('sid', ''))}")
-    addr = c["host"] if is_ip(c["host"]) else ip
-    return {"id": ids, "net": net_features(addr), "prof": prof}
-
-
-def build_weights(work_feats, pool_counts, n_pool):
-    """Вес признака = log(доля рабочих серверов с ним / доля пула с ним). Чем он у рабочих чаще, чем в пуле,
-    тем сильнее говорит о сходстве. pbk/uuid, встречающиеся у рабочих и почти не встречающиеся в пуле, весят больше всего."""
-    n_work = len(work_feats)
-    cnt = Counter()
-    for f in work_feats:
-        cnt.update({x for group in f.values() for x in group})
-    weights = {}
-    for feat, cw in cnt.items():
-        p_work = cw / n_work
-        p_pool = (pool_counts.get(feat, 0) + 1) / (n_pool + 1)
-        weights[feat] = max(0.0, math.log(p_work / p_pool))
-    return weights
-
-
-def short(feat):
-    kind, _, val = feat.partition(":")
-    return f"{kind}:{val[:10]}…" if kind in ("pbk", "uuid") and len(val) > 10 else feat
-
-
-def score(feats, w):
-    """-> (оценка, есть ли совпадение по личности/сети, причины)."""
-    groups = {}
-    for g, items in feats.items():
-        groups[g] = sorted(((w.get(f, 0.0), f) for f in items if w.get(f, 0.0) > 0), reverse=True)
-    ids, net, prof = groups["id"], groups["net"], groups["prof"]
-    s_id = (ids[0][0] + 0.3 * sum(x for x, _ in ids[1:])) if ids else 0.0   # несколько совпадений усиливают друг друга
-    s_net = net[0][0] if net else 0.0
-    s_prof = min(3.0, sum(x for x, _ in prof))
-    why = [short(f) for _, f in sorted(ids + net + prof, reverse=True)[:4]]
-    return W_ID * s_id + W_NET * s_net + W_PROF * s_prof, bool(ids or net), why
-
-
-# ───────────────────────────── Xray для любых vless ─────────────────────────────
-_orig_xray_config = col.xray_config
-
-
-def xray_config_any(c, port):
-    """collector.xray_config умеет только Reality. Берём его (транспорты уже разобраны) и подменяем защиту."""
-    c2 = dict(c, q=dict(c["q"]))
-    c2["q"].setdefault("pbk", "x")
-    cfg = _orig_xray_config(c2, port)
-    if cfg is None:
-        return None
-    out = cfg["outbounds"][0]
-    ss = out["streamSettings"]
-    sec = c.get("sec", "reality")
-    if sec == "tls":
-        ss.pop("realitySettings", None)
-        tls = {"serverName": c["sni"] or c["host"]}
-        if c["q"].get("fp"):
-            tls["fingerprint"] = c["q"]["fp"]
-        if c["q"].get("alpn"):
-            tls["alpn"] = [a for a in c["q"]["alpn"].split(",") if a]
-        if (c["q"].get("allowinsecure") or c["q"].get("insecure")) in ("1", "true"):
-            tls["allowInsecure"] = True
-        ss["security"], ss["tlsSettings"] = "tls", tls
-    elif sec == "none":
-        ss.pop("realitySettings", None)
-        ss["security"] = "none"
-    user = out["settings"]["vnext"][0]["users"][0]
-    user["encryption"] = c["q"].get("encryption") or "none"
-    if c["q"].get("flow") and c["type"] in ("tcp", "raw"):
-        user["flow"] = c["q"]["flow"]
-    return cfg
-
-
-col.xray_config = xray_config_any  # col.probe ищет эту функцию по имени в своём модуле
-
-
-# ───────────────────────────── основная работа ─────────────────────────────
-def read_lines(path):
-    if not path.exists():
-        return []
-    text = path.read_text(encoding="utf-8", errors="ignore")
-    if "://" not in text:  # файл целиком в base64
-        text = col.try_b64(text) or text
-    return [ln.strip() for ln in text.splitlines() if "://" in ln]
-
-
-def load_working(path, why):
-    """-> (vless-серверы, признаки всех рабочих, ссылки)"""
-    links = read_lines(path)
-    vless, feats = [], []
-    hosts_to_resolve = set()
-    others = []
-    for link in links:
-        c = parse_vless_any(link, why) if link.lower().startswith("vless://") else None
-        if c:
-            vless.append(c)
-            if not is_ip(c["host"]):
-                hosts_to_resolve.add(c["host"])
-        else:
-            h = link_host(link)
-            if h:
-                others.append(h)
-                if not is_ip(h):
-                    hosts_to_resolve.add(h)
-    ip_of = {}
-    if hosts_to_resolve:
-        hs = sorted(hosts_to_resolve)
-        with cf.ThreadPoolExecutor(32) as ex:
-            ip_of = dict(zip(hs, ex.map(col.resolve, hs)))
-    for c in vless:
-        feats.append(features(c, ip_of.get(c["host"])))
-    for h in others:
-        feats.append(host_features(h, ip_of.get(h)))
-    return vless, feats, links
-
-
-def run(args):
-    t0 = time.monotonic()
-    stats = Counter()
-    why = Counter()
-
-    work_vless, work_feats, work_links = load_working(Path(args.working), why)
-    stats["working_total"] = len(work_links)
-    stats["working_vless"] = len(work_vless)
-    if not work_feats:
-        log(f"! в {args.working} нет ни одной ссылки — нечего сравнивать")
-        return None, stats
-    work_keys = {ckey(c) for c in work_vless}
-
-    pool_lines = read_lines(Path(args.pool))
-    stats["pool_links"] = len(pool_lines)
-    if not pool_lines:
-        log(f"! пул {args.pool} пуст: запусти collector.py с --pool-out work/pool.txt")
-        return None, stats
-    cands = {}
-    for link in pool_lines:
-        c = parse_vless_any(link, why)
-        if c and ckey(c) not in work_keys:
-            cands.setdefault(ckey(c), c)
-    cands = list(cands.values())
-    stats["pool_valid_unique"] = len(cands)
-    for k, v in why.items():
-        stats[f"drop_{k}"] = v
-
-    # веса признаков
-    wanted = {x for f in work_feats for group in f.values() for x in group}
-    pool_counts = Counter()
-    cand_feats = []
-    for c in cands:
-        f = features(c)
-        cand_feats.append(f)
-        pool_counts.update(x for group in f.values() for x in group if x in wanted)
-    weights = build_weights(work_feats, pool_counts, len(cands))
-    stats["features_with_weight"] = sum(1 for v in weights.values() if v > 0)
-
-    # первая оценка (без DNS)
-    scored = []
-    for c, f in zip(cands, cand_feats):
-        s, strong, why_ = score(f, weights)
-        if s > 0:
-            scored.append((s, strong, c, f))
-    scored.sort(key=lambda t: (-t[0], t[2]["base"]))
-    strong_n = sum(1 for t in scored if t[1])
-    stats["similar_by_identity_or_network"] = strong_n
-    if args.no_fill:
-        scored = [t for t in scored if t[1]]
-    shortlist = scored[:SHORTLIST]
-
-    # DNS для адресов-доменов: подсеть выдаёт оператора и у серверов с доменным именем
-    hosts = sorted({t[2]["host"] for t in shortlist if not is_ip(t[2]["host"])})
-    log(f"DNS: {len(hosts)} адресов…")
+def enrich(servers, priority, use_asn, resolver=C.resolve, asn_fn=asn_lookup):
+    """Добавляет каждому серверу IP (c['ip']) и, если можно, ASN/страну. Возвращает только тех, у кого есть IP."""
+    hosts = sorted({c["host"] for c in servers})
     with cf.ThreadPoolExecutor(64) as ex:
-        ip_of = dict(zip(hosts, ex.map(col.resolve, hosts)))
-    rescored = []
-    for s, strong, c, f in shortlist:
-        ip = c["host"] if is_ip(c["host"]) else ip_of.get(c["host"])
-        if not ip:
-            stats["dns_failed"] += 1
+        ip_of = dict(zip(hosts, ex.map(resolver, hosts)))
+    servers = [c for c in servers if ip_of.get(c["host"])]
+    for c in servers:
+        c["ip"] = ip_of[c["host"]]
+    if use_asn and servers:
+        first = [c["ip"] for c in priority if c.get("ip")]  # сначала IP твоих серверов
+        order = list(dict.fromkeys(first + sorted({c["ip"] for c in servers})))[:MAX_ASN_IPS]
+        info = asn_fn(order)
+        for c in servers:
+            c.update({k: v for k, v in info.get(c["ip"], {}).items() if v})
+    return servers
+
+
+class Model:
+    """Что мы знаем о твоих рабочих (pos) и нерабочих (neg) серверах, и как часто признак встречается в пуле (df)."""
+
+    def __init__(self, good, bad, pool):
+        self.pos, self.neg, self.df = Counter(), Counter(), Counter()
+        for c in good:
+            self.pos.update(features(c).items())
+        for c in bad:
+            self.neg.update(features(c).items())
+        for c in pool:
+            self.df.update(features(c).items())
+        self.n = len(pool)
+
+    def score(self, c):
+        total = 0.0
+        for kv in features(c).items():
+            p, n = self.pos[kv], self.neg[kv]
+            if p or n:
+                rarity = 1 - self.df[kv] / (self.n + 1)  # признак есть у всех → почти ничего не значит
+                total += WEIGHTS[kv[0]] * (p - n) / (p + n + 1) * rarity
+        return total
+
+    def top_features(self, kinds=("pbk", "net", "net16", "asn", "domain", "sni_dom", "sni", "cc"), k=5):
+        lines = []
+        for kind in kinds:
+            items = sorted(((v, p) for (kk, v), p in self.pos.items() if kk == kind), key=lambda x: -x[1])[:k]
+            if items:
+                shown = ", ".join(f"{(v[:8] + '…') if kind == 'pbk' else v}×{p}" for v, p in items)
+                lines.append(f"  {kind}: {shown}")
+        return lines
+
+
+def pick(items, n):
+    """Лимиты: не больше MAX_PER_IP на адрес и MAX_PER_PBK на провайдера."""
+    per_ip, per_pbk, out = Counter(), Counter(), []
+    for c in items:
+        pbk = c["q"]["pbk"]
+        if per_ip[c["ip"]] >= C.MAX_PER_IP or per_pbk[pbk] >= MAX_PER_PBK:
             continue
-        c["ip"] = ip
-        s2, strong2, why_ = score(features(c, ip), weights)
-        rescored.append((s2, strong2, why_, c))
-    rescored.sort(key=lambda t: (-t[0], t[3]["base"]))
+        per_ip[c["ip"]] += 1
+        per_pbk[pbk] += 1
+        out.append(c)
+        if len(out) >= n:
+            break
+    return out
 
-    # TCP
-    batch = rescored[:TCP_MAX]
-    log(f"TCP: {len(batch)} серверов…")
+
+def run(good, bad, pool, xray_bin=None, use_asn=True, use_geo=True, top_n=TOP_N, min_score=MIN_SCORE,
+        test_top=TEST_TOP, sort="score", resolver=C.resolve, asn_fn=asn_lookup, tcp_fn=C.tcp_ping,
+        probe_fn=C.probe, geo_fn=C.geo_lookup):
+    st = Counter(my_working=len(good), my_bad=len(bad), pool_links=len(pool))
+
+    good_keys, bad_keys = {key(c) for c in good}, {key(c) for c in bad}
+    pool = [c for c in pool if key(c) not in good_keys and key(c) not in bad_keys]
+    st["pool_after_removing_mine_and_bad"] = len(pool)
+
+    # предварительный отбор, если пул огромный: по признакам, не требующим сети
+    if len(pool) > MAX_POOL:
+        for c in good + bad + pool:
+            c.setdefault("ip", "")
+        pre = Model(good, bad, pool)
+        pool = sorted(pool, key=lambda c: -pre.score(c))[:MAX_POOL]
+        st["pool_trimmed_to"] = len(pool)
+
+    everything = enrich(good + bad + pool, good + bad, use_asn, resolver, asn_fn)
+    ok = {id(c) for c in everything}
+    good, bad, pool = [c for c in good if id(c) in ok], [c for c in bad if id(c) in ok], [c for c in pool if id(c) in ok]
+    st["pool_resolved"] = len(pool)
+    if not good:
+        return [], [], Model([], [], []), st
+
+    model = Model(good, bad, pool)
+    scored = sorted(((model.score(c), c) for c in pool), key=lambda t: (-t[0], t[1]["base"]))
+    scored = [(s, c) for s, c in scored if s >= min_score]
+    st["similar_candidates"] = len(scored)
+
+    # проверка лучших: TCP, затем реальный запуск в Xray
+    head, tail = scored[:test_top], scored[test_top:]
     with cf.ThreadPoolExecutor(100) as ex:
-        pings = list(ex.map(lambda t: col.tcp_ping(t[3]), batch))
-    alive = []
-    for (s, strong, why_, c), ms in zip(batch, pings):
-        if ms is not None:
-            c.update(score=s, why=why_, ms=ms)
-            alive.append(c)
-    stats["tcp_checked"] = len(batch)
-    stats["tcp_ok"] = len(alive)
+        pings = list(ex.map(lambda t: tcp_fn(t[1]), head))
+    alive = [(s, c, ms) for (s, c), ms in zip(head, pings) if ms is not None]
+    st["tcp_ok"] = len(alive)
+    tested, failed = [], []
+    if xray_bin:
+        with cf.ThreadPoolExecutor(C.SPEED_WORKERS) as ex:
+            res = list(ex.map(lambda t: probe_fn(t[1], xray_bin), alive))
+        for (s, c, ms), r in zip(alive, res):
+            (tested if r else failed).append(dict(c, score=s, ms=ms, **(r or {})))
+    else:
+        failed = [dict(c, score=s, ms=ms) for s, c, ms in alive]
+    st["xray_ok"] = len(tested)
 
-    # Xray
-    verified = []
-    if args.xray_bin:
-        probe_batch = alive[:PROBE_MAX]
-        log(f"Xray: {len(probe_batch)} серверов, {col.SPEED_WORKERS} параллельно…")
-        col.PROBE_FAIL.clear()
-        with cf.ThreadPoolExecutor(col.SPEED_WORKERS) as ex:
-            res = list(ex.map(lambda c: col.probe(c, args.xray_bin), probe_batch))
-        verified = [dict(c, **r) for c, r in zip(probe_batch, res) if r]
-        stats["xray_ok"] = len(verified)
-        for k, v in sorted(col.PROBE_FAIL.items()):
-            if k != "ok":
-                stats[f"probe_fail_{k}"] = v
-    verified.sort(key=lambda c: (-c.get("mbps", 0.0), -c["score"]))
+    if sort == "speed":
+        tested.sort(key=lambda c: (-c.get("mbps", 0.0), -c["score"]))
+    else:
+        tested.sort(key=lambda c: (-c["score"], -c.get("mbps", 0.0)))
+    untested = sorted(failed + [dict(c, score=s, ms=0.0) for s, c in tail], key=lambda c: -c["score"])
 
-    def limit(items, cap_total):
-        per_ip, out = Counter(), []
-        for c in items:
-            if per_ip[c["ip"]] >= args.max_per_ip:
-                continue
-            per_ip[c["ip"]] += 1
-            out.append(c)
-            if len(out) >= cap_total:
-                break
-        return out
+    final_t, final_u = pick(tested, top_n), pick(untested, top_n)
+    st["final_tested"], st["final_untested"] = len(final_t), len(final_u)
 
-    final = limit(verified, args.max_verified)
-    final_keys = {ckey(c) for c in final}
-    rest = [c for c in alive if ckey(c) not in final_keys]  # уже отсортированы по оценке
-    candidates = limit(rest, args.max_candidates)
-
-    # имена по IP
-    ips = ({c["ip"] for c in final} | {c["exit_ip"] for c in final if c.get("exit_ip")} | {c["ip"] for c in candidates})
-    geo = col.geo_lookup(ips) if (args.geo and ips) else {}
-    for c in final:
-        place = c.get("exit_ip") or c["ip"]
-        c["name"] = col.make_name(geo.get(place, {}), c.get("exit_cc", ""))
-        c["entry_cc"] = geo.get(c["ip"], {}).get("countryCode", "")
-    for c in candidates:
-        c["name"] = col.make_name(geo.get(c["ip"], {}))
-        c["entry_cc"] = geo.get(c["ip"], {}).get("countryCode", "")
-
-    stats["similar_verified"] = len(final)
-    stats["similar_candidates"] = len(candidates)
-    stats["entry_in_ru"] = sum(c["entry_cc"] == "RU" for c in final + candidates)
-    stats["ru_sni_share_percent"] = round(100 * sum(c["tier"] > 0 for c in final + candidates)
-                                          / max(1, len(final) + len(candidates)))
-    stats["seconds"] = round(time.monotonic() - t0)
-    return (final, candidates, weights), stats
+    ips = {c["exit_ip"] for c in final_t} | {c["ip"] for c in final_u}
+    geo = geo_fn(ips) if use_geo and ips else {}
+    for c in final_t:
+        c["name"] = C.make_name(geo.get(c["exit_ip"], {}), c.get("exit_cc", ""))
+    for c in final_u:
+        c["name"] = C.make_name(geo.get(c["ip"], {}))
+    return final_t, final_u, model, st
 
 
-def write_outputs(result, stats):
-    final, candidates, weights = result
+def write(final_t, final_u, model, st):
     OUT.mkdir(exist_ok=True)
-    line = lambda c: f"{c['base']}#{up.quote(c['name'])}"
-    (OUT / "similar_verified.txt").write_text("".join(line(c) + "\n" for c in final), encoding="utf-8")
-    (OUT / "similar_candidates.txt").write_text("".join(line(c) + "\n" for c in candidates), encoding="utf-8")
-    (OUT / "similar_ruip.txt").write_text(
-        "".join(line(c) + "\n" for c in final + candidates if c["entry_cc"] == "RU"), encoding="utf-8")
-    (OUT / "similar_why.txt").write_text(
-        "".join(f"{c['score']:.2f}\t{c['name']}\t{', '.join(c['why'])}\n" for c in (final + candidates)[:300]),
-        encoding="utf-8")
-    top = sorted(((w, f) for f, w in weights.items() if w > 0), reverse=True)[:15]
-    lines = [f"{k}: {v}" for k, v in stats.items()]
-    lines += ["", "самые весомые признаки твоих рабочих серверов (вес, признак):"]
-    lines += [f"  {w:.2f}  {short(f)}" for w, f in top]
-    (OUT / "similar_report.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    line = lambda c: f"{c['base']}#{C.up.quote(c['name'])}"
+    for name, items in (("similar_to_mine.txt", final_t), ("similar_to_mine_untested.txt", final_u)):
+        (OUT / name).write_text("".join(line(c) + "\n" for c in items), encoding="utf-8")
+    rep = [f"{k}: {v}" for k, v in st.items()]
+    rep += ["", "Чему научился (признаки твоих рабочих серверов):"] + model.top_features()
+    (OUT / "similar_report.txt").write_text("\n".join(rep) + "\n", encoding="utf-8")
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Поиск серверов, похожих на твои рабочие")
-    ap.add_argument("--working", default=str(ROOT / "my_working.txt"), help="твои рабочие серверы (экспорт из v2rayNG)")
-    ap.add_argument("--pool", default=str(ROOT / "work" / "pool.txt"), help="пул ссылок от collector.py --pool-out")
-    ap.add_argument("--xray", help="путь к xray (или переменная XRAY_BIN)")
-    ap.add_argument("--no-probe", action="store_true", help="не запускать Xray")
-    ap.add_argument("--no-geo", dest="geo", action="store_false", help="не определять страну по IP")
-    ap.add_argument("--no-fill", action="store_true", help="только совпадения по оператору/сети, без добора по профилю")
-    ap.add_argument("--max-verified", type=int, default=MAX_VERIFIED)
-    ap.add_argument("--max-candidates", type=int, default=MAX_CANDIDATES)
-    ap.add_argument("--max-per-ip", type=int, default=MAX_PER_IP)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--good", default="my_working.txt")
+    ap.add_argument("--bad", default="my_bad.txt")
+    ap.add_argument("--all", default="my_all.txt", dest="all_", help="всё, что проверял до чистки; нерабочие = all − good")
+    ap.add_argument("--pool", default="work/pool.txt", help="файл от collector.py --pool-out")
+    ap.add_argument("--xray", help="путь к xray (или переменная XRAY_BIN); без него все результаты идут в untested")
+    ap.add_argument("--no-asn", action="store_true", help="не запрашивать ASN (быстрее, но без признаков «тот же хостинг/страна»)")
+    ap.add_argument("--no-geo", action="store_true")
+    ap.add_argument("--any-sni", action="store_true", help="не ограничивать кандидатов российским SNI")
+    ap.add_argument("--top", type=int, default=TOP_N)
+    ap.add_argument("--min-score", type=float, default=MIN_SCORE)
+    ap.add_argument("--sort", choices=["score", "speed"], default="score")
     args = ap.parse_args()
 
-    args.xray_bin = None
-    if not args.no_probe:
-        found = shutil.which(args.xray or __import__("os").environ.get("XRAY_BIN") or "xray")
-        if found and shutil.which("curl"):
-            args.xray_bin = str(Path(found).resolve())
-        else:
-            log("! xray или curl не найден — похожие без проверки через Xray (только TCP)")
+    good = load(args.good)
+    if not good:
+        C.log(f"! {args.good} пуст или не найден (нужны vless Reality ссылки) — подбирать не на чем, выхожу")
+        return
+    gk = {key(c) for c in good}
+    bad = load(args.bad)
+    bk = {key(b) for b in bad}
+    bad += [c for c in load(args.all_) if key(c) not in gk and key(c) not in bk]
+    if len(good) < 3:
+        C.log(f"! в {args.good} всего {len(good)} серверов — подбор будет грубым, лучше 10+")
 
-    result, stats = run(args)
-    if result is None:
-        sys.exit(1)
-    write_outputs(result, stats)
-    log("Итого:\n" + "\n".join(f"  {k}: {v}" for k, v in stats.items()))
+    pool = []
+    pool_path = Path(args.pool)
+    if not pool_path.exists():
+        C.log(f"! нет {pool_path}: запусти collector.py с --pool-out {pool_path}")
+        return
+    seen = set()
+    for link in C.extract_links(pool_path.read_text(encoding="utf-8", errors="ignore")):
+        c = C.parse_vless(link, keep_other=True)
+        if c and key(c) not in seen and (args.any_sni or c["tier"] > 0):
+            seen.add(key(c))
+            pool.append(c)
+
+    found = shutil.which(args.xray or os.environ.get("XRAY_BIN") or "xray")
+    xray_bin = str(Path(found).resolve()) if found and shutil.which("curl") else None
+    if not xray_bin:
+        C.log("! xray/curl не найдены — проверка через Xray пропущена, всё попадёт в similar_to_mine_untested.txt")
+
+    final_t, final_u, model, st = run(good, bad, pool, xray_bin, not args.no_asn, not args.no_geo,
+                                      args.top, args.min_score, sort=args.sort)
+    write(final_t, final_u, model, st)
+    C.log("Итого:\n" + "\n".join(f"  {k}: {v}" for k, v in st.items()))
+    C.log("\n".join(["Признаки твоих серверов:"] + model.top_features()))
 
 
 if __name__ == "__main__":
