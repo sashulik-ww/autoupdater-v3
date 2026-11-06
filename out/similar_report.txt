@@ -1,41 +1,41 @@
-working_total: 235
-working_vless: 132
-pool_links: 214826
-pool_valid_unique: 93164
-drop_bad_url: 124
-drop_bad_uuid: 4309
-drop_bad_host: 120
-drop_transport_unsupported: 74
-drop_bad_pbk_sid: 452
-drop_no_sni: 782
-drop_security_unsupported: 224
-features_with_weight: 527
-similar_by_identity_or_network: 14778
-dns_failed: 767
+working_total: 254
+working_vless: 151
+pool_links: 108241
+pool_valid_unique: 53964
+drop_bad_url: 29
+drop_bad_uuid: 1772
+drop_bad_host: 85
+drop_transport_unsupported: 49
+drop_bad_pbk_sid: 200
+drop_no_sni: 635
+drop_security_unsupported: 145
+features_with_weight: 596
+similar_by_identity_or_network: 9476
+dns_failed: 842
 tcp_checked: 4000
-tcp_ok: 2064
-xray_ok: 167
-probe_fail_no_exit_ip: 673
-probe_fail_xray_exited: 60
-similar_verified: 151
-similar_candidates: 1478
-entry_in_ru: 192
-ru_sni_share_percent: 14
-seconds: 288
+tcp_ok: 2273
+xray_ok: 156
+probe_fail_no_exit_ip: 702
+probe_fail_xray_exited: 42
+similar_verified: 141
+similar_candidates: 1500
+entry_in_ru: 182
+ru_sni_share_percent: 17
+seconds: 299
 
 самые весомые признаки твоих рабочих серверов (вес, признак):
-  8.06  net24:13.143.189
-  7.59  sni:pl-b1.golangwikito.cfd
-  7.59  net24:66.163.118
-  7.59  net24:217.60.33
-  7.37  net16:66.163
-  7.08  net24:84.32.108
-  7.08  net24:216.238.105
-  7.08  net24:130.94.51
-  7.08  net24:119.46.51
-  7.08  net16:119.46
-  7.08  host2:ubuntuupdates.com
-  7.08  host2:awsno.com
-  6.68  uuid:f333ac5d-1…
-  6.68  uuid:c6438331-a…
-  6.68  sni:tiktok.com
+  7.44  net24:13.143.189
+  6.97  sni:pl-b1.golangwikito.cfd
+  6.97  net24:66.163.118
+  6.97  net24:217.60.33
+  6.75  net24:217.25.93
+  6.75  net24:216.152.147
+  6.75  net16:66.163
+  6.75  net16:216.152
+  6.46  net24:50.7.216
+  6.46  net24:216.238.105
+  6.46  net24:130.94.51
+  6.46  net24:119.46.51
+  6.46  net16:119.46
+  6.46  host2:ubuntuupdates.com
+  6.46  host2:awsno.com
