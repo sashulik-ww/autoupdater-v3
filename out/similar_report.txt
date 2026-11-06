@@ -1,21 +1,41 @@
-my_working: 75
-my_bad: 0
-pool_links: 10915
-pool_after_removing_mine_and_bad: 10900
-pool_trimmed_to: 8000
-pool_resolved: 7727
-similar_candidates: 2575
-tcp_ok: 220
-xray_ok: 3
-final_tested: 3
-final_untested: 150
+working_total: 235
+working_vless: 132
+pool_links: 56171
+pool_valid_unique: 31081
+drop_bad_url: 18
+drop_bad_uuid: 993
+drop_bad_host: 40
+drop_transport_unsupported: 57
+drop_bad_pbk_sid: 189
+drop_no_sni: 195
+drop_security_unsupported: 310
+features_with_weight: 526
+similar_by_identity_or_network: 4136
+dns_failed: 600
+tcp_checked: 4000
+tcp_ok: 2633
+xray_ok: 177
+probe_fail_no_exit_ip: 659
+probe_fail_xray_exited: 64
+similar_verified: 153
+similar_candidates: 1500
+entry_in_ru: 151
+ru_sni_share_percent: 13
+seconds: 261
 
-Чему научился (признаки твоих рабочих серверов):
-  pbk: QrNs0ew7…×4, NaCZ-sS4…×4, TRaUsnzF…×3, ZJlfiMh4…×3, LEziyH-E…×3
-  net: 217.60.33.0/24×3, 88.216.70.0/24×2, 150.241.74.0/24×2, 195.189.98.0/24×2, 13.143.184.0/24×2
-  net16: 88.216.0.0/16×4, 84.32.0.0/16×4, 217.60.0.0/16×4, 13.143.0.0/16×3, 150.241.0.0/16×2
-  asn: 9123×10, 59642×5, 197574×5, 213896×3, 219064×3
-  domain: betust.net×5, fox-lisa.ru×3, huahua.wiki×3, jarbook.net×2, izzzyvpn.space×1
-  sni_dom: betust.net×11, bachidze.com×5, fox-lisa.ru×4, apple.com×4, topp-con.xyz×4
-  sni: www.apple.com×4, tickets.betust.net×3, yoy-api.bachidze.com×3, cdn.izzzyvpn.space×2, app.betust.net×2
-  cc: RU×16, NL×13, DE×9, PL×7, SE×4
+самые весомые признаки твоих рабочих серверов (вес, признак):
+  6.96  net24:13.143.189
+  6.49  sni:pl-b1.golangwikito.cfd
+  6.49  net24:66.163.118
+  6.49  net24:217.60.33
+  6.27  net24:216.152.147
+  6.27  net16:66.163
+  6.27  net16:216.152
+  5.98  sni:cz.pythonmakemigreat.wiki
+  5.98  net24:216.238.105
+  5.98  net24:130.94.51
+  5.98  net24:119.46.51
+  5.98  net16:119.46
+  5.98  host2:ubuntuupdates.com
+  5.98  host2:awsno.com
+  5.84  pbk:QrNs0ew7sn…
