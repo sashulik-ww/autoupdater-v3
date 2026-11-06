@@ -1,19 +1,21 @@
-my_working: 68
+my_working: 75
 my_bad: 0
-pool_links: 13445
-pool_after_removing_mine_and_bad: 13431
+pool_links: 13749
+pool_after_removing_mine_and_bad: 13734
 pool_trimmed_to: 8000
-pool_resolved: 7563
-similar_candidates: 1625
-tcp_ok: 198
-xray_ok: 6
-final_tested: 6
+pool_resolved: 7632
+similar_candidates: 3093
+tcp_ok: 197
+xray_ok: 5
+final_tested: 5
 final_untested: 150
 
 Чему научился (признаки твоих рабочих серверов):
-  pbk: QrNs0ew7…×4, NaCZ-sS4…×3, LEziyH-E…×3, TRaUsnzF…×2, v--0dXOW…×2
-  net: 150.241.74.0/24×2, 13.143.184.0/24×2, 45.194.66.0/24×2, 217.60.33.0/24×2, 150.40.126.0/24×2
-  asn: 9123×8, 59642×5, 197574×5, 207957×3, 132203×3
-  domain: betust.net×4, huahua.wiki×3, jarbook.net×2, fox-lisa.ru×2, izzzyvpn.space×1
-  sni: www.apple.com×4, tickets.betust.net×2, cdn.izzzyvpn.space×2, msc1.serverslocal.ru×2, yoy-api.bachidze.com×2
-  cc: RU×14, NL×11, DE×9, PL×7, SE×4
+  pbk: QrNs0ew7…×4, NaCZ-sS4…×4, TRaUsnzF…×3, ZJlfiMh4…×3, LEziyH-E…×3
+  net: 88.216.70.0/24×2, 150.241.74.0/24×2, 195.189.98.0/24×2, 45.194.66.0/24×2, 217.60.33.0/24×2
+  net16: 88.216.0.0/16×4, 84.32.0.0/16×4, 217.60.0.0/16×3, 13.143.0.0/16×3, 150.241.0.0/16×2
+  asn: 9123×10, 59642×5, 197574×5, 213896×3, 219064×3
+  domain: betust.net×5, fox-lisa.ru×3, huahua.wiki×3, jarbook.net×2, izzzyvpn.space×1
+  sni_dom: betust.net×11, bachidze.com×5, fox-lisa.ru×4, apple.com×4, topp-con.xyz×4
+  sni: www.apple.com×4, tickets.betust.net×3, yoy-api.bachidze.com×3, cdn.izzzyvpn.space×2, app.betust.net×2
+  cc: RU×16, NL×13, DE×9, PL×7, SE×4
