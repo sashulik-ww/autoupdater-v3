@@ -1,300 +1,300 @@
-6.02	🇺🇸 United States, Chicago	uuid:fb37d713-0…, net16:88.216, sidlen:8, flow:xtls-rprx-vision
-5.99	🇺🇸 United States, Chicago	uuid:fb37d713-0…, net16:88.216, sidlen:8, flow:xtls-rprx-vision
-8.87	🇨🇦 Canada, Toronto	uuid:f333ac5d-1…, sni:tiktok.com, pbk:kLCwYNBhCg…, port:2066
-8.05	🇳🇱 The Netherlands, Halfweg	sni2:betust.net, net24:50.7.95, uuid:fb37d713-0…, net16:50.7
-9.32	🇺🇸 United States, Orem	net24:177.202.78, sni:hollandlanzerotte.xyz, sni2:hollandlanzerotte.xyz, pbk:EEL-yDPBfo…
-4.21	🇵🇱 Poland, Warsaw	uuid:71b566cb-7…, sni2:xvanta.online, flow:xtls-rprx-vision, sec:reality
-11.26	🇺🇸 United States, Orem	net24:177.202.78, host2:hollandlanzerotte.xyz, sni:hollandlanzerotte.xyz, sni2:hollandlanzerotte.xyz
-10.80	🇳🇱 The Netherlands, Amsterdam	uuid:727a9178-d…, sni:bol.com, sni2:bol.com, pbk:yyXZsa238G…
-4.51	🇵🇱 Poland, Warsaw	uuid:71b566cb-7…, sni2:xvanta.online, fp:firefox, flow:xtls-rprx-vision
-2.33	🇳🇱 The Netherlands, Amsterdam	net16:86.54, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
-2.33	🇳🇱 The Netherlands, Amsterdam	net16:86.54, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
-8.28	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, host2:bachidze.com, sni2:bachidze.com, fp:firefox
-6.98	🇵🇱 Poland, Warsaw	sni:pl1.song69.fun, pbk:5H_MmyfvF4…, sni2:song69.fun, uuid:92b79c22-f…
-3.09	🇱🇹 Lithuania, Šiauliai	net24:84.32.209, net16:84.32, fp:firefox, flow:xtls-rprx-vision
-3.29	🇧🇬 Bulgaria, Sofia	net16:217.60, fp:firefox, flow:xtls-rprx-vision, sec:reality
-4.59	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision, sec:reality
-9.52	🇱🇹 Lithuania, Šiauliai	uuid:2232d904-8…, sni2:betust.net, host2:betust.net, net16:84.32
-8.77	🇪🇪 Estonia, Tallinn	net24:132.243.74, sni:ee.song69.fun, sni2:song69.fun, uuid:92b79c22-f…
-3.06	🇪🇪 Estonia, Tallinn	net24:45.86.60, net16:45.86, fp:firefox, flow:xtls-rprx-vision
-8.94	🇪🇪 Estonia, Tallinn	net24:132.243.74, sni:ee.song69.fun, uuid:0806e6e2-e…, sni2:song69.fun
-9.50	🇱🇹 Lithuania, Šiauliai	uuid:2232d904-8…, sni2:betust.net, host2:betust.net, net16:84.32
-4.55	🇳🇱 The Netherlands, Amsterdam	uuid:92b79c22-f…, pbk:HRmmr0Ii4T…, sidlen:8, net16:144.31
-14.03	🇷🇺 Russia, St Petersburg	sni:yoy-api.bachidze.com, pbk:ZJlfiMh4eb…, net24:83.147.246, uuid:3bb97d46-7…
-9.96	🇩🇪 Germany, Frankfurt am Main	sni:c8.qwyak.ru, pbk:3pBHfffYFR…, sni2:qwyak.ru, uuid:558b26f6-0…
-2.89	🇪🇪 Estonia, Tallinn	net24:45.86.60, net16:45.86, fp:ios, flow:xtls-rprx-vision
-4.90	🇪🇪 Estonia, Tallinn	sni2:keno.su, net16:31.56, sidlen:0, flow:xtls-rprx-vision
-12.06	🇨🇦 Canada, Montreal	host2:fox-lisa.ru, net24:78.17.93, uuid:ccb8ff48-3…, sni2:fox-lisa.ru
-9.96	🇨🇦 Canada, Montreal	net24:78.17.93, uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…
-6.98	🇵🇱 Poland, Warsaw	sni:pl1.song69.fun, pbk:5H_MmyfvF4…, sni2:song69.fun, uuid:92b79c22-f…
-10.89	🇷🇸 Serbia, Belgrade	sni:rs3.univesalsrv.com, pbk:gHDoSWGWMV…, net24:150.40.126, net16:150.40
-2.50	🇷🇴 Romania, Bucharest	net16:86.54, sidlen:8, sec:reality, type:tcp
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-7.21	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, sni2:univesalsrv.com, uuid:2f35965a-9…
-4.59	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision, sec:reality
-7.21	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, sni2:univesalsrv.com, uuid:2f35965a-9…
-8.02	🇳🇱 The Netherlands, Amsterdam	host2:golangwikito.cfd, uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:31.56
-2.21	🇬🇧 United Kingdom, Bolton	net16:82.148, fp:firefox, flow:xtls-rprx-vision, sec:reality
-5.35	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:firefox, flow:xtls-rprx-vision
-4.92	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, fp:firefox, flow:xtls-rprx-vision
-5.32	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:firefox, flow:xtls-rprx-vision
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-2.08	🇬🇧 United Kingdom, Bolton	net16:82.148, fp:firefox, sec:reality
-8.38	🇬🇧 United Kingdom, Bolton	uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…, net16:82.148
-4.45	🇺🇸 United States, Buffalo	uuid:50a87e21-f…, net16:72.56, sidlen:0, flow:xtls-rprx-vision
-10.64	🇵🇱 Poland, Warsaw	net24:191.217.211, sni:pl1.song69.fun, pbk:5H_MmyfvF4…, net16:191.217
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-5.85	🇱🇹 Lithuania, Vilnius	sni2:song69.fun, uuid:92b79c22-f…, pbk:HRmmr0Ii4T…, fp:firefox
-4.82	🇩🇪 Germany, Frankfurt am Main	uuid:5d978525-b…, sidlen:8, sec:reality
-4.92	🇸🇪 Sweden, Stockholm	uuid:f8d52ece-f…, sni2:golangwikito.cfd, fp:firefox, flow:xtls-rprx-vision
-6.71	🇨🇾 Cyprus, Nicosia	uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…, fp:firefox
-5.24	🇳🇱 The Netherlands, Amsterdam	uuid:92b79c22-f…, pbk:HRmmr0Ii4T…, sidlen:8, fp:firefox
-3.50	🇩🇪 Germany, Frankfurt am Main	net16:94.183, sni:www.bing.com, sni2:bing.com, flow:xtls-rprx-vision
-5.51	🇫🇷 France, Paris	sni2:song69.fun, uuid:92b79c22-f…, pbk:HRmmr0Ii4T…, sidlen:0
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-7.99	🇳🇱 The Netherlands, Amsterdam	host2:golangwikito.cfd, uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:31.56
-2.82	🇵🇱 Poland, Warsaw	net16:150.251, flow:xtls-rprx-vision, sec:reality
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-2.47	🇳🇱 The Netherlands, Kerkrade	net16:13.143, sec:reality, type:tcp
-6.55	🇸🇪 Sweden, Stockholm	host2:golangwikito.cfd, uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision
-4.48	🇺🇦 Ukraine, Kyiv	net16:83.147, sni:www.bing.com, sni2:bing.com, flow:xtls-rprx-vision
-6.59	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, sni2:bachidze.com, sidlen:0, flow:xtls-rprx-vision
-4.70	🇸🇪 Sweden, Stockholm	uuid:a35c508f-4…, sni2:nexfile.net, fp:firefox, net16:2.26
-6.89	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, sni2:bachidze.com, fp:firefox, sidlen:0
-6.92	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, sni2:bachidze.com, fp:firefox, sidlen:0
-7.62	🇳🇱 The Netherlands, Amsterdam	net24:217.60.34, net16:217.60, uuid:f8d52ece-f…, sni2:golangwikito.cfd
-6.89	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, sni2:bachidze.com, fp:firefox, sidlen:0
-2.64	🇳🇱 The Netherlands, Kerkrade	net16:13.143, type:xhttp, sec:reality
-6.59	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, sni2:bachidze.com, sidlen:0, flow:xtls-rprx-vision
-4.51	🇺🇦 Ukraine, Kyiv	net16:83.147, sni:www.bing.com, sni2:bing.com, flow:xtls-rprx-vision
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
+3.76	🇺🇸 United States, Elk Grove Village	sni2:zestapp778.com, uuid:e9a8144e-5…, type:tcp
+4.03	🇺🇸 United States, Elk Grove Village	sni2:zestapp778.com, uuid:e9a8144e-5…, fp:firefox
+9.38	🇳🇱 The Netherlands, Halfweg	sni2:betust.net, uuid:fb37d713-0…, net24:50.7.95, net16:50.7
+15.39	🇬🇧 United Kingdom, Slough	sni:prime.jarbook.net, pbk:oAX7soFKfN…, host2:jarbook.net, uuid:95d0e214-e…
+12.98	🇸🇪 Sweden, Stockholm	uuid:3bb97d46-7…, sni2:bachidze.com, sni:smart.bachidze.com, pbk:vzRgIP8Mvd…
+5.65	🇵🇱 Poland, Warsaw	sni2:xvanta.online, uuid:71b566cb-7…, net16:31.76, flow:xtls-rprx-vision
+14.61	🇸🇪 Sweden, Stockholm	uuid:3bb97d46-7…, host2:bachidze.com, sni2:bachidze.com, sni:smart.bachidze.com
+13.33	🇩🇪 Germany, Frankfurt am Main	uuid:95d0e214-e…, sni:tickets.betust.net, pbk:TRaUsnzFf-…, net24:88.216.70
+14.62	🇩🇪 Germany, Frankfurt am Main	uuid:95d0e214-e…, sni:tickets.betust.net, pbk:TRaUsnzFf-…, net24:88.216.182
+13.02	🇳🇱 The Netherlands, Amsterdam	uuid:727a9178-d…, sni:bol.com, sni2:bol.com, pbk:yyXZsa238G…
+3.87	🇸🇪 Sweden, Stockholm	uuid:50a87e21-f…, sidlen:0, fp:firefox, flow:xtls-rprx-vision
+5.80	🇩🇪 Germany, Frankfurt am Main	uuid:5d978525-b…, sidlen:8, sec:reality
+5.92	🇵🇱 Poland, Warsaw	sni2:xvanta.online, uuid:71b566cb-7…, fp:firefox, net16:31.76
+7.78	🇩🇪 Germany, Frankfurt am Main	uuid:558b26f6-0…, net24:191.44.108, net16:191.44, fp:ios
+3.69	🇸🇪 Sweden, Stockholm	uuid:50a87e21-f…, sidlen:0, fp:ios, flow:xtls-rprx-vision
+7.93	🇩🇪 Germany, Frankfurt am Main	uuid:558b26f6-0…, net24:191.44.108, net16:191.44, fp:firefox
+3.11	🇩🇪 Germany, Frankfurt am Main	sni:www.bing.com, sni2:bing.com, flow:xtls-rprx-vision, sec:reality
+3.13	🇩🇪 Germany, Frankfurt am Main	sni:www.bing.com, sni2:bing.com, flow:xtls-rprx-vision, sec:reality
+2.94	🇱🇹 Lithuania, Šiauliai	net24:84.32.209, net16:84.32, fp:firefox, flow:xtls-rprx-vision
+3.17	🇧🇬 Bulgaria, Sofia	net16:217.60, fp:firefox, flow:xtls-rprx-vision, sec:reality
+9.94	🇪🇪 Estonia, Tallinn	net24:132.243.74, sni:ee.song69.fun, sni2:song69.fun, uuid:92b79c22-f…
+2.97	🇱🇹 Lithuania, Šiauliai	net24:84.32.209, net16:84.32, fp:firefox, flow:xtls-rprx-vision
+12.18	🇩🇪 Germany, Frankfurt am Main	sni:c8.qwyak.ru, pbk:3pBHfffYFR…, sni2:qwyak.ru, uuid:558b26f6-0…
+10.24	🇷🇺 Russia, St Petersburg	sni:yoy-api.bachidze.com, pbk:ZJlfiMh4eb…, uuid:3bb97d46-7…, sni2:bachidze.com
+16.54	🇷🇺 Russia, St Petersburg	net24:217.25.93, sni:yoy-api.bachidze.com, pbk:ZJlfiMh4eb…, net16:217.25
+10.42	🇪🇪 Estonia, Tallinn	uuid:0806e6e2-e…, net24:132.243.74, sni:ee.song69.fun, sni2:song69.fun
+9.94	🇪🇪 Estonia, Tallinn	net24:132.243.74, sni:ee.song69.fun, sni2:song69.fun, uuid:92b79c22-f…
+3.71	🇪🇪 Estonia, Tallinn	net24:45.86.60, net16:45.86, fp:firefox, flow:xtls-rprx-vision
+9.94	🇪🇪 Estonia, Tallinn	net24:132.243.74, sni:ee.song69.fun, sni2:song69.fun, uuid:92b79c22-f…
+5.60	🇳🇱 The Netherlands, Amsterdam	uuid:92b79c22-f…, pbk:HRmmr0Ii4T…, sidlen:8, fp:firefox
+9.48	🇩🇪 Germany, Frankfurt am Main	sni2:qwyak.ru, uuid:558b26f6-0…, net24:191.44.108, net16:191.44
+10.99	🇳🇱 The Netherlands, Eygelshoven	sni:qq.utiltools.site, uuid:4054fdc2-e…, sni2:utiltools.site, pbk:drY21DHNOr…
+7.00	🇸🇪 Sweden, Stockholm	uuid:f8d52ece-f…, sni2:golangwikito.cfd, fp:firefox, flow:xtls-rprx-vision
+2.98	🇷🇴 Romania, Bucharest	net16:86.54, sidlen:8, sec:reality, type:tcp
+9.64	🇷🇺 Russia, St Petersburg	pbk:KbjX7IJnVt…, net24:147.45.104, net16:147.45, sidlen:8
+2.72	🇬🇧 United Kingdom, Bolton	net16:82.148, fp:firefox, flow:xtls-rprx-vision, sec:reality
+3.17	🇪🇸 Spain, Titulcia	net24:122.8.47, net16:122.8, sidlen:0, fp:firefox
+3.58	🇱🇻 Latvia, Riga	net16:217.60, sidlen:0, fp:firefox, flow:xtls-rprx-vision
+2.71	🇬🇧 United Kingdom, London	net16:82.148, fp:firefox, type:xhttp
+2.72	🇬🇧 United Kingdom, London	net16:82.148, fp:firefox, flow:xtls-rprx-vision, sec:reality
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+13.99	🇩🇪 Germany, Frankfurt Am Main	net24:130.49.177, uuid:727a9178-d…, sni:de-2.ffpn.pro, sni2:ffpn.pro
+6.24	🇺🇸 United States, Orem	net16:177.202, uuid:50a87e21-f…, sidlen:0, flow:xtls-rprx-vision
+2.70	🇬🇧 United Kingdom, Bolton	net16:82.148, fp:firefox, flow:xtls-rprx-vision, sec:reality
+6.26	🇺🇸 United States, Orem	net16:177.202, uuid:50a87e21-f…, sidlen:0, flow:xtls-rprx-vision
+3.44	🇪🇪 Estonia, Tallinn	net24:45.86.60, net16:45.86, flow:xtls-rprx-vision, sec:reality
+6.08	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:firefox, flow:xtls-rprx-vision
+6.06	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:firefox, flow:xtls-rprx-vision
+5.78	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, flow:xtls-rprx-vision, sec:reality
+10.25	🇬🇧 United Kingdom, Bolton	uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…, net16:82.148
+12.24	🇬🇧 United Kingdom, Bolton	host2:fox-lisa.ru, uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…
+12.24	🇬🇧 United Kingdom, Bolton	host2:fox-lisa.ru, uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…
+3.92	🇫🇮 Finland, Helsinki	net16:13.143, sidlen:0, fp:firefox, flow:xtls-rprx-vision
+10.04	🇨🇾 Cyprus, Nicosia	host2:fox-lisa.ru, uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…
+5.57	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+4.78	🇺🇸 United States, Buffalo	uuid:50a87e21-f…, net16:72.56, sidlen:0, fp:ios
+10.25	🇬🇧 United Kingdom, Bolton	uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…, net16:82.148
+12.28	🇨🇦 Canada, Montreal	net24:78.17.93, sni:ca1.fox-lisa.ru, uuid:ccb8ff48-3…, sni2:fox-lisa.ru
+4.46	🇩🇪 Germany, Frankfurt am Main	sni:www.bing.com, sni2:bing.com, net16:94.183, flow:xtls-rprx-vision
+14.27	🇨🇦 Canada, Montreal	net24:78.17.93, host2:fox-lisa.ru, sni:ca1.fox-lisa.ru, uuid:ccb8ff48-3…
+6.26	🇺🇸 United States, Orem	net16:177.202, uuid:50a87e21-f…, sidlen:0, flow:xtls-rprx-vision
 3.28	🇩🇪 Germany, Frankfurt am Main	net16:217.60, sidlen:0, flow:xtls-rprx-vision, sec:reality
-3.23	🇫🇮 Finland, Helsinki	net16:13.143, fp:firefox, sidlen:0, flow:xtls-rprx-vision
-7.54	🇩🇪 Germany, Frankfurt am Main	sni2:qwyak.ru, uuid:558b26f6-0…, net24:191.44.108, net16:191.44
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-3.18	🇳🇴 Norway, Stokmarknes	net24:13.143.184, net16:13.143, fp:firefox, flow:xtls-rprx-vision
-4.85	🇫🇷 France, Paris	uuid:0806e6e2-e…, sni2:song69.fun, fp:firefox, flow:xtls-rprx-vision
-4.51	🇵🇱 Poland, Warsaw	uuid:0806e6e2-e…, sni2:song69.fun, flow:xtls-rprx-vision, sec:reality
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-2.40	🇨🇭 Switzerland, Zurich	net24:208.69.78, net16:208.69, sni:www.apple.com, sec:reality
-2.43	🇨🇭 Switzerland, Zurich	net24:208.69.78, net16:208.69, sni:www.apple.com, sec:reality
-2.69	🇺🇸 United States, Elk Grove Village	sni2:zestapp778.com, uuid:e9a8144e-5…, type:tcp
-8.51	🇩🇪 Germany, Frankfurt am Main	uuid:2cd9dc41-a…, sni2:filebeam.website, pbk:xcTXD3of3Y…, net16:78.17
-3.00	🇺🇸 United States, Elk Grove Village	sni2:zestapp778.com, uuid:e9a8144e-5…, fp:firefox
-5.02	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, flow:xtls-rprx-vision, sec:reality
-3.23	🇵🇱 Poland, Warsaw	net16:13.143, fp:firefox, sidlen:0, flow:xtls-rprx-vision
-2.57	🇵🇱 Poland, Warsaw	net16:13.143, flow:xtls-rprx-vision, sec:reality, type:tcp
-11.88	🇺🇸 United States, Orem	net24:177.202.73, host2:gemsubbgem.world, sni:gemsubbgem.world, sni2:gemsubbgem.world
-8.38	🇬🇧 United Kingdom, Bolton	uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…, net16:82.148
-13.31	🇩🇪 Germany, Frankfurt am Main	sni:tickets.betust.net, pbk:TRaUsnzFf-…, net24:88.216.182, uuid:95d0e214-e…
-13.29	🇬🇧 United Kingdom, Slough	host2:jarbook.net, uuid:95d0e214-e…, sni:prime.jarbook.net, pbk:oAX7soFKfN…
-12.41	🇳🇱 The Netherlands, Halfweg	host2:jarbook.net, uuid:95d0e214-e…, sni2:jarbook.net, sni:main.jarbook.net
-12.41	🇳🇱 The Netherlands, Halfweg	host2:jarbook.net, uuid:95d0e214-e…, sni2:jarbook.net, sni:main.jarbook.net
-12.40	🇸🇪 Sweden, Stockholm	uuid:3bb97d46-7…, host2:bachidze.com, sni2:bachidze.com, sni:smart.bachidze.com
-12.35	🇳🇱 The Netherlands, Eygelshoven	sni:qq.utiltools.site, sni2:utiltools.site, uuid:4054fdc2-e…, host2:utiltools.site
-12.15	🇳🇱 The Netherlands, Amsterdam	net24:84.32.101, pbk:92lzqaBZnD…, uuid:2232d904-8…, sni:api37.betust.net
-12.15	🇳🇱 The Netherlands, Amsterdam	net24:84.32.101, pbk:92lzqaBZnD…, uuid:2232d904-8…, sni:api37.betust.net
-12.03	🇩🇪 Germany, Frankfurt am Main	sni:tickets.betust.net, pbk:TRaUsnzFf-…, uuid:95d0e214-e…, net24:88.216.70
-11.77	🇩🇪 Germany, Frankfurt Am Main	net24:130.49.177, uuid:727a9178-d…, sni:de-2.ffpn.pro, sni2:ffpn.pro
-11.32	🇫🇷 France, Roubaix	host2:bookmai.com, net24:163.245.42, net16:163.245, uuid:b9bfa54d-b…
-11.30	🇷🇸 Serbia, Belgrade	sni:rs5.univesalsrv.com, pbk:X8mPYnsoTd…, net24:150.40.126, net16:150.40
-11.02	🇸🇪 Sweden, Stockholm	uuid:3bb97d46-7…, sni2:bachidze.com, sni:smart.bachidze.com, pbk:vzRgIP8Mvd…
-11.00	🇳🇱 The Netherlands, Amsterdam	uuid:c1fdf1e6-6…, sni:nl1.kids-games.ru, sni2:kids-games.ru, pbk:oSbyJBoI2J…
-10.78	🇳🇱 The Netherlands, Eygelshoven	host2:xvanta.online, net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…
-8.97	🇫🇷 France, Roubaix	net24:163.245.42, net16:163.245, uuid:b9bfa54d-b…, sni:mother-earth.fyi
-8.85	🇳🇱 The Netherlands, Eygelshoven	net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…, net24:191.217.217
-7.86	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
-7.86	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
-7.21	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, sni2:univesalsrv.com, uuid:2f35965a-9…
-7.21	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, sni2:univesalsrv.com, uuid:2f35965a-9…
-6.31	🇩🇪 Germany, Frankfurt am Main	uuid:558b26f6-0…, net24:191.44.108, net16:191.44, fp:firefox
-6.05	🇫🇷 France, Roubaix	uuid:b9bfa54d-b…, sni:mother-earth.fyi, sni2:mother-earth.fyi, sidlen:0
-6.01	🇩🇪 Germany, Frankfurt am Main	uuid:558b26f6-0…, net24:191.44.108, net16:191.44, flow:xtls-rprx-vision
-5.51	🇺🇸 United States, Orem	net16:177.202, uuid:50a87e21-f…, sidlen:0, flow:xtls-rprx-vision
-5.48	🇺🇸 United States, Orem	net16:177.202, uuid:50a87e21-f…, sidlen:0, flow:xtls-rprx-vision
-5.32	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:firefox, flow:xtls-rprx-vision
-5.23	🇪🇪 Estonia, Tallinn	sni2:keno.su, net16:31.56, fp:firefox, sidlen:0
-5.02	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, flow:xtls-rprx-vision, sec:reality
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇧🇬 Bulgaria, Sofia	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-2.69	🇸🇬 Singapore	sni2:zestapp778.com, uuid:e9a8144e-5…, type:tcp
-2.22	🇩🇪 Germany, Frankfurt am Main	sni:www.bing.com, sni2:bing.com, flow:xtls-rprx-vision, sec:reality
-2.19	🇩🇪 Germany, Frankfurt am Main	sni:www.bing.com, sni2:bing.com, flow:xtls-rprx-vision, sec:reality
-2.15	🇯🇵 Japan, Tokyo	net24:104.24.0
-2.15	🇸🇬 Singapore	net24:104.24.0
-13.53	🇷🇺 Russia, Moscow	uuid:c53ea5e9-e…, sni:du-rov.secureservice.top, sni2:secureservice.top, pbk:fSVfR9NB-6…
-12.09	🇵🇱 Poland, Warsaw	net24:217.60.33, sni:cz.pythonmakemigreat.wiki, port:61374, sni2:pythonmakemigreat.wiki
-11.87	🇩🇪 Germany, Frankfurt am Main	sni:tickets.betust.net, pbk:TRaUsnzFf-…, net24:88.216.182, sni2:betust.net
-11.85	🇱🇹 Lithuania, Šiauliai	uuid:95d0e214-e…, sni:admin.betust.net, pbk:zZjrHRzULo…, sni2:betust.net
-11.09	🇷🇺 Russia, Moscow	sni:apply.betust.net, pbk:T98nmnCp0q…, net24:81.163.22, sni2:betust.net
-11.01	🇸🇪 Sweden, Stockholm	sni:cdn.izzzyvpn.space, pbk:v--0dXOWcn…, uuid:e7ee38d7-f…, sni2:izzzyvpn.space
-10.86	🇳🇱 The Netherlands, Amsterdam	net24:84.32.96, host2:jarbook.net, sni2:jarbook.net, sni:reg.jarbook.net
-10.63	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, uuid:7d1a74fd-8…, host2:ferrin.uk, net16:84.32
-10.62	🇵🇱 Poland, Warsaw	net24:217.60.33, port:61374, net16:217.60, host2:pythonmakemigreat.wiki
-10.56	🇬🇧 United Kingdom, Bolton	uuid:a52fd54b-b…, sni2:vpngold.ru, pbk:1H1DiBCBB7…, host2:vpngold.ru
-9.96	🇨🇦 Canada, Montreal	net24:78.17.93, uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…
-9.92	🇳🇱 The Netherlands, Halfweg	uuid:3bb97d46-7…, sni2:bachidze.com, sni:direct-nl.bachidze.com, pbk:E12wXXagR8…
-9.91	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, host2:ferrin.uk, net16:84.32, sni2:ferrin.uk
-9.83	🇳🇱 The Netherlands, Zoetermeer	uuid:5fb552a8-9…, sni2:vethilis.ru, sni:papad1.vethilis.ru, net24:93.152.205
-9.80	🇷🇺 Russia, Moscow	net24:81.163.22, sni2:betust.net, host2:betust.net, uuid:fb37d713-0…
-9.80	🇱🇹 Lithuania, Šiauliai	sni:admin.betust.net, pbk:zZjrHRzULo…, sni2:betust.net, host2:betust.net
-9.65	🇳🇱 The Netherlands, Amsterdam	host2:vethilis.ru, uuid:5fb552a8-9…, sni2:vethilis.ru, net16:93.152
-9.49	🇷🇺 Russia, Moscow	net24:81.163.22, sni2:betust.net, host2:betust.net, uuid:fb37d713-0…
-9.37	🇺🇸 United States, Santa Clara	uuid:b9dd6833-9…, pbk:mvgWVqCFiq…, net24:43.153.90, net16:43.153
-9.31	🇷🇺 Russia, Moscow	sni:msc1.serverslocal.ru, sni2:serverslocal.ru, pbk:qPh1iuwpEL…, net24:13.143.184
-9.31	🇷🇺 Russia, Moscow	sni:msc1.serverslocal.ru, sni2:serverslocal.ru, pbk:qPh1iuwpEL…, net24:13.143.184
-9.17	🇱🇻 Latvia, Riga	sni:lv.dexlen.cc, uuid:2614a96d-e…, sni2:dexlen.cc, net24:72.56.52
-9.11	🇫🇷 France, Strasbourg	host2:bookmai.com, net24:163.245.42, net16:163.245, uuid:b9bfa54d-b…
-9.00	🇪🇪 Estonia, Tallinn	sni:ee.lenvex.cc, uuid:2614a96d-e…, net16:13.143, net24:13.143.182
-8.85	🇳🇱 The Netherlands, Eygelshoven	net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…, net24:191.217.217
-8.85	🇳🇱 The Netherlands, Eygelshoven	net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…, net24:191.217.217
-8.83	🇵🇱 Poland, Warsaw	sni:cz.pythonmakemigreat.wiki, pbk:QrNs0ew7sn…, port:61374, sni2:pythonmakemigreat.wiki
-8.72	🇸🇬 Singapore	net24:5.223.59, host2:divarkhaghazi.com, sni2:divarkhaghazi.com, net16:5.223
-8.72	🇸🇬 Singapore	net24:5.223.59, host2:divarkhaghazi.com, sni2:divarkhaghazi.com, net16:5.223
-8.72	🇸🇬 Singapore	net24:5.223.59, host2:divarkhaghazi.com, sni2:divarkhaghazi.com, net16:5.223
-8.72	🇺🇿 Uzbekistan, Tashkent	uuid:3cd95e58-9…, pbk:6eN2NciEaZ…, net16:185.76, sni:stats.vk-portal.net
-8.57	🇩🇪 Germany, Frankfurt am Main	pbk:QrNs0ew7sn…, port:61374, uuid:f8d52ece-f…, sni2:golangwikito.cfd
-8.51	🇳🇱 The Netherlands, Amsterdam	sni2:pythonmakemigreat.wiki, net16:217.60, uuid:f8d52ece-f…, fp:firefox
-8.49	🇫🇮 Finland, Helsinki	uuid:2614a96d-e…, net16:13.143, pbk:OFmJtVi6OB…, sni2:lenvex.cc
-8.26	🇱🇹 Lithuania, Šiauliai	sni2:betust.net, host2:betust.net, net16:84.32, sidlen:8
-8.25	🇨🇦 Canada, Toronto	uuid:50414e45-4…, net24:104.20.45, net16:104.20
-8.10	🇺🇸 United States, Chicago	sni2:betust.net, host2:betust.net, net16:88.216, sidlen:8
-7.93	🇱🇹 Lithuania, Šiauliai	sni2:betust.net, host2:betust.net, net16:84.32, sidlen:8
-7.92	🇪🇪 Estonia, Tallinn	net24:31.77.236, sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…
-7.92	🇪🇪 Estonia, Tallinn	net24:31.77.236, sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…
-7.89	🇨🇦 Canada, Toronto	host2:speedtest.org, net24:172.67.74, net16:172.67, fp:firefox
-7.86	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
-7.86	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
-7.85	🇷🇺 Russia, Moscow	pbk:LEziyH-E4k…, uuid:7ad63b26-b…, sni2:topp-con.xyz, flow:xtls-rprx-vision
-7.66	🇨🇦 Canada, Toronto	uuid:e3149c82-0…, sni:fast.145779.xyz, sni2:145779.xyz, net24:172.67.199
-7.66	🇳🇱 The Netherlands, Amsterdam	uuid:5fb552a8-9…, sni2:vethilis.ru, net16:93.152, flow:xtls-rprx-vision
-7.62	🇵🇱 Poland, Warsaw	net24:45.194.66, uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:45.194
-7.56	🇨🇦 Canada, Toronto	host2:speedtest.org, net24:172.67.74, net16:172.67
-7.52	🇩🇪 Germany, Frankfurt am Main	uuid:7ad63b26-b…, sni2:topp-con.xyz, net16:13.143, fp:ios
-7.46	🇳🇱 The Netherlands, Amsterdam	port:61374, net24:217.60.34, net16:217.60, uuid:f8d52ece-f…
-7.45	🇷🇺 Russia, Moscow	sni:msk1.nexfile.net, pbk:e6RrKgiMRF…, net24:185.76.241, net16:185.76
-7.45	🇷🇺 Russia, Moscow	sni:msk1.nexfile.net, pbk:e6RrKgiMRF…, net24:185.76.241, net16:185.76
-7.21	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, sni2:univesalsrv.com, uuid:2f35965a-9…
-7.21	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, sni2:univesalsrv.com, uuid:2f35965a-9…
-7.04	🇭🇰 Hong Kong	host2:huahua.wiki, net16:43.161, sni:www.apple.com, flow:xtls-rprx-vision
-6.93	🇸🇪 Sweden, Stockholm	net16:13.143, pbk:OFmJtVi6OB…, sni2:lenvex.cc, sidlen:0
-6.93	🇸🇪 Sweden, Stockholm	net16:13.143, pbk:OFmJtVi6OB…, sni2:lenvex.cc, sidlen:0
-6.90	🇳🇱 The Netherlands, Amsterdam	sni2:pythonmakemigreat.wiki, uuid:f8d52ece-f…, net16:31.56, fp:firefox
-6.84	🇬🇧 United Kingdom, Bolton	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-6.84	🇬🇧 United Kingdom, Bolton	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-6.73	🇷🇺 Russia, Novosibirsk	uuid:7ad63b26-b…, sni2:topp-con.xyz, net16:147.45, fp:firefox
-6.69	🇩🇪 Germany, Frankfurt am Main	uuid:e7ee38d7-f…, host2:izzzyvpn.space, sni2:izzzyvpn.space, net16:144.31
-6.66	🇨🇦 Canada, Beauharnois	uuid:3cd95e58-9…, pbk:6eN2NciEaZ…, sni:stats.vk-portal.net, sni2:vk-portal.net
-6.65	🇷🇺 Russia, Moscow	uuid:7ad63b26-b…, sni2:topp-con.xyz, net16:147.45, fp:firefox
-6.63	🇨🇦 Canada, Toronto	host2:145779.xyz, sni:fast.145779.xyz, sni2:145779.xyz, net16:104.21
-6.56	🇳🇱 The Netherlands, Amsterdam	sni2:pythonmakemigreat.wiki, uuid:f8d52ece-f…, net16:31.56, flow:xtls-rprx-vision
-6.50	🇳🇱 The Netherlands, Amsterdam	host2:golangwikito.cfd, uuid:f8d52ece-f…, net16:31.56, type:tcp
-6.44	🇳🇱 The Netherlands, Amsterdam	uuid:e7ee38d7-f…, host2:izzzyvpn.space, sni2:izzzyvpn.space, flow:xtls-rprx-vision
-6.43	🇳🇱 The Netherlands, Amsterdam	net24:217.60.34, net16:217.60, uuid:f8d52ece-f…, type:tcp
-6.42	🇬🇧 United Kingdom, Bolton	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, net16:82.148
-6.40	🇷🇺 Russia, Moscow	sni:pl.sparxiecn.com, sni2:sparxiecn.com, uuid:4d8132cb-f…, net24:84.23.52
-6.40	🇷🇺 Russia, Moscow	sni:pl.sparxiecn.com, sni2:sparxiecn.com, uuid:4d8132cb-f…, net24:84.23.52
-6.40	🇬🇧 United Kingdom, Bolton	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, net16:82.148
-6.22	🇨🇦 Canada, Toronto	uuid:e3149c82-0…, sni:fast.145779.xyz, sni2:145779.xyz, net16:104.21
-6.17	🇨🇦 Canada, Toronto	host2:shopify.com, net24:104.18.42
-6.17	🇨🇦 Canada, Toronto	host2:shopify.com, net24:104.18.42
-6.15	🇩🇪 Germany, Frankfurt am Main	net16:217.60, uuid:f8d52ece-f…, type:tcp
-6.12	🇧🇾 Belarus, Minsk	net16:13.143, uuid:a35c508f-4…, sni2:nexfile.net, type:xhttp
-6.12	🇧🇾 Belarus, Minsk	net16:13.143, uuid:a35c508f-4…, sni2:nexfile.net, type:xhttp
-6.12	🇧🇾 Belarus, Minsk	net16:13.143, uuid:a35c508f-4…, sni2:nexfile.net, type:xhttp
-6.11	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
-6.11	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
-6.11	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
-6.11	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
-6.11	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
-6.07	🇱🇻 Latvia, Riga	net24:72.56.52, pbk:OFmJtVi6OB…, net16:72.56, sidlen:0
-6.06	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:31.56, fp:firefox
-5.99	🇨🇦 Canada, Toronto	sni:fast.145779.xyz, sni2:145779.xyz, net24:172.67.199, net16:172.67
-5.97	🇮🇷 Iran, Tehran	net16:94.184, sni2:bing.com, sidlen:8, sec:reality
-5.97	🇮🇷 Iran, Tehran	net16:94.184, sni2:bing.com, sidlen:8, sec:reality
-5.97	🇫🇮 Finland, Helsinki	uuid:ffaa2141-7…, net24:122.8.47, net16:122.8, type:tcp
-5.92	🇩🇪 Germany, Frankfurt am Main	net24:178.17.52, sni2:blog-forme.ru, net16:178.17, fp:firefox
-5.91	🇩🇪 Germany, Frankfurt am Main	sni2:filebeam.website, pbk:xcTXD3of3Y…, sidlen:8, fp:firefox
-5.85	🇺🇸 United States, Orem	net16:177.202, uuid:50a87e21-f…, fp:firefox, sidlen:0
-5.75	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, type:tcp
-5.75	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, type:tcp
-5.75	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, type:tcp
-5.75	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, type:tcp
-5.75	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, type:tcp
-5.75	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, type:tcp
-5.75	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, type:tcp
-5.67	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, type:xhttp
-5.67	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, type:xhttp
-5.67	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, type:xhttp
-5.60	🇳🇱 The Netherlands, Amsterdam	uuid:e7ee38d7-f…, sni2:izzzyvpn.space, fp:firefox, flow:xtls-rprx-vision
-5.59	🇩🇪 Germany, Frankfurt am Main	net24:178.17.52, sni2:blog-forme.ru, net16:178.17, sec:reality
-5.51	🇩🇪 Germany, Frankfurt am Main	uuid:e7ee38d7-f…, sni2:izzzyvpn.space, net16:144.31, flow:xtls-rprx-vision
-5.42	🇪🇪 Estonia, Tallinn	sni2:izzzyvpn.space, net16:31.56, fp:firefox, flow:xtls-rprx-vision
-5.34	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, type:xhttp, sec:reality
-5.22	🇩🇪 Germany, Frankfurt am Main	sni2:dexlen.cc, pbk:OFmJtVi6OB…, fp:firefox, sidlen:0
-5.22	🇵🇱 Poland, Warsaw	sni2:dexlen.cc, pbk:OFmJtVi6OB…, fp:firefox, sidlen:0
-5.20	🇷🇺 Russia, Moscow	sni:msk1.nexfile.net, pbk:e6RrKgiMRF…, sni2:nexfile.net, sidlen:8
-5.18	🇳🇱 The Netherlands, Zoetermeer	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇳🇱 The Netherlands, Zoetermeer	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇪🇪 Estonia, Tallinn	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇪🇪 Estonia, Tallinn	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.18	🇮🇹 Italy, Palermo	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
-5.10	🇦🇪 United Arab Emirates, Abu Dhabi	uuid:dc413f44-7…, sni2:keno.su, flow:xtls-rprx-vision, sec:reality
-5.10	🇦🇪 United Arab Emirates, Abu Dhabi	uuid:dc413f44-7…, sni2:keno.su, flow:xtls-rprx-vision, sec:reality
-5.09	🇺🇸 United States, Las Vegas	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
-5.06	🇺🇸 United States, Las Vegas	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
-5.06	🇩🇪 Germany, Bad Soden am Taunus	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
-5.03	🇨🇦 Canada, Montreal	net16:66.163, fp:firefox, flow:xtls-rprx-vision, sec:reality
-4.90	🇦🇪 United Arab Emirates, Dubai	sni:mother-earth.fyi, sni2:mother-earth.fyi, sidlen:0, flow:xtls-rprx-vision
-4.90	🇩🇪 Germany, Berlin	sni:mother-earth.fyi, sni2:mother-earth.fyi, sidlen:0, flow:xtls-rprx-vision
-4.89	🇭🇰 Hong Kong	host2:huahua.wiki, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
-4.89	🇮🇩 Indonesia, Jakarta	host2:huahua.wiki, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
-4.89	🇯🇵 Japan, Tokyo	host2:huahua.wiki, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
-4.85	🇷🇺 Russia, Moscow	uuid:0806e6e2-e…, sni2:song69.fun, fp:firefox, flow:xtls-rprx-vision
-4.85	🇷🇺 Russia, Moscow	uuid:0806e6e2-e…, sni2:song69.fun, fp:firefox, flow:xtls-rprx-vision
-4.76	🇫🇷 France, Paris	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
-4.76	🇵🇱 Poland, Warsaw	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
-4.76	🇩🇪 Germany, Bad Soden am Taunus	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
-4.73	🇨🇦 Canada, Toronto	host2:speedtest.org
-4.73	🇨🇦 Canada, Toronto	host2:speedtest.org
-4.70	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, net16:84.32, fp:firefox, sec:reality
-4.70	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, net16:84.32, fp:firefox, sec:reality
-4.70	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, net16:84.32, fp:firefox, sec:reality
-4.70	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, net16:84.32, fp:firefox, sec:reality
-4.70	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, net16:84.32, fp:firefox, sec:reality
-4.70	🇳🇱 The Netherlands, Amsterdam	net24:84.32.108, net16:84.32, fp:firefox, sec:reality
-4.66	🇷🇺 Russia, Moscow	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, sidlen:0
-4.66	🇷🇺 Russia, Moscow	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, sidlen:0
-4.63	🇮🇷 Iran, Tehran	net16:94.184, sidlen:8, flow:xtls-rprx-vision, sec:reality
-4.59	🇸🇪 Sweden, Stockholm	uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision, sec:reality
-4.54	🇩🇪 Germany, Frankfurt am Main	net16:178.17, sni:www.bing.com, sni2:bing.com, sidlen:0
-4.53	🇷🇺 Russia, St Petersburg	sni2:betust.net, sidlen:8, flow:xtls-rprx-vision, sec:reality
-4.36	🇸🇪 Sweden, Stockholm	uuid:a35c508f-4…, sni2:nexfile.net, net16:2.26, type:xhttp
-4.34	🇨🇦 Canada, Toronto	uuid:eaf76557-2…, net24:104.18.151
-4.34	🇨🇦 Canada, Toronto	uuid:eaf76557-2…, net24:104.18.151
-4.32	🇷🇺 Russia, Rostov-on-Don	uuid:2232d904-8…, fp:firefox
-4.32	🇩🇪 Germany, Frankfurt am Main	net24:88.216.70, net16:88.216, sidlen:8, fp:firefox
-4.22	🇧🇪 Belgium, Brussels	net16:13.143, sni2:hat.onl, fp:firefox
-4.22	🇧🇾 Belarus, Minsk	net16:13.143, sni2:hat.onl, fp:firefox
-4.22	🇭🇺 Hungary, Budapest	net16:13.143, sni2:hat.onl, fp:firefox
-4.22	🇷🇸 Serbia, Belgrade	net16:13.143, sni2:hat.onl, fp:firefox
-4.19	🇷🇺 Russia, Moscow	uuid:2232d904-8…, type:xhttp
-4.18	🇲🇩 Moldova, Chisinau	sni2:univesalsrv.com, uuid:2f35965a-9…, sec:reality
-4.17	🇨🇦 Canada, Ottawa	host2:shopify.com
-4.17	🇨🇦 Canada, Ottawa	host2:shopify.com
-4.14	🇷🇺 Russia, Moscow	net16:193.108, sidlen:8, flow:xtls-rprx-vision, sec:reality
-4.12	🇩🇪 Germany, Falkenstein	sni:graphs.4cdn.de, sni2:4cdn.de, flow:xtls-rprx-vision, sec:reality
-4.10	🇮🇷 Iran, Qarchak	net16:94.184, sec:reality, type:tcp
-4.10	🇮🇷 Iran, Qarchak	net16:94.184, sec:reality, type:tcp
-4.10	🇩🇪 Germany, Frankfurt am Main	net16:178.17, sni:www.bing.com, sni2:bing.com, sec:reality
+5.87	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, fp:firefox, sec:reality
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+8.94	🇸🇪 Sweden, Stockholm	host2:golangwikito.cfd, uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision
+6.21	🇫🇷 France, Paris	uuid:0806e6e2-e…, sni2:song69.fun, fp:firefox, net16:31.76
+5.91	🇫🇷 France, Paris	uuid:0806e6e2-e…, sni2:song69.fun, net16:31.76, flow:xtls-rprx-vision
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+7.18	🇰🇷 South Korea, Seoul	net24:158.247.220, sni2:zestapp778.com, net16:158.247, uuid:e9a8144e-5…
+7.68	🇧🇾 Belarus, Minsk	net16:13.143, uuid:a35c508f-4…, sni2:nexfile.net, type:xhttp
+3.76	🇸🇬 Singapore	sni2:zestapp778.com, uuid:e9a8144e-5…, type:tcp
+3.13	🇨🇭 Switzerland, Zurich	net24:208.69.78, net16:208.69, sni:www.apple.com, sec:reality
+3.64	🇳🇴 Norway, Stokmarknes	net24:13.143.184, net16:13.143, flow:xtls-rprx-vision, sec:reality
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+3.76	🇭🇰 Hong Kong	sni2:zestapp778.com, uuid:e9a8144e-5…, type:tcp
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+3.62	🇵🇱 Poland, Warsaw	net16:13.143, sidlen:0, flow:xtls-rprx-vision, sec:reality
+7.93	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, sni2:bachidze.com, sidlen:0, fp:firefox
+3.92	🇵🇱 Poland, Warsaw	net16:13.143, sidlen:0, fp:firefox, flow:xtls-rprx-vision
+4.96	🇺🇸 United States, Buffalo	uuid:50a87e21-f…, net16:72.56, sidlen:0, fp:firefox
+3.10	🇨🇭 Switzerland, Zurich	net24:208.69.78, net16:208.69, sni:www.apple.com, sec:reality
+9.26	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, host2:bachidze.com, sni2:bachidze.com, sidlen:0
+3.23	🇵🇱 Poland, Warsaw	net16:13.143, flow:xtls-rprx-vision, sec:reality, type:tcp
+10.42	🇩🇪 Germany, Frankfurt am Main	uuid:2cd9dc41-a…, sni2:filebeam.website, pbk:xcTXD3of3Y…, net16:78.17
+7.66	🇩🇪 Germany, Estenfeld	uuid:3bb97d46-7…, sni2:bachidze.com, sidlen:0, flow:xtls-rprx-vision
+8.16	🇸🇬 Singapore	host2:zestapp778.com, sni2:zestapp778.com, uuid:e9a8144e-5…, type:tcp
+13.05	🇳🇱 The Netherlands, Amsterdam	uuid:2232d904-8…, pbk:92lzqaBZnD…, sni:api37.betust.net, host2:betust.net
+11.67	🇳🇱 The Netherlands, Amsterdam	uuid:2232d904-8…, pbk:92lzqaBZnD…, sni:api37.betust.net, net24:84.32.101
+14.31	🇫🇷 France, Roubaix	host2:bookmai.com, net24:163.245.42, net16:163.245, uuid:b9bfa54d-b…
+14.12	🇷🇸 Serbia, Belgrade	sni:rs5.univesalsrv.com, pbk:X8mPYnsoTd…, net24:150.40.126, net16:150.40
+13.92	🇳🇱 The Netherlands, Halfweg	host2:jarbook.net, uuid:95d0e214-e…, sni2:jarbook.net, sni:main.jarbook.net
+13.92	🇳🇱 The Netherlands, Halfweg	host2:jarbook.net, uuid:95d0e214-e…, sni2:jarbook.net, sni:main.jarbook.net
+13.72	🇷🇸 Serbia, Belgrade	sni:rs3.univesalsrv.com, pbk:gHDoSWGWMV…, net24:150.40.126, net16:150.40
+13.70	🇬🇧 United Kingdom, Slough	sni:prime.jarbook.net, pbk:oAX7soFKfN…, uuid:95d0e214-e…, net24:50.7.193
+13.35	🇺🇸 United States, Orem	net24:177.202.78, host2:hollandlanzerotte.xyz, sni:hollandlanzerotte.xyz, sni2:hollandlanzerotte.xyz
+13.25	🇳🇱 The Netherlands, Eygelshoven	host2:xvanta.online, net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…
+13.22	🇳🇱 The Netherlands, Amsterdam	uuid:c1fdf1e6-6…, sni:nl1.kids-games.ru, sni2:kids-games.ru, pbk:oSbyJBoI2J…
+12.74	🇳🇱 The Netherlands, Eygelshoven	sni:qq.utiltools.site, host2:utiltools.site, uuid:4054fdc2-e…, sni2:utiltools.site
+12.45	🇳🇱 The Netherlands, Amsterdam	uuid:95d0e214-e…, sni2:jarbook.net, pbk:nUUSNvkc5X…, net24:84.32.96
+11.66	🇵🇱 Poland, Warsaw	net24:191.217.211, sni:pl1.song69.fun, net16:191.217, uuid:0806e6e2-e…
+11.58	🇳🇱 The Netherlands, Amsterdam	uuid:2232d904-8…, sni:app.betust.net, net24:84.32.101, pbk:xNzdfy4hPv…
+11.51	🇫🇷 France, Roubaix	net24:163.245.42, net16:163.245, uuid:b9bfa54d-b…, sni:mother-earth.fyi
+11.26	🇵🇱 Poland, Warsaw	net24:191.217.211, sni:pl1.song69.fun, net16:191.217, pbk:5H_MmyfvF4…
+11.19	🇳🇱 The Netherlands, Amsterdam	sni:app.betust.net, net24:84.32.101, pbk:xNzdfy4hPv…, sni2:betust.net
+11.02	🇳🇱 The Netherlands, Eygelshoven	net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…, net24:191.217.217
+10.89	🇺🇸 United States, Orem	net24:177.202.78, sni:hollandlanzerotte.xyz, sni2:hollandlanzerotte.xyz, pbk:EEL-yDPBfo…
+10.69	🇱🇹 Lithuania, Šiauliai	uuid:2232d904-8…, host2:betust.net, sni2:betust.net, net16:84.32
+10.67	🇱🇹 Lithuania, Šiauliai	uuid:2232d904-8…, host2:betust.net, sni2:betust.net, net16:84.32
+10.60	🇳🇱 The Netherlands, Amsterdam	net24:217.60.34, uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:217.60
+10.06	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, sni2:univesalsrv.com
+9.99	🇳🇱 The Netherlands, Amsterdam	host2:golangwikito.cfd, uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:31.56
+9.97	🇳🇱 The Netherlands, Amsterdam	host2:golangwikito.cfd, uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:31.56
+9.88	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
+9.88	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
+9.76	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, sni2:univesalsrv.com
+9.76	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, sni2:univesalsrv.com
+9.76	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, sni2:univesalsrv.com
+9.40	🇺🇸 United States, North Bergen	uuid:e3149c82-0…, sni:fast.145779.xyz, sni2:145779.xyz, net24:104.21.58
+8.32	🇺🇸 United States, North Bergen	host2:145779.xyz, sni:fast.145779.xyz, sni2:145779.xyz, net16:172.67
+8.04	🇨🇾 Cyprus, Nicosia	uuid:ccb8ff48-3…, sni2:fox-lisa.ru, pbk:NaCZ-sS4po…, fp:firefox
+7.92	🇺🇸 United States, North Bergen	uuid:e3149c82-0…, sni:fast.145779.xyz, sni2:145779.xyz, net16:172.67
+7.68	🇫🇷 France, Roubaix	uuid:b9bfa54d-b…, sni:mother-earth.fyi, sni2:mother-earth.fyi, sidlen:0
+7.45	🇺🇸 United States, North Bergen	sni:fast.145779.xyz, sni2:145779.xyz, net24:104.21.58, net16:104.21
+7.43	🇺🇸 United States, Chicago	uuid:fb37d713-0…, net16:88.216, sidlen:8, fp:firefox
+7.36	🇵🇱 Poland, Warsaw	sni:pl1.song69.fun, pbk:5H_MmyfvF4…, sni2:song69.fun, uuid:92b79c22-f…
+7.36	🇵🇱 Poland, Warsaw	sni:pl1.song69.fun, pbk:5H_MmyfvF4…, sni2:song69.fun, uuid:92b79c22-f…
+7.36	🇵🇱 Poland, Warsaw	sni:pl1.song69.fun, pbk:5H_MmyfvF4…, sni2:song69.fun, uuid:92b79c22-f…
+7.36	🇵🇱 Poland, Warsaw	sni:pl1.song69.fun, pbk:5H_MmyfvF4…, sni2:song69.fun, uuid:92b79c22-f…
+7.14	🇺🇸 United States, Chicago	uuid:fb37d713-0…, net16:88.216, sidlen:8, flow:xtls-rprx-vision
+6.70	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision, sec:reality
+6.70	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision, sec:reality
+6.70	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, flow:xtls-rprx-vision, sec:reality
+6.31	🇳🇱 The Netherlands, Amsterdam	uuid:92b79c22-f…, pbk:HRmmr0Ii4T…, net16:31.77, sidlen:8
+6.06	🇺🇸 United States, New York	uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:firefox, flow:xtls-rprx-vision
+5.87	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, fp:firefox, sec:reality
+5.57	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇧🇬 Bulgaria, Sofia	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+5.57	🇲🇩 Moldova, Chisinau	uuid:2f35965a-9…, sni2:univesalsrv.com, sec:reality
+4.97	🇫🇮 Finland, Helsinki	uuid:a35c508f-4…, sni2:nexfile.net, fp:firefox, type:xhttp
+4.97	🇫🇮 Finland, Helsinki	uuid:a35c508f-4…, sni2:nexfile.net, fp:firefox, type:xhttp
+4.97	🇫🇮 Finland, Helsinki	uuid:a35c508f-4…, sni2:nexfile.net, fp:firefox, type:xhttp
+3.41	🇳🇱 The Netherlands, Amsterdam	net16:86.54, sni:www.apple.com, fp:firefox, flow:xtls-rprx-vision
+3.19	🇵🇱 Poland, Warsaw	net16:150.251, flow:xtls-rprx-vision, sec:reality
+3.11	🇳🇱 The Netherlands, Amsterdam	net16:86.54, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
+15.48	🇵🇱 Poland, Warsaw	net24:217.60.33, sni:cz.pythonmakemigreat.wiki, port:61374, sni2:pythonmakemigreat.wiki
+15.10	🇷🇺 Russia, Moscow	uuid:c53ea5e9-e…, sni:du-rov.secureservice.top, sni2:secureservice.top, pbk:fSVfR9NB-6…
+15.08	🇳🇱 The Netherlands, Amsterdam	net24:2.26.77, uuid:9d7f9398-1…, sni:conv-nl.unit-digital.com, sni2:unit-digital.com
+13.28	🇸🇪 Sweden, Stockholm	sni:cdn.izzzyvpn.space, pbk:v--0dXOWcn…, uuid:e7ee38d7-f…, sni2:izzzyvpn.space
+13.17	🇱🇹 Lithuania, Šiauliai	uuid:95d0e214-e…, sni:admin.betust.net, pbk:zZjrHRzULo…, host2:betust.net
+13.05	🇳🇱 The Netherlands, Amsterdam	uuid:2232d904-8…, pbk:92lzqaBZnD…, sni:api37.betust.net, host2:betust.net
+12.95	🇩🇪 Germany, Frankfurt am Main	sni:tickets.betust.net, pbk:TRaUsnzFf-…, net24:88.216.182, host2:betust.net
+12.91	🇩🇪 Germany, Frankfurt am Main	host2:gemsubbgem.world, sni:gemsubbgem.world, sni2:gemsubbgem.world, pbk:6PJlXT9xrg…
+12.43	🇷🇺 Russia, St Petersburg	uuid:e267bd26-3…, sni:git.medrocket.ru, sni2:medrocket.ru, net24:136.234.9
+12.35	🇬🇧 United Kingdom, Bolton	uuid:a52fd54b-b…, sni2:vpngold.ru, pbk:1H1DiBCBB7…, host2:vpngold.ru
+12.33	🇷🇺 Russia, Moscow	sni:apply.betust.net, pbk:T98nmnCp0q…, sni2:betust.net, uuid:fb37d713-0…
+12.14	🇳🇱 The Netherlands, Halfweg	uuid:95d0e214-e…, sni2:jarbook.net, sni:main.jarbook.net, pbk:gJoMHh97te…
+12.11	🇮🇷 Iran, Tehran	net24:94.184.18, uuid:560ecca1-7…, host2:chaqalli.com, port:8180
+11.60	🇳🇱 The Netherlands, Halfweg	uuid:3bb97d46-7…, sni2:bachidze.com, sni:direct-nl.bachidze.com, pbk:E12wXXagR8…
+11.60	🇳🇱 The Netherlands, Halfweg	uuid:3bb97d46-7…, sni2:bachidze.com, sni:direct-nl.bachidze.com, pbk:E12wXXagR8…
+11.57	🇩🇪 Germany, Frankfurt am Main	sni:tickets.betust.net, pbk:TRaUsnzFf-…, net24:88.216.182, sni2:betust.net
+11.51	🇷🇺 Russia, Moscow	sni:msc1.serverslocal.ru, pbk:qPh1iuwpEL…, sni2:serverslocal.ru, net24:13.143.184
+11.51	🇷🇺 Russia, Moscow	sni:msc1.serverslocal.ru, pbk:qPh1iuwpEL…, sni2:serverslocal.ru, net24:13.143.184
+11.48	🇳🇱 The Netherlands, Amsterdam	pbk:92lzqaBZnD…, sni:api37.betust.net, net24:84.32.101, sni2:betust.net
+11.34	🇳🇱 The Netherlands, Zoetermeer	uuid:5fb552a8-9…, sni:papad1.vethilis.ru, sni2:vethilis.ru, net24:93.152.205
+11.19	🇳🇱 The Netherlands, Amsterdam	host2:jarbook.net, sni2:jarbook.net, net24:84.32.96, sni:reg.jarbook.net
+11.19	🇳🇱 The Netherlands, Amsterdam	host2:jarbook.net, sni2:jarbook.net, net24:84.32.96, sni:reg.jarbook.net
+11.15	🇪🇪 Estonia, Tallinn	sni:ee.lenvex.cc, uuid:2614a96d-e…, net16:13.143, net24:13.143.182
+11.08	🇳🇱 The Netherlands, Amsterdam	host2:vethilis.ru, uuid:5fb552a8-9…, sni2:vethilis.ru, net16:93.152
+11.07	🇱🇹 Lithuania, Šiauliai	sni:admin.betust.net, pbk:zZjrHRzULo…, host2:betust.net, sni2:betust.net
+11.02	🇳🇱 The Netherlands, Eygelshoven	net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…, net24:191.217.217
+11.02	🇳🇱 The Netherlands, Eygelshoven	net16:191.217, sni:vdsin.xvanta.online, pbk:xEDYfxVdiR…, net24:191.217.217
+10.97	🇱🇻 Latvia, Riga	sni:lv.dexlen.cc, uuid:2614a96d-e…, sni2:dexlen.cc, net24:72.56.52
+10.94	🇳🇱 The Netherlands, Amsterdam	pbk:QrNs0ew7sn…, port:61374, sni2:pythonmakemigreat.wiki, sni:nl-s-2.pythonmakemigreat.wiki
+10.94	🇵🇱 Poland, Warsaw	sni:cz.pythonmakemigreat.wiki, pbk:QrNs0ew7sn…, port:61374, sni2:pythonmakemigreat.wiki
+10.81	🇷🇺 Russia, Moscow	host2:betust.net, sni2:betust.net, uuid:fb37d713-0…, net24:81.163.22
+10.57	🇩🇪 Germany, Frankfurt am Main	pbk:QrNs0ew7sn…, port:61374, uuid:f8d52ece-f…, sni2:golangwikito.cfd
+10.53	🇷🇺 Russia, Moscow	host2:betust.net, sni2:betust.net, uuid:fb37d713-0…, net24:81.163.22
+10.48	🇷🇺 Russia, Moscow	pbk:LEziyH-E4k…, uuid:7ad63b26-b…, sni2:topp-con.xyz, net24:186.246.9
+10.42	🇪🇪 Estonia, Tallinn	uuid:0806e6e2-e…, net24:132.243.74, sni:ee.song69.fun, sni2:song69.fun
+10.31	🇩🇪 Germany, Frankfurt am Main	sni:gemsubbgem.world, sni2:gemsubbgem.world, pbk:6PJlXT9xrg…, net16:177.202
+10.20	🇺🇿 Uzbekistan, Tashkent	net24:82.148.6, uuid:3cd95e58-9…, pbk:6eN2NciEaZ…, net16:82.148
+10.15	🇩🇪 Germany, Frankfurt am Main	uuid:a52fd54b-b…, sni2:vpngold.ru, pbk:1H1DiBCBB7…, host2:vpngold.ru
+10.12	🇪🇪 Estonia, Tallinn	net24:31.77.236, sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…
+10.12	🇪🇪 Estonia, Tallinn	net24:31.77.236, sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…
+10.04	🇳🇱 The Netherlands, Amsterdam	port:61374, net24:217.60.34, uuid:f8d52ece-f…, net16:217.60
+9.89	🇨🇦 Canada, Toronto	uuid:50414e45-4…, net24:104.20.45, net16:104.20
+9.88	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
+9.88	🇯🇵 Japan, Tokyo	sni:fuji.etherhub.cc, sni2:etherhub.cc, pbk:ejx56dFtS4…, uuid:7072eeba-9…
+9.81	🇸🇬 Singapore	net24:5.223.59, host2:divarkhaghazi.com, sni2:divarkhaghazi.com, net16:5.223
+9.81	🇸🇬 Singapore	net24:5.223.59, host2:divarkhaghazi.com, sni2:divarkhaghazi.com, net16:5.223
+9.81	🇸🇬 Singapore	net24:5.223.59, host2:divarkhaghazi.com, sni2:divarkhaghazi.com, net16:5.223
+9.76	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, sni2:univesalsrv.com
+9.76	🇷🇸 Serbia, Belgrade	net24:150.40.126, net16:150.40, uuid:2f35965a-9…, sni2:univesalsrv.com
+9.75	🇺🇸 United States, Santa Clara	uuid:b9dd6833-9…, net24:43.153.90, net16:43.153, sni:www.apple.com
+9.33	🇬🇧 United Kingdom, Slough	net24:50.7.193, host2:betust.net, net16:50.7, sidlen:8
+9.29	🇳🇱 The Netherlands, Amsterdam	net24:2.26.77, host2:unit-digital.com, sidlen:8, net16:2.26
+9.16	🇩🇪 Germany, Frankfurt am Main	uuid:7d1a74fd-8…, host2:ferrin.uk, net16:50.7, type:tcp
+9.15	🇱🇹 Lithuania, Šiauliai	host2:betust.net, sni2:betust.net, net16:84.32, sidlen:8
+9.01	🇱🇹 Lithuania, Šiauliai	uuid:2232d904-8…, sni2:betust.net, net16:84.32, sidlen:8
+8.92	🇩🇪 Germany, Frankfurt am Main	net16:13.143, uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:ios
+8.90	🇬🇧 United Kingdom, Bolton	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+8.90	🇬🇧 United Kingdom, Bolton	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+8.85	🇺🇸 United States, Chicago	host2:betust.net, sni2:betust.net, net16:88.216, sidlen:8
+8.85	🇩🇪 Germany, Frankfurt am Main	host2:ferrin.uk, sni2:ferrin.uk, net16:50.7, fp:firefox
+8.79	🇳🇱 The Netherlands, Amsterdam	uuid:5fb552a8-9…, sni2:vethilis.ru, net16:93.152, flow:xtls-rprx-vision
+8.78	🇷🇺 Russia, Moscow	sni:msk1.nexfile.net, pbk:e6RrKgiMRF…, net24:185.76.241, sni2:nexfile.net
+8.72	🇩🇪 Germany, Frankfurt am Main	uuid:5254c281-3…, sni:nl-modx-prime.storagedirectguide.com, sni2:storagedirectguide.com, pbk:node0aB_7y…
+8.70	🇺🇿 Uzbekistan, Tashkent	uuid:3cd95e58-9…, pbk:6eN2NciEaZ…, net16:185.76, sidlen:8
+8.65	🇸🇪 Sweden, Stockholm	net16:13.143, sni2:lenvex.cc, pbk:OFmJtVi6OB…, sidlen:0
+8.65	🇸🇪 Sweden, Stockholm	net16:13.143, sni2:lenvex.cc, pbk:OFmJtVi6OB…, sidlen:0
+8.54	🇷🇺 Russia, Moscow	sni:pl.sparxiecn.com, sni2:sparxiecn.com, uuid:4d8132cb-f…, net24:84.23.52
+8.54	🇷🇺 Russia, Moscow	sni:pl.sparxiecn.com, sni2:sparxiecn.com, uuid:4d8132cb-f…, net24:84.23.52
+8.52	🇩🇪 Germany, Frankfurt am Main	uuid:e7ee38d7-f…, host2:izzzyvpn.space, sni2:izzzyvpn.space, net16:144.31
+8.38	🇳🇱 The Netherlands, Amsterdam	uuid:e7ee38d7-f…, host2:izzzyvpn.space, sni2:izzzyvpn.space, fp:firefox
+8.36	🇳🇱 The Netherlands, Amsterdam	sni2:pythonmakemigreat.wiki, uuid:f8d52ece-f…, net16:31.56, flow:xtls-rprx-vision
+8.12	🇭🇰 Hong Kong	host2:huahua.wiki, net16:43.161, sni:www.apple.com, flow:xtls-rprx-vision
+8.04	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
+8.04	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
+8.04	🇫🇷 France, Muntzenheim	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, net16:130.49
+7.79	🇷🇺 Russia, Moscow	pbk:LEziyH-E4k…, uuid:7ad63b26-b…, sni2:topp-con.xyz, fp:ios
+7.75	🇳🇱 The Netherlands, Amsterdam	uuid:f8d52ece-f…, sni2:golangwikito.cfd, net16:31.56, fp:firefox
+7.68	🇧🇾 Belarus, Minsk	net16:13.143, uuid:a35c508f-4…, sni2:nexfile.net, type:xhttp
+7.68	🇧🇾 Belarus, Minsk	net16:13.143, uuid:a35c508f-4…, sni2:nexfile.net, type:xhttp
+7.67	🇷🇺 Russia, Moscow	pbk:LEziyH-E4k…, uuid:7ad63b26-b…, sni2:topp-con.xyz, flow:xtls-rprx-vision
+7.52	🇷🇺 Russia, Novosibirsk	uuid:7ad63b26-b…, sni2:topp-con.xyz, net16:147.45, fp:firefox
+7.47	🇨🇦 Canada, Toronto	host2:speedtest.org, net24:104.26.14, net16:104.26, fp:firefox
+7.40	🇺🇸 United States, Orem	net24:177.202.73, net16:177.202, uuid:50a87e21-f…, sidlen:0
+7.38	🇨🇦 Canada, Toronto	host2:speedtest.org, net24:104.26.14, net16:104.26, type:xhttp
+7.22	🇷🇺 Russia, Moscow	uuid:7ad63b26-b…, sni2:topp-con.xyz, net16:147.45, flow:xtls-rprx-vision
+7.11	🇺🇸 United States, Chicago	uuid:fb37d713-0…, net16:88.216, sidlen:8, flow:xtls-rprx-vision
+7.06	🇩🇪 Germany, Frankfurt am Main	uuid:e7ee38d7-f…, sni2:izzzyvpn.space, net16:144.31, flow:xtls-rprx-vision
+6.97	🇩🇪 Germany, Frankfurt am Main	net24:178.17.52, net16:178.17, sni2:blog-forme.ru, fp:firefox
+6.86	🇱🇹 Lithuania, Vilnius	sni2:song69.fun, uuid:92b79c22-f…, pbk:HRmmr0Ii4T…, sidlen:0
+6.70	🇳🇱 The Netherlands, Zoetermeer	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇳🇱 The Netherlands, Zoetermeer	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇪🇪 Estonia, Tallinn	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇪🇪 Estonia, Tallinn	sni:assets-v2.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇩🇪 Germany, Bad Soden am Taunus	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.70	🇮🇹 Italy, Palermo	sni:files.porsche.com, sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…
+6.67	🇩🇪 Germany, Frankfurt am Main	net24:178.17.52, net16:178.17, sni2:blog-forme.ru, sec:reality
+6.65	🇱🇻 Latvia, Riga	net24:72.56.52, pbk:OFmJtVi6OB…, net16:72.56, sidlen:0
+6.58	🇺🇸 United States, Las Vegas	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
+6.57	🇦🇪 United Arab Emirates, Abu Dhabi	uuid:dc413f44-7…, sni2:keno.su, fp:firefox, flow:xtls-rprx-vision
+6.56	🇺🇸 United States, Las Vegas	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
+6.56	🇩🇪 Germany, Bad Soden am Taunus	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
+6.56	🇩🇪 Germany, Frankfurt am Main	net16:177.202, uuid:50a87e21-f…, sidlen:0, fp:firefox
+6.49	🇨🇦 Canada, Beauharnois	uuid:3cd95e58-9…, pbk:6eN2NciEaZ…, sidlen:8, sni:stats.vk-portal.net
+6.49	🇩🇪 Germany, Frankfurt am Main	sni2:dexlen.cc, pbk:OFmJtVi6OB…, sidlen:0, fp:firefox
+6.38	🇺🇸 United States, Orem	net16:177.202, uuid:50a87e21-f…, sidlen:0, fp:ios
+6.37	🇰🇿 Kazakhstan, Almaty	uuid:3cd95e58-9…, pbk:6eN2NciEaZ…, sidlen:8, sni:stats.vk-portal.net
+6.28	🇫🇷 France, Paris	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
+6.28	🇵🇱 Poland, Warsaw	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
+6.28	🇩🇪 Germany, Bad Soden am Taunus	sni2:porsche.com, pbk:kBTMVLCNE0…, uuid:5c32201a-6…, sidlen:8
+6.27	🇦🇪 United Arab Emirates, Abu Dhabi	uuid:dc413f44-7…, sni2:keno.su, flow:xtls-rprx-vision, sec:reality
+6.27	🇵🇱 Poland, Warsaw	sni2:dexlen.cc, pbk:OFmJtVi6OB…, sidlen:0, fp:firefox
+6.21	🇷🇺 Russia, Moscow	uuid:0806e6e2-e…, sni2:song69.fun, fp:firefox, net16:31.76
+6.20	🇷🇺 Russia, Moscow	sni:msk1.nexfile.net, pbk:e6RrKgiMRF…, sni2:nexfile.net, sidlen:8
+6.14	🇷🇺 Russia, Moscow	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, sidlen:0
+6.14	🇷🇺 Russia, Moscow	pbk:Sq7mtLmaan…, sni:www.philips.com, sni2:philips.com, sidlen:0
+6.13	🇭🇰 Hong Kong	host2:huahua.wiki, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
+6.13	🇮🇩 Indonesia, Jakarta	host2:huahua.wiki, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
+6.13	🇯🇵 Japan, Tokyo	host2:huahua.wiki, sni:www.apple.com, flow:xtls-rprx-vision, sec:reality
+6.00	🇪🇪 Estonia, Tallinn	sni2:izzzyvpn.space, net16:31.56, fp:firefox, flow:xtls-rprx-vision
+5.98	🇪🇪 Estonia, Tallinn	sni2:izzzyvpn.space, net16:31.56, fp:firefox, flow:xtls-rprx-vision
+5.97	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, type:xhttp
+5.97	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, type:xhttp
+5.97	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, type:xhttp
+5.97	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, type:xhttp
+5.97	🇦🇪 United Arab Emirates, Dubai	sni:mother-earth.fyi, sni2:mother-earth.fyi, sidlen:0, flow:xtls-rprx-vision
+5.97	🇩🇪 Germany, Berlin	sni:mother-earth.fyi, sni2:mother-earth.fyi, sidlen:0, fp:firefox
+5.97	🇨🇦 Canada, Toronto	sni:fast.145779.xyz, sni2:145779.xyz, net16:172.67
+5.91	🇷🇺 Russia, Moscow	uuid:0806e6e2-e…, sni2:song69.fun, net16:31.76, flow:xtls-rprx-vision
+5.90	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, fp:firefox, flow:xtls-rprx-vision
+5.88	🇳🇱 The Netherlands, Amsterdam	net16:217.60, sni:www.bing.com, sni2:bing.com, sidlen:0
+5.83	🇨🇦 Canada, Toronto	uuid:eaf76557-2…, net24:104.18.151
+5.83	🇨🇦 Canada, Toronto	uuid:eaf76557-2…, net24:104.18.151
+5.82	🇨🇦 Canada, Toronto	host2:speedtest.org, net16:104.26
+5.82	🇨🇦 Canada, Toronto	host2:speedtest.org, net16:104.26
+5.78	🇷🇺 Russia, Novosibirsk	uuid:7ad63b26-b…, sni2:topp-con.xyz, flow:xtls-rprx-vision, sec:reality
+5.77	🇧🇪 Belgium, Brussels	net16:13.143, sni2:hat.onl, fp:firefox
+5.77	🇧🇾 Belarus, Minsk	net16:13.143, sni2:hat.onl, fp:firefox
+5.77	🇭🇺 Hungary, Budapest	net16:13.143, sni2:hat.onl, fp:firefox
+5.77	🇷🇸 Serbia, Belgrade	net16:13.143, sni2:hat.onl, fp:firefox
+5.77	🇺🇸 United States, Los Angeles	net16:66.163, sidlen:0, flow:xtls-rprx-vision, sec:reality
+5.67	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, type:xhttp, sec:reality
+5.67	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, type:xhttp, sec:reality
+5.67	🇳🇱 The Netherlands, Amsterdam	uuid:6da2c981-8…, sni2:blog-forme.ru, type:xhttp, sec:reality
+5.60	🇩🇪 Germany, Frankfurt am Main	net16:178.17, sni:www.bing.com, sni2:bing.com, sidlen:0
+5.49	🇮🇷 Iran, Tehran	net16:94.184, sni2:bing.com, sidlen:8, sec:reality
+5.49	🇮🇷 Iran, Tehran	net16:94.184, sni2:bing.com, sidlen:8, sec:reality
