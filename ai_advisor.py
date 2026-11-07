@@ -17,7 +17,7 @@
 
 Переменные окружения:
   AI_API_KEY   — ключ API (обязателен)
-  AI_PROVIDER  — gemini, groq или mistral. Если не задан, определяется по ключу (gsk_… — Groq, AIza…/AQ.… — Gemini)
+  AI_PROVIDER  — gemini, groq, mistral или openai. Если не задан, определяется по ключу (gsk_… — Groq, AIza…/AQ.… — Gemini)
   AI_BASE_URL  — необязательно: адрес любого другого OpenAI-совместимого API
   AI_MODEL     — необязательно: модель или несколько через запятую (пробуются по очереди)
   GITHUB_TOKEN — для проверки репозиториев (в Actions есть сам)
@@ -55,6 +55,9 @@ PRESETS = {
                "model": "gemini-2.5-flash,gemini-2.5-flash-lite"},
     "groq": {"base": "https://api.groq.com/openai/v1", "model": "llama-3.3-70b-versatile,llama-3.1-8b-instant"},
     "mistral": {"base": "https://api.mistral.ai/v1", "model": "mistral-small-latest,mistral-medium-latest"},
+    # Только если ключ именно от OpenAI. Ключ перепродавца (ProxyAPI и т.п.) с этим адресом работать не будет:
+    # для него задай свой AI_BASE_URL из документации сервиса.
+    "openai": {"base": "https://api.openai.com/v1", "model": "gpt-4o-mini"},
 }
 MAX_REPOS, MAX_TG, MAX_QUERIES, MAX_DISCOVER, MAX_DOMAINS = 30, 15, 8, 6, 40
 REPO_MAX_AGE_DAYS = 60
@@ -473,8 +476,11 @@ def main():
         return
     base, models = resolve_provider(key, os.environ)
     if not base or not models:
-        warn("Провайдер по ключу не определился (ожидаю gsk_… для Groq, AIza…/AQ.… для Gemini). Задай переменную "
-             "AI_PROVIDER = gemini, groq или mistral: Settings → Secrets and variables → Actions → Variables.")
+        hint = (" Ключ вида sk-… — это OpenAI-совместимый ключ (OpenAI или перепродавец): ключ прочитан нормально, "
+                "не хватает адреса сервиса. Задай переменные AI_BASE_URL (из документации сервиса, обычно оканчивается на /v1) "
+                "и AI_MODEL; если ключ именно от OpenAI — AI_PROVIDER = openai." if key.startswith("sk-") else "")
+        warn("Провайдер по ключу не определился (ожидаю gsk_… для Groq, AIza…/AQ.… для Gemini)." + hint +
+             " Иначе задай переменную AI_PROVIDER = gemini, groq или mistral: Settings → Secrets and variables → Actions → Variables.")
         return
     log(f"Провайдер: {base.split('/')[2]}, модели: {models}")
 
