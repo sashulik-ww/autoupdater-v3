@@ -1,20 +1,20 @@
-my_working: 97
+my_working: 109
 my_bad: 0
-pool_links: 5241
-pool_after_removing_mine_and_bad: 5221
-pool_resolved: 5056
-similar_candidates: 3280
-tcp_ok: 229
-xray_ok: 20
-final_tested: 19
+pool_links: 2609
+pool_after_removing_mine_and_bad: 2583
+pool_resolved: 2519
+similar_candidates: 1596
+tcp_ok: 372
+xray_ok: 32
+final_tested: 31
 final_untested: 150
 
 Чему научился (признаки твоих рабочих серверов):
-  pbk: NaCZ-sS4…×8, QrNs0ew7…×4, ZJlfiMh4…×3, TRaUsnzF…×3, LEziyH-E…×3
-  net: 217.60.33.0/24×3, 84.32.209.0/24×2, 92.42.201.0/24×2, 45.83.85.0/24×2, 177.1.183.0/24×2
-  net16: 84.32.0.0/16×6, 88.216.0.0/16×4, 217.60.0.0/16×4, 82.148.0.0/16×3, 50.7.0.0/16×3
-  asn: 9123×11, 197574×5, 59642×5, 16125×3, 30058×3
-  domain: fox-lisa.ru×5, betust.net×5, huahua.wiki×3, titun.su×2, jarbook.net×2
-  sni_dom: betust.net×11, fox-lisa.ru×8, bachidze.com×5, plus-hit.ru×4, apple.com×4
+  pbk: NaCZ-sS4…×8, QrNs0ew7…×4, HRmmr0Ii…×3, ZJlfiMh4…×3, TRaUsnzF…×3
+  net: 217.60.33.0/24×3, 92.42.201.0/24×2, 45.83.85.0/24×2, 177.1.183.0/24×2, 50.7.95.0/24×2
+  net16: 84.32.0.0/16×6, 50.7.0.0/16×4, 217.60.0.0/16×4, 13.143.0.0/16×4, 88.216.0.0/16×4
+  asn: 9123×11, 215540×5, 59642×5, 197574×5, 16125×4
+  domain: betust.net×6, fox-lisa.ru×5, japancase.site×4, jarbook.net×3, h1clayd.click×3
+  sni_dom: betust.net×12, fox-lisa.ru×8, bachidze.com×5, plus-hit.ru×4, jarbook.net×4
   sni: www.apple.com×4, yoy-api.bachidze.com×3, tickets.betust.net×3, gb1.fox-lisa.ru×2, ru-gr1.fluxnode777.ru×2
-  cc: RU×21, NL×17, DE×12, PL×7, GB×4
+  cc: RU×22, NL×21, DE×13, PL×8, SE×5
