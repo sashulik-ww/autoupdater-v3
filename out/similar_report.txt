@@ -1,21 +1,21 @@
 my_working: 109
 my_bad: 0
-pool_links: 11811
-pool_after_removing_mine_and_bad: 11779
+pool_links: 15224
+pool_after_removing_mine_and_bad: 15191
 pool_trimmed_to: 8000
-pool_resolved: 7699
-similar_candidates: 5881
-tcp_ok: 216
-xray_ok: 24
-final_tested: 24
+pool_resolved: 7761
+similar_candidates: 5756
+tcp_ok: 227
+xray_ok: 23
+final_tested: 23
 final_untested: 150
 
 Чему научился (признаки твоих рабочих серверов):
   pbk: NaCZ-sS4…×6, QrNs0ew7…×4, HRmmr0Ii…×3, ZJlfiMh4…×3, TRaUsnzF…×3
-  net: 92.42.201.0/24×2, 177.1.183.0/24×2, 50.7.95.0/24×2, 78.159.250.0/24×2, 132.243.74.0/24×2
+  net: 92.42.201.0/24×2, 177.1.183.0/24×2, 50.7.95.0/24×2, 196.245.153.0/24×2, 78.159.250.0/24×2
   net16: 84.32.0.0/16×6, 50.7.0.0/16×4, 88.216.0.0/16×4, 147.45.0.0/16×3, 132.243.0.0/16×3
   asn: 9123×11, 215540×5, 59642×5, 16125×4, 30058×4
   domain: betust.net×6, japancase.site×4, jarbook.net×3, h1clayd.click×3, fox-lisa.ru×3
   sni_dom: betust.net×12, fox-lisa.ru×6, bachidze.com×5, plus-hit.ru×4, jarbook.net×4
   sni: www.apple.com×4, yoy-api.bachidze.com×3, tickets.betust.net×3, ru-gr1.fluxnode777.ru×2, main.jarbook.net×2
-  cc: RU×22, NL×21, DE×14, PL×7, EE×5
+  cc: RU×22, NL×20, DE×14, PL×7, EE×5
