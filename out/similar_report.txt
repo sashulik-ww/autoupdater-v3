@@ -1,13 +1,12 @@
 my_working: 109
 my_bad: 0
-pool_links: 8296
-pool_after_removing_mine_and_bad: 8268
-pool_trimmed_to: 8000
-pool_resolved: 7732
-similar_candidates: 4801
-tcp_ok: 211
-xray_ok: 27
-final_tested: 27
+pool_links: 3025
+pool_after_removing_mine_and_bad: 2996
+pool_resolved: 2801
+similar_candidates: 2044
+tcp_ok: 242
+xray_ok: 23
+final_tested: 23
 final_untested: 150
 
 Чему научился (признаки твоих рабочих серверов):
@@ -18,4 +17,4 @@ final_untested: 150
   domain: betust.net×6, japancase.site×4, jarbook.net×3, h1clayd.click×3, fox-lisa.ru×3
   sni_dom: betust.net×12, fox-lisa.ru×6, bachidze.com×5, plus-hit.ru×4, jarbook.net×4
   sni: www.apple.com×4, yoy-api.bachidze.com×3, tickets.betust.net×3, ru-gr1.fluxnode777.ru×2, main.jarbook.net×2
-  cc: RU×23, NL×20, DE×14, PL×7, EE×5
+  cc: RU×23, NL×19, DE×14, PL×7, EE×5
