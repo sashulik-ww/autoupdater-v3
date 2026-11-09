@@ -1,20 +1,50 @@
-my_working: 109
-my_bad: 0
-pool_links: 7797
-pool_after_removing_mine_and_bad: 7768
-pool_resolved: 7556
-similar_candidates: 5226
-tcp_ok: 202
-xray_ok: 18
-final_tested: 18
-final_untested: 150
+Похожие на рабочие серверы — отчёт
 
-Чему научился (признаки твоих рабочих серверов):
-  pbk: NaCZ-sS4…×6, QrNs0ew7…×4, HRmmr0Ii…×3, ZJlfiMh4…×3, TRaUsnzF…×3
-  net: 195.206.235.0/24×3, 92.42.201.0/24×2, 177.1.183.0/24×2, 50.7.95.0/24×2, 78.159.250.0/24×2
-  net16: 84.32.0.0/16×7, 50.7.0.0/16×4, 88.216.0.0/16×4, 48.102.0.0/16×3, 195.206.0.0/16×3
-  asn: 9123×11, 215540×5, 59642×5, 16125×4, 30058×4
-  domain: betust.net×6, japancase.site×4, jarbook.net×3, h1clayd.click×3, fox-lisa.ru×3
-  sni_dom: betust.net×12, fox-lisa.ru×6, bachidze.com×5, plus-hit.ru×4, jarbook.net×4
-  sni: www.apple.com×4, yoy-api.bachidze.com×3, tickets.betust.net×3, ru-gr1.fluxnode777.ru×2, main.jarbook.net×2
-  cc: RU×22, NL×19, DE×13, PL×7, GB×6
+Твоих рабочих серверов: 286 (vless 175: reality 154, tls 18; vmess 51, trojan 49, hysteria2 11)
+Ключей Reality (pbk) среди рабочих: 78; семейств доменов: 96; подсетей /24: 105
+
+pool_unusable: 29679
+pool_already_in_working: 1076
+pool_candidates: 58164
+matched_before_dns: 1930
+dns_ok: 55560
+similar_found: 1960
+match_pbk: 357
+match_uuid: 619
+match_host: 346
+match_fam: 1286
+match_subnet: 636
+match_sni: 546
+tcp_ok: 1291
+xray_ok: 196
+dropped_per_ip: 140
+dropped_per_pbk: 25
+dropped_per_family: 3
+final: 450
+
+Первые 25 серверов и почему они похожи:
+  327 ✓ 🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), host=yoy-api.bachidze.com(+56.0)
+  311   🇩🇪 Germany, Frankfurt am Main — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+74.1), host=pl-b1.golangwikito.cfd(+61.2)
+  308 ✓ 🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=prime.jarbook.net(+56.0)
+  294 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), host=ca1.fox-lisa.ru(+35.0)
+  283 ✓ 🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=main.jarbook.net(+35.0)
+  282   🇵🇱 Poland, Warsaw — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+74.1), fam=pythonmakemigreat.wiki(+57.0)
+  275 ✓ 🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
+  274 ✓ 🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
+  274 ✓ 🇸🇪 Sweden, Stockholm — pbk=vzRgIP8Mvd9V6krwKxw5Ewwz(+50.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), host=88.216.223.100(+35.0)
+  272 ✓ 🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
+  259 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+74.1), fam=golangwikito.cfd(+52.5)
+  256 ✓ 🇳🇱 The Netherlands, Eygelshoven — pbk=drY21DHNOr6ezJLA2B10mzTE(+65.0), uuid=4054fdc2-ee80-4419-8a8e-(+52.0), host=qq.utiltools.site(+40.2)
+  255 ✓ 🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
+  254   🇵🇱 Poland, Warsaw — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+74.1), fam=pythonmakemigreat.wiki(+57.0)
+  251 ✓ 🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
+  251 ✓ 🇷🇸 Serbia, Belgrade — pbk=X8mPYnsoTd8QCnvFZKSy7Vvp(+65.0), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
+  245   🇪🇪 Estonia, Tallinn — pbk=HRmmr0Ii4Tr9jPLwratvLhee(+65.0), uuid=92b79c22-f68b-4713-8b21-(+52.0), host=ee.song69.fun(+35.0)
+  241 ✓ 🇸🇪 Sweden, Stockholm — pbk=vzRgIP8Mvd9V6krwKxw5Ewwz(+50.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
+  241 ✓ 🇷🇸 Serbia, Belgrade — pbk=gHDoSWGWMVZKWNKONWHw-Cpl(+57.5), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
+  240 ✓ 🇱🇹 Lithuania, Šiauliai — pbk=zZjrHRzULoXKVccVdPqtrtXL(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=admin.betust.net(+35.0)
+  234   🇹🇷 Turkey, Istanbul — pbk=d3yQvdpwFHpLkl0ZbTnMH4ui(+50.0), uuid=9f9c913b-0b78-4d14-a4db-(+58.0), host=81.177.215.122(+35.0)
+  234   🇱🇹 Lithuania, Šiauliai — pbk=N4UtYAhibzkb0n_U2Qmqze5-(+50.0), uuid=9f9c913b-0b78-4d14-a4db-(+58.0), host=84.32.209.132(+35.0)
+  232 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+74.1), fam=golangwikito.cfd(+52.5)
+  229   🇩🇪 Germany, Frankfurt am Main — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+74.1), fam=pythonmakemigreat.wiki(+57.0)
+  224   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+74.1), fam=golangwikito.cfd(+52.5)
