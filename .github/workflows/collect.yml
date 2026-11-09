@@ -35,6 +35,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python collector.py --xray ./xray/xray --pool-out work/pool.txt
+              
+      - name: Similar servers
+        run: python similar.py --pool work/pool.txt --working my_working.txt --xray "$XRAY_BIN"
 
       - name: Подобрать серверы, похожие на мои рабочие
         continue-on-error: true   # если my_working.txt нет или шаг упал, основной список всё равно сохранится
