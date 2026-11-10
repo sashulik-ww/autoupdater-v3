@@ -1,10 +1,14 @@
 socks5://4.157.29.42:3000#%F0%9F%87%BA%F0%9F%87%B8%20United%20States%2C%20Boydton
 socks5://172.104.210.252:1080#%F0%9F%87%BA%F0%9F%87%B8%20United%20States%2C%20Cedar%20Knolls
 socks5://159.203.61.169:1080#%F0%9F%87%A8%F0%9F%87%A6%20Canada%2C%20Toronto
+socks5://47.251.166.203:1080#%F0%9F%87%BA%F0%9F%87%B8%20United%20States%2C%20Minkler
 socks5://69.55.49.177:38182#%F0%9F%87%BA%F0%9F%87%B8%20United%20States%2C%20North%20Bergen
+socks5://157.90.113.23:9052#%F0%9F%87%BF%F0%9F%87%A6%20South%20Africa%2C%20Johannesburg
+socks5://test123:test123@185.145.99.41:1080#%F0%9F%87%BA%F0%9F%87%B8%20United%20States%2C%20Dallas
 socks5://121.169.46.116:1090#%F0%9F%87%B0%F0%9F%87%B7%20South%20Korea%2C%20Suwon
 socks5://8888:8888@47.236.168.243:1080#%F0%9F%87%B8%F0%9F%87%AC%20Singapore%2C%20Singapore
-socks5://5.255.113.177:1080#%F0%9F%87%B3%F0%9F%87%B1%20Netherlands%2C%20Dronten
+socks5://140.238.243.61:1080#%F0%9F%87%AE%F0%9F%87%B3%20India%2C%20Mumbai
+socks5://test123:test123@169.255.56.148:1080#%F0%9F%87%AC%F0%9F%87%AD%20Ghana%2C%20Accra
 socks5://180.222.187.50:10800#%F0%9F%87%AF%F0%9F%87%B5%20Japan%2C%20Chiyoda%20City
-socks5://45.194.33.12:30001#%F0%9F%87%AD%F0%9F%87%B0%20Hong%20Kong%2C%20Hong%20Kong
-socks5://test:test@47.104.206.9:1080#%F0%9F%87%A8%F0%9F%87%B3%20China%2C%20Qingdao
+socks5://188.226.27.24:1080#%F0%9F%87%B3%F0%9F%87%B1%20Netherlands%2C%20Amsterdam
+socks5://39.106.165.196:1080#%F0%9F%87%A8%F0%9F%87%B3%20China%2C%20Beijing
