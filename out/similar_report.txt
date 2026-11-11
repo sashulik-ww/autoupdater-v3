@@ -1,49 +1,49 @@
 Похожие на рабочие серверы — отчёт
 
-Твоих рабочих серверов: 286 (vless 175: reality 154, tls 18; vmess 51, trojan 49, hysteria2 11)
-Ключей Reality (pbk) среди рабочих: 78; семейств доменов: 96; подсетей /24: 105
+Твоих рабочих серверов: 299 (vless 188: reality 163, tls 22; vmess 51, trojan 49, hysteria2 11)
+Ключей Reality (pbk) среди рабочих: 79; семейств доменов: 98; подсетей /24: 107
 
-pool_unusable: 21850
-pool_already_in_working: 863
-pool_candidates: 32801
-matched_before_dns: 1574
-dns_ok: 31523
-similar_found: 1590
-match_pbk: 314
-match_uuid: 458
-match_host: 270
-match_fam: 1137
-match_subnet: 447
-match_sni: 457
-tcp_ok: 1047
-xray_ok: 152
-dropped_per_ip: 141
-dropped_per_pbk: 22
+pool_unusable: 33493
+pool_already_in_working: 1069
+pool_candidates: 57475
+matched_before_dns: 1943
+dns_ok: 55073
+similar_found: 1976
+match_pbk: 345
+match_uuid: 506
+match_host: 305
+match_fam: 1198
+match_subnet: 659
+match_sni: 549
+tcp_ok: 1213
+xray_ok: 161
+dropped_per_ip: 135
+dropped_per_pbk: 20
 final: 450
 
 Первые 25 серверов и почему они похожи:
+  361 ✓ 🇦🇹 Austria, Vienna — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), host=qq.utiltools.site(+45.5)
   300   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=prime.jarbook.net(+56.0)
   294 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), host=ca1.fox-lisa.ru(+35.0)
-  285   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=fb37d713-0ed3-4146-b085-(+58.0), host=prime.jarbook.net(+56.0)
   275   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=main.jarbook.net(+35.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
   261 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
-  256 ✓ 🇦🇹 Austria, Vienna — pbk=drY21DHNOr6ezJLA2B10mzTE(+65.0), uuid=4054fdc2-ee80-4419-8a8e-(+52.0), host=qq.utiltools.site(+40.2)
   251 ✓ 🇷🇸 Serbia, Belgrade — pbk=X8mPYnsoTd8QCnvFZKSy7Vvp(+65.0), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
-  250   🇱🇹 Lithuania, Šiauliai — pbk=zZjrHRzULoXKVccVdPqtrtXL(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=admin.betust.net(+35.0)
+  249   🇱🇹 Lithuania, Šiauliai — pbk=zZjrHRzULoXKVccVdPqtrtXL(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=admin.betust.net(+35.0)
+  247   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
   241 ✓ 🇷🇸 Serbia, Belgrade — pbk=gHDoSWGWMVZKWNKONWHw-Cpl(+57.5), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
   235 ✓ 🇵🇱 Poland, Warsaw — pbk=kLCwYNBhCg68BQah9El1lNg6(+57.5), uuid=f333ac5d-1e0b-4947-a123-(+46.0), host=150.251.112.45(+40.2)
-  226   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+76.0), fam=golangwikito.cfd(+52.5)
-  218   🇱🇹 Lithuania, Šiauliai — pbk=zZjrHRzULoXKVccVdPqtrtXL(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=betust.net(+57.0)
-  217 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=6PJlXT9xrgJP8RXfhpWDMKPh(+57.5), uuid=50a87e21-f0e2-4b53-a787-(+51.6), host=gemsubbgem.world(+40.2)
+  217   🇱🇹 Lithuania, Šiauliai — pbk=zZjrHRzULoXKVccVdPqtrtXL(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=betust.net(+55.6)
   216 ✓ 🇳🇱 The Netherlands, Amsterdam — pbk=yyXZsa238GRW90w5DweXAdRT(+50.0), uuid=727a9178-d7f0-4142-8205-(+46.0), host=138.124.245.102(+35.0)
-  210   🇳🇱 The Netherlands, Amsterdam — pbk=drY21DHNOr6ezJLA2B10mzTE(+65.0), uuid=4054fdc2-ee80-4419-8a8e-(+52.0), fam=utiltools.site(+39.0)
+  212 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=6PJlXT9xrgJP8RXfhpWDMKPh(+57.5), uuid=50a87e21-f0e2-4b53-a787-(+47.3), host=gemsubbgem.world(+40.2)
+  211   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+55.6)
+  211   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+55.6)
   209   🇳🇱 The Netherlands, Amsterdam — pbk=lXCVb-MY5dJqMUw6xvkuPbi0(+50.0), uuid=db80088c-32a1-4cb8-a907-(+58.0), host=nl4.japancase.site(+35.0)
+  209 ✓ 🇷🇺 Russia, Kostroma — pbk=I_0JD13_bJuD6bNhTfb1PFPJ(+65.0), uuid=84a56b88-2f89-4a57-b925-(+52.0), host=78.159.245.40(+35.0)
+  209   🇪🇪 Estonia, Tallinn — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+58.5), fam=golangwikito.cfd(+52.5)
   208   🇦🇹 Austria, Liezen District — pbk=zEntiD6D81wY__YHPvIw78e0(+50.0), uuid=db80088c-32a1-4cb8-a907-(+58.0), host=at1.japancase.site(+35.0)
-  202   🇷🇺 Russia, Moscow — pbk=LEziyH-E4k9hehGRJkVi1Fad(+65.0), uuid=7ad63b26-bf70-4872-8fab-(+58.0), fam=topp-con.xyz(+43.5)
-  197 ✓ 🇺🇸 United States, Washington — pbk=EEL-yDPBfol_fiEEM8Pd0zue(+50.0), uuid=50a87e21-f0e2-4b53-a787-(+51.6), host=hollandlanzerotte.xyz(+35.0)
-  197 ✓ 🇺🇸 United States, Orem — pbk=TyuIIquHoesD9YwMQJHda0YZ(+50.0), uuid=50a87e21-f0e2-4b53-a787-(+51.6), host=swedenafteraventura.spac(+35.0)
-  197 ✓ 🇫🇷 France, Roubaix — pbk=SbVKOEMjK0sIlbwg4akyBg5m(+7.4), uuid=b9bfa54d-bc44-4592-a6d6-(+58.0), host=edge.bookmai.com(+50.8)
-  189   🇷🇺 Russia, Moscow — pbk=qPh1iuwpELosLWTxOXyfCiMg(+57.5), host=13.143.184.226(+40.2), fam=serverslocal.ru(+34.5)
-  189   🇷🇺 Russia, Moscow — pbk=qPh1iuwpELosLWTxOXyfCiMg(+57.5), host=13.143.184.226(+40.2), fam=serverslocal.ru(+34.5)
+  208   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+58.5), fam=golangwikito.cfd(+52.5)
+  193 ✓ 🇫🇷 France, Roubaix — pbk=SbVKOEMjK0sIlbwg4akyBg5m(+3.5), uuid=b9bfa54d-bc44-4592-a6d6-(+58.0), host=edge.bookmai.com(+50.8)
+  193 ✓ 🇺🇸 United States, Orem — pbk=TyuIIquHoesD9YwMQJHda0YZ(+50.0), uuid=50a87e21-f0e2-4b53-a787-(+47.3), host=swedenafteraventura.spac(+35.0)
+  193 ✓ 🇺🇸 United States, Washington — pbk=EEL-yDPBfol_fiEEM8Pd0zue(+50.0), uuid=50a87e21-f0e2-4b53-a787-(+47.3), host=hollandlanzerotte.xyz(+35.0)

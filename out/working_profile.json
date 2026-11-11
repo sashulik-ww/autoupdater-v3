@@ -1,11 +1,11 @@
 {
  "servers": {
-  "servers": 286,
-  "vless": 175,
-  "vless_reality": 154,
+  "servers": 299,
+  "vless": 188,
+  "vless_reality": 163,
+  "vless_tls": 22,
   "trojan": 49,
   "vmess": 51,
-  "vless_tls": 18,
   "hysteria2": 11,
   "vless_none": 3
  },
@@ -13,6 +13,10 @@
   [
    "QrNs0ew7…",
    16
+  ],
+  [
+   "drY21DHN…",
+   9
   ],
   [
    "NaCZ-sS4…",
@@ -39,11 +43,11 @@
    4
   ],
   [
-   "HRmmr0Ii…",
+   "I_0JD13_…",
    3
   ],
   [
-   "drY21DHN…",
+   "HRmmr0Ii…",
    3
   ],
   [
@@ -52,10 +56,6 @@
   ],
   [
    "fSVfR9NB…",
-   3
-  ],
-  [
-   "X8mPYnso…",
    3
   ]
  ],
@@ -85,6 +85,10 @@
    10
   ],
   [
+   "utiltools.site",
+   9
+  ],
+  [
    "fox-lisa.ru",
    9
   ],
@@ -97,16 +101,12 @@
    9
   ],
   [
-   "windowssearchtools.com",
+   "yandex.ru",
    7
   ],
   [
-   "golangwikito.cfd",
-   6
-  ],
-  [
-   "speedtest.org",
-   6
+   "windowssearchtools.com",
+   7
   ]
  ],
  "sni": [
@@ -117,6 +117,10 @@
   [
    "marvdasht.phonecomparisonblog.org",
    12
+  ],
+  [
+   "qq.utiltools.site",
+   9
   ],
   [
    "yoy-api.bachidze.com",
@@ -153,16 +157,16 @@
   [
    "pl2.nexfile.net",
    5
-  ],
-  [
-   "mother-earth.fyi",
-   4
   ]
  ],
  "subnets_24": [
   [
    "13.143.189",
    8
+  ],
+  [
+   "78.159.250",
+   6
   ],
   [
    "188.114.96",
@@ -175,6 +179,10 @@
   [
    "150.40.126",
    5
+  ],
+  [
+   "185.178.208",
+   4
   ],
   [
    "216.152.147",
@@ -199,20 +207,12 @@
   [
    "172.67.153",
    3
-  ],
-  [
-   "147.45.148",
-   3
-  ],
-  [
-   "5.42.99",
-   3
   ]
  ],
  "ports": [
   [
    443,
-   132
+   142
   ],
   [
    61374,
@@ -221,6 +221,10 @@
   [
    8443,
    8
+  ],
+  [
+   8445,
+   4
   ],
   [
    14443,
@@ -237,16 +241,12 @@
   [
    2096,
    2
-  ],
-  [
-   8180,
-   2
   ]
  ],
  "transports": [
   [
    "tcp",
-   131
+   140
   ],
   [
    "xhttp",
@@ -254,7 +254,7 @@
   ],
   [
    "ws",
-   11
+   15
   ],
   [
    "grpc",
@@ -264,33 +264,33 @@
  "flows": [
   [
    "xtls-rprx-vision",
-   125
+   134
   ],
   [
    "",
-   50
+   54
   ]
  ],
  "fingerprints": [
   [
    "chrome",
-   73
+   78
   ],
   [
    "firefox",
-   70
+   73
   ],
   [
    "",
-   14
+   16
+  ],
+  [
+   "ios",
+   6
   ],
   [
    "random",
    5
-  ],
-  [
-   "ios",
-   4
   ],
   [
    "qq",
