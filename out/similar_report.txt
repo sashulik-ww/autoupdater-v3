@@ -3,21 +3,21 @@
 Твоих рабочих серверов: 286 (vless 175: reality 154, tls 18; vmess 51, trojan 49, hysteria2 11)
 Ключей Reality (pbk) среди рабочих: 78; семейств доменов: 96; подсетей /24: 105
 
-pool_unusable: 29947
-pool_already_in_working: 1400
-pool_candidates: 55314
-matched_before_dns: 1883
-dns_ok: 51529
-similar_found: 1908
-match_pbk: 356
-match_uuid: 532
-match_host: 290
-match_fam: 1173
-match_subnet: 642
-match_sni: 572
-tcp_ok: 1138
-xray_ok: 146
-dropped_per_ip: 124
+pool_unusable: 29973
+pool_already_in_working: 1410
+pool_candidates: 55485
+matched_before_dns: 1903
+dns_ok: 51672
+similar_found: 1919
+match_pbk: 340
+match_uuid: 542
+match_host: 308
+match_fam: 1170
+match_subnet: 659
+match_sni: 561
+tcp_ok: 1165
+xray_ok: 142
+dropped_per_ip: 131
 dropped_per_pbk: 24
 final: 450
 
@@ -30,7 +30,7 @@ final: 450
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
   261 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
   256 ✓ 🇳🇱 The Netherlands, Eygelshoven — pbk=drY21DHNOr6ezJLA2B10mzTE(+65.0), uuid=4054fdc2-ee80-4419-8a8e-(+52.0), host=qq.utiltools.site(+40.2)
-  256   🇵🇱 Poland, Warsaw — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+54.3), fam=golangwikito.cfd(+52.5)
+  255   🇵🇱 Poland, Warsaw — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+53.3), fam=golangwikito.cfd(+52.5)
   251 ✓ 🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
   251 ✓ 🇷🇸 Serbia, Belgrade — pbk=X8mPYnsoTd8QCnvFZKSy7Vvp(+65.0), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
   247   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), host=yoy-api.bachidze.com(+56.0), fam=bachidze.com(+57.0)
@@ -45,5 +45,5 @@ final: 450
   213   🇪🇪 Estonia, Tallinn — pbk=HRmmr0Ii4Tr9jPLwratvLhee(+65.0), uuid=92b79c22-f68b-4713-8b21-(+52.0), fam=song69.fun(+48.0)
   213   🇪🇪 Estonia, Tallinn — pbk=HRmmr0Ii4Tr9jPLwratvLhee(+65.0), uuid=92b79c22-f68b-4713-8b21-(+52.0), fam=song69.fun(+48.0)
   205 ✓ 🇳🇱 The Netherlands, Amsterdam — pbk=nUUSNvkc5Xy6LRCP4yeFvbI8(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
-  205   🇪🇪 Estonia, Tallinn — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+54.3), fam=golangwikito.cfd(+52.5)
-  204   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+54.3), fam=golangwikito.cfd(+52.5)
+  204   🇪🇪 Estonia, Tallinn — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+53.3), fam=golangwikito.cfd(+52.5)
+  203   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+53.3), fam=golangwikito.cfd(+52.5)
