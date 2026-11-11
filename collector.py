@@ -77,12 +77,13 @@ for _f in (ROOT / "ai_domains.txt", ROOT / "my_domains.txt"):
 
 ALLOWED_TYPES = None    # None = любые транспорты (tcp, grpc, xhttp, ws, h2, httpupgrade, kcp…); иначе например {"tcp", "grpc"}
 
-MAX_TOTAL = 600         # итоговый размер списка
+MAX_TOTAL = 10**9       # потолка нет: размер списка ограничен только MAX_PER_IP (поставь число, если нужен потолок)
 MAX_PER_IP = 2          # не больше стольких серверов на один адрес
-MAX_TEST = 7500         # сколько кандидатов максимум гонять через Xray (все, что ответили по TCP)
+MAX_TEST = 50000        # сколько кандидатов максимум гонять через Xray (практически все, что ответили по TCP)
 SPEED_WORKERS = 32      # сколько Xray запускать параллельно
-CANDIDATES_MAX = 750   # размер файла «непроверенных кандидатов» (ответили по TCP, но не прошли проверку Xray с раннера США)
-CANDIDATES_POOL = 4500  # из скольких кандидатов выбирать (для них запрашивается страна по IP)
+CANDIDATES_MAX = 10**9  # потолка нет: файл «непроверенных кандидатов» (ответили по TCP, но не прошли Xray с раннера США)
+CANDIDATES_POOL = 10**9  # из скольких кандидатов выбирать (для них запрашивается страна по IP)
+TCP_RETRY_TIMEOUT = 7   # повторная попытка для не ответивших по TCP (потери пакетов, защита от SYN-флуда)
 SPEED_URL = "https://speed.cloudflare.com/__down?bytes=25000000"
 SPEED_TIMEOUT = 8       # секунд на измерение скорости (среднее за окно)
 EXIT_TIMEOUTS = (8, 5)    # секунд на запрос «какой у меня IP» через сервер: к первому адресу, ко второму
@@ -187,6 +188,11 @@ def public_host(host):
         return "." in host and host != "localhost" and not host.endswith(".local")
 
 
+def norm_pbk(pbk):
+    """Публичный ключ Reality для Xray — base64url без «=»; в ссылках часто встречается с «=» или как обычный base64."""
+    return pbk.strip().rstrip("=").replace("+", "-").replace("/", "_")
+
+
 def parse_vless(link, keep_other=False, why=None):
     """Возвращает dict или None. В why (Counter) записывается причина отказа."""
     def no(reason):
@@ -202,19 +208,20 @@ def parse_vless(link, keep_other=False, why=None):
         return no("bad_url")
     if u.scheme != "vless" or not u.username or not port:
         return no("bad_url")
-    if not public_host(host):
-        return no("bad_host")
-    if not UUID_RE.match(u.username):
-        return no("bad_uuid")
     q = {k.lower(): v for k, v in up.parse_qsl(u.query, keep_blank_values=True)}
     if q.get("security", "").lower() != "reality":
-        return no("not_reality")
+        return no("not_reality")  # дальше причины отказа считаются только для Reality-ссылок
+    if not public_host(host):
+        return no("bad_host")
     if q.get("encryption", "none").lower() not in ("none", ""):
         return no("vless_encryption")  # VLESS-шифрование (ML-KEM) клиенты почти не понимают
+    if not UUID_RE.match(u.username):
+        return no("bad_uuid")
     typ = (q.get("type") or "tcp").lower()
     if ALLOWED_TYPES is not None and typ not in ALLOWED_TYPES:
         return no("transport_filtered")
-    if not PBK_RE.match(q.get("pbk", "")) or not SID_RE.match(q.get("sid", "")):
+    pbk = norm_pbk(q.get("pbk", ""))
+    if not PBK_RE.match(pbk) or not SID_RE.match(q.get("sid", "")):
         return no("bad_pbk_sid")
     sni = (q.get("sni") or q.get("servername") or "").strip().lower()
     if not sni:
@@ -222,8 +229,14 @@ def parse_vless(link, keep_other=False, why=None):
     tier = match_tier(sni)
     if tier == 0 and not keep_other:
         return no("sni_not_russian")
+    base = link.split("#", 1)[0]
+    if pbk != q.get("pbk", ""):  # ключ был с «=» или в «обычном» base64 — приводим к виду, который понимает Xray
+        base = re.sub(r"(?i)(?<=[?&])pbk=[^&#]*", "pbk=" + pbk, base)
+        q["pbk"] = pbk
+        if why is not None:
+            why["fixed_pbk_format"] += 1  # не отказ, а счётчик исправленных ссылок (попадёт в report.txt как drop_fixed_pbk_format)
     return {
-        "base": link.split("#", 1)[0], "q": q, "type": typ,
+        "base": base, "q": q, "type": typ,
         "host": host.lower(), "port": port, "uuid": u.username.lower(),
         "sni": sni, "tier": tier,
     }
@@ -576,11 +589,22 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
     stats["dns_ok"] = len(cands)
 
     # 3. TCP: отсев мёртвых и задержка
+    dead = []  # не ответили по TCP: из США это не значит «мёртв» — российские серверы часто не пускают чужие адреса
     if check_tcp:
         with cf.ThreadPoolExecutor(100) as ex:
             pings = list(ex.map(tcp_fn, cands))
+        again = [i for i, ms in enumerate(pings) if ms is None]
+        if again:  # вторая попытка с большим таймаутом
+            retry = (lambda c: tcp_ping(c, TCP_RETRY_TIMEOUT)) if tcp_fn is tcp_ping else tcp_fn
+            with cf.ThreadPoolExecutor(100) as ex:
+                second = list(ex.map(retry, [cands[i] for i in again]))
+            for i, ms in zip(again, second):
+                pings[i] = ms
+            stats["tcp_recovered_on_retry"] = sum(ms is not None for ms in second)
+        dead = [c for c, ms in zip(cands, pings) if ms is None]
         cands = [dict(c, ms=ms) for c, ms in zip(cands, pings) if ms is not None]
         stats["tcp_ok"] = len(cands)
+        stats["tcp_no_answer"] = len(dead)
     for c in cands:
         c.setdefault("ms", 0.0)
     cands.sort(key=lambda c: (c["tier"] == 0, c["ms"], c["base"]))
@@ -618,7 +642,7 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
 
     # 6. страна и город: по ВЫХОДНОМУ IP (если проверяли через Xray), иначе по адресу сервера
     ips = ({c["ip"] for c in final} | {c["exit_ip"] for c in final if c.get("exit_ip")}
-           | {c["ip"] for c in rest})
+           | {c["ip"] for c in rest} | {c["ip"] for c in dead})
     geo = geo_fn(ips) if use_geo and ips else {}
     for c in final:
         place = c.get("exit_ip") or c["ip"]
@@ -636,8 +660,19 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
             candidates.append(c)
         if len(candidates) >= CANDIDATES_MAX:
             break
+    # RU-адрес + российский SNI, но порт не ответил с раннера США: возможно, сервер пускает только российские сети.
+    notcp, per_ip_nc = [], Counter()
+    for c in sorted(dead, key=lambda c: (c["tier"] == 0, c["tier"], c["base"])):
+        g = geo.get(c["ip"], {})
+        if g.get("countryCode") == "RU" and per_ip_nc[c["ip"]] < MAX_PER_IP:
+            per_ip_nc[c["ip"]] += 1
+            c["entry_cc"] = "RU"
+            c["name"] = make_name(g)
+            notcp.append(c)
     if extra is not None:
         extra["candidates"] = candidates
+        extra["candidates_notcp_ruip"] = notcp
+    stats["candidates_notcp_ruip"] = len(notcp)
     stats["candidates_total"] = len(candidates)
     stats["candidates_entry_in_ru"] = sum(c["entry_cc"] == "RU" for c in candidates)
     stats["final"] = len(final)
@@ -648,13 +683,15 @@ def build(raw, keep_other=False, check_tcp=True, xray_bin=None, use_geo=True, st
     return final, stats
 
 
-def write_outputs(final, stats, candidates=None):
+def write_outputs(final, stats, candidates=None, notcp=None):
     OUT.mkdir(exist_ok=True)
     line = lambda c: f"{c['base']}#{up.quote(c['name'])}"
     if candidates is not None:  # непроверенные кандидаты: пинговать самому в v2rayNG; имя — по адресу сервера
         (OUT / "candidates_ru_sni.txt").write_text("".join(line(c) + "\n" for c in candidates), encoding="utf-8")
         (OUT / "candidates_ru_sni_ruip.txt").write_text(
             "".join(line(c) + "\n" for c in candidates if c["entry_cc"] == "RU"), encoding="utf-8")
+    if notcp is not None:  # RU-адрес без ответа по TCP из США: проверять только пингом в приложении
+        (OUT / "candidates_ru_sni_ruip_notcp.txt").write_text("".join(line(c) + "\n" for c in notcp), encoding="utf-8")
     allp = "\n".join(line(c) for c in final) + "\n"
     (OUT / "whitelist_ru_sni.txt").write_text(allp, encoding="utf-8")
     (OUT / "whitelist_ru_sni_b64.txt").write_text(base64.b64encode(allp.encode()).decode(), encoding="utf-8")
@@ -733,7 +770,7 @@ def main():
 
     extra = {}
     final, stats = build(raw, args.keep_other, not args.no_tcp, xray_bin, not args.no_geo, stats, extra)
-    write_outputs(final, stats, extra.get("candidates"))
+    write_outputs(final, stats, extra.get("candidates"), extra.get("candidates_notcp_ruip"))
     log("Итого:\n" + "\n".join(f"  {k}: {v}" for k, v in stats.items()))
     if not final:
         log("! ничего не найдено — файлы перезаписаны пустыми, смотри out/report.txt и sources.txt")
