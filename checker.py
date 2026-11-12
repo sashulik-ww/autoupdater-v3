@@ -114,9 +114,11 @@ SPEED_CONCURRENCY = int(os.getenv("SPEED_CONCURRENCY", "8"))    # одновре
 SPEED_URL = os.getenv("SPEED_URL", "https://speed.cloudflare.com/__down?bytes={bytes}")
 MIN_SPEED_MBPS = float(os.getenv("MIN_SPEED_MBPS", "3"))        # Мбит/с; 0 = не отсеивать по скорости
 
-# --- all.txt (общий список) ---
-MAX_PER_COUNTRY = int(os.getenv("MAX_PER_COUNTRY", "4"))
-MAX_TOTAL = int(os.getenv("MAX_TOTAL", "250"))
+# --- основной список и его две непересекающиеся подписки ---
+MAX_PER_COUNTRY = int(os.getenv("MAX_PER_COUNTRY", "18"))
+# Максимум элементов в объединённом списке, из которого берутся первые 600 и следующие 600.
+MAX_TOTAL = int(os.getenv("MAX_TOTAL", "1200"))
+SUBSCRIPTION_PART_SIZE = int(os.getenv("SUBSCRIPTION_PART_SIZE", "600"))
 
 # --- by_protocol/*.txt ---
 PROTO_MAX_PER_COUNTRY = int(os.getenv("PROTO_MAX_PER_COUNTRY", "20"))
@@ -141,9 +143,10 @@ def env_set(name: str, default: str, lower: bool = True) -> set[str]:
     return {x.strip().lower() if lower else x.strip().upper() for x in raw.split(",") if x.strip()}
 
 
-# США и Канада: лимит на страну уменьшается в REDUCED_FACTOR раз (во всех списках)
-REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "US,CA", lower=False)
-REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.5"))
+# Дополнительный понижающий лимит отключён по умолчанию для всех стран.
+# Можно включить явно через REDUCED_COUNTRIES и REDUCED_FACTOR.
+REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "", lower=False)
+REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "1"))
 
 # «Общие» файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
 GENERAL_EXCLUDE_SCHEMES = env_set("GENERAL_EXCLUDE_SCHEMES", "http,https,ss,socks5,socks4")  # не нужны / работают плохо
@@ -1552,7 +1555,8 @@ def select_servers(
     )
 
     def cap_for(country: str) -> int:
-        return max(1, int(cap * REDUCED_FACTOR)) if country in REDUCED_COUNTRIES else cap
+        factor = REDUCED_FACTOR if country in REDUCED_COUNTRIES else 1.0
+        return max(1, int(cap * factor))
 
     def run(low_quota: int | None) -> list[dict]:
         ip_n: dict[str, int] = defaultdict(int)
@@ -1747,24 +1751,33 @@ GEO_PROVIDERS = {"ipapi": ipapi_lookup, "geojs": geojs_lookup}
 def decide_country(item: dict, entry: dict) -> dict:
     """Голосование: Cloudflare (страна выходного IP через туннель) + источники по IP."""
     votes: list[tuple[str, str, str]] = []
-    if item.get("exit_cc") in COUNTRIES:
-        votes.append(("cf", item["exit_cc"], ""))
+    exit_cc = str(item.get("exit_cc") or "").upper()
+    if exit_cc in COUNTRIES:
+        votes.append(("cf", exit_cc, ""))
     for source in GEO_SOURCES:
         value = entry.get(source)
-        if value:
-            votes.append((source, value[0], value[1]))
+        if value and isinstance(value, (list, tuple)) and value:
+            cc = str(value[0] or "").upper()
+            if cc in COUNTRIES:
+                city_name = str(value[1] or "") if len(value) > 1 else ""
+                votes.append((source, cc, city_name))
     if not votes:
         return {"cc": None, "city": "", "agree": 0, "total": 0, "ok": False}
 
-    order = {name: n for n, name in enumerate(GEO_PRIORITY)}
+    # Каждый источник имеет ровно один голос.
+    unique_votes = {}
+    for source, cc, city_name in votes:
+        unique_votes[source] = (cc, city_name)
+    votes = [(source, cc, city_name) for source, (cc, city_name) in unique_votes.items()]
     counts = Counter(cc for _, cc, _ in votes)
-    best = {}
-    for source, cc, _ in votes:
-        best[cc] = min(best.get(cc, 99), order.get(source, 99))
-    top = min(counts, key=lambda cc: (-counts[cc], best[cc]))
+    max_votes = max(counts.values())
+    winners = [cc for cc, count in counts.items() if count == max_votes]
+    if len(winners) != 1:
+        return {"cc": None, "city": "", "agree": max_votes, "total": len(votes), "ok": False}
+    top = winners[0]
     agree = counts[top]
     city = next((c for source, cc, c in votes if cc == top and c and source != "cf"), "")
-    ok = agree >= min(GEO_MIN_AGREE, len(votes))
+    ok = agree >= GEO_MIN_AGREE
     return {"cc": top, "city": city, "agree": agree, "total": len(votes), "ok": ok}
 
 
@@ -1978,6 +1991,19 @@ async def main_async() -> int:
     # 6. Списки
     pool = [i for i in working if in_pool(i, sb_required)]
     main_list = select_servers(pool, MAX_PER_COUNTRY, MAX_TOTAL, general=True)
+    # Повторный отбор по тем же квотам для второй подписки: не допускаем обхода
+    # лимитов страны/IP при разбиении на 2 сегмента.
+    if SUBSCRIPTION_PART_SIZE <= 0:
+        raise ValueError("SUBSCRIPTION_PART_SIZE должен быть больше нуля")
+    # Две части непересекающиеся: второй файл содержит следующий сегмент того же
+    # уже отфильтрованного и ранжированного списка, без повторной выборки/квот.
+    subscription_1 = main_list[:SUBSCRIPTION_PART_SIZE]
+    # Для второй части используем тот же пул и те же фильтры/квоты; затем исключаем
+    # уже выданные конфиги, чтобы подписки не пересекались.
+    selected_ids = {id(i) for i in subscription_1}
+    remaining_pool = [i for i in pool if id(i) not in selected_ids]
+    subscription_2 = select_servers(remaining_pool, MAX_PER_COUNTRY, SUBSCRIPTION_PART_SIZE,
+                                    general=True)
     white_list = smart_filter_white(pool)
     xray_list = select_servers(
         [i for i in working if i["xray_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, XRAY_FILE_MAX_TOTAL,
@@ -2009,8 +2035,10 @@ async def main_async() -> int:
     for old in by_dir.glob("*.txt"):
         old.unlink()
 
-    write_list(OUT_DIR / "all.txt", main_list)
-    write_list(OUT_DIR / "working_proxies.txt", main_list)
+    write_list(OUT_DIR / "all.txt", subscription_1)
+    write_list(OUT_DIR / "all_2.txt", subscription_2)
+    write_list(OUT_DIR / "working_proxies.txt", subscription_1)
+    write_list(OUT_DIR / "working_proxies_2.txt", subscription_2)
     write_list(OUT_DIR / "white_checked.txt", white_list)
     write_list(OUT_DIR / "xray_checked.txt", xray_list)
     write_list(OUT_DIR / "singbox_checked.txt", sb_list)
@@ -2053,13 +2081,14 @@ async def main_async() -> int:
         "singbox_by_protocol": sb_stats,
         "refuse_fallback_protocols": fallback,
         "files": {
-            "all_txt": len(main_list), "white_checked_txt": len(white_list),
+            "all_txt": len(subscription_1), "all_2_txt": len(subscription_2),
+            "white_checked_txt": len(white_list),
             "xray_checked_txt": len(xray_list), "singbox_checked_txt": len(sb_list),
             "ru_servers_txt": len(ru_list), "by_protocol": per_file,
         },
         "all_txt_europe_share": round(europe_n / len(main_list), 2) if main_list else None,
         "all_txt_by_protocol": dict(Counter(i["scheme"] for i in main_list)),
-        "all_txt_us_ca": sum(1 for i in main_list if i["country"] in REDUCED_COUNTRIES),
+        "all_txt_us_ca": sum(1 for i in main_list if i["country"] in {"US", "CA"}),
         "all_txt_speed_mbps_median": speeds[len(speeds) // 2] if speeds else None,
         "limits": {
             "all_txt": {"per_country": MAX_PER_COUNTRY, "total": MAX_TOTAL},
@@ -2069,6 +2098,7 @@ async def main_async() -> int:
             "ru_servers_txt": {"per_ip": RU_MAX_PER_IP, "total": RU_MAX_TOTAL},
             "europe_share": EUROPE_SHARE, "max_country_share": MAX_COUNTRY_SHARE,
             "reduced_countries": sorted(REDUCED_COUNTRIES), "reduced_factor": REDUCED_FACTOR,
+            "subscription_part_size": SUBSCRIPTION_PART_SIZE,
             "general_exclude_schemes": sorted(GENERAL_EXCLUDE_SCHEMES),
             "low_schemes": sorted(LOW_SCHEMES), "low_schemes_keep": LOW_SCHEMES_KEEP,
             "hysteria2_share": HYSTERIA2_SHARE,
