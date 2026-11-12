@@ -117,7 +117,6 @@ MIN_SPEED_MBPS = float(os.getenv("MIN_SPEED_MBPS", "3"))        # Мбит/с; 0
 # --- all.txt (общий список) ---
 MAX_PER_COUNTRY = int(os.getenv("MAX_PER_COUNTRY", "4"))
 MAX_TOTAL = int(os.getenv("MAX_TOTAL", "250"))
-SUBSCRIPTION_PART_SIZE = int(os.getenv("SUBSCRIPTION_PART_SIZE", "600"))
 
 # --- by_protocol/*.txt ---
 PROTO_MAX_PER_COUNTRY = int(os.getenv("PROTO_MAX_PER_COUNTRY", "20"))
@@ -142,7 +141,7 @@ def env_set(name: str, default: str, lower: bool = True) -> set[str]:
     return {x.strip().lower() if lower else x.strip().upper() for x in raw.split(",") if x.strip()}
 
 
-# США и Канада: дополнительное ограничение, как и раньше, в 2 раза.
+# США и Канада: лимит на страну уменьшается в REDUCED_FACTOR раз (во всех списках)
 REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "US,CA", lower=False)
 REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.5"))
 
@@ -1979,11 +1978,6 @@ async def main_async() -> int:
     # 6. Списки
     pool = [i for i in working if in_pool(i, sb_required)]
     main_list = select_servers(pool, MAX_PER_COUNTRY, MAX_TOTAL, general=True)
-    if SUBSCRIPTION_PART_SIZE <= 0:
-        raise ValueError("SUBSCRIPTION_PART_SIZE должен быть больше нуля")
-    subscription_1 = main_list[:SUBSCRIPTION_PART_SIZE]
-    # Вторая подписка — следующие самые приоритетные элементы после общего отбора.
-    subscription_2 = main_list[SUBSCRIPTION_PART_SIZE:SUBSCRIPTION_PART_SIZE * 2]
     white_list = smart_filter_white(pool)
     xray_list = select_servers(
         [i for i in working if i["xray_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, XRAY_FILE_MAX_TOTAL,
@@ -2015,10 +2009,8 @@ async def main_async() -> int:
     for old in by_dir.glob("*.txt"):
         old.unlink()
 
-    write_list(OUT_DIR / "all.txt", subscription_1)
-    write_list(OUT_DIR / "all_2.txt", subscription_2)
-    write_list(OUT_DIR / "working_proxies.txt", subscription_1)
-    write_list(OUT_DIR / "working_proxies_2.txt", subscription_2)
+    write_list(OUT_DIR / "all.txt", main_list)
+    write_list(OUT_DIR / "working_proxies.txt", main_list)
     write_list(OUT_DIR / "white_checked.txt", white_list)
     write_list(OUT_DIR / "xray_checked.txt", xray_list)
     write_list(OUT_DIR / "singbox_checked.txt", sb_list)
@@ -2061,8 +2053,7 @@ async def main_async() -> int:
         "singbox_by_protocol": sb_stats,
         "refuse_fallback_protocols": fallback,
         "files": {
-            "all_txt": len(subscription_1), "all_2_txt": len(subscription_2),
-            "white_checked_txt": len(white_list),
+            "all_txt": len(main_list), "white_checked_txt": len(white_list),
             "xray_checked_txt": len(xray_list), "singbox_checked_txt": len(sb_list),
             "ru_servers_txt": len(ru_list), "by_protocol": per_file,
         },
@@ -2078,7 +2069,6 @@ async def main_async() -> int:
             "ru_servers_txt": {"per_ip": RU_MAX_PER_IP, "total": RU_MAX_TOTAL},
             "europe_share": EUROPE_SHARE, "max_country_share": MAX_COUNTRY_SHARE,
             "reduced_countries": sorted(REDUCED_COUNTRIES), "reduced_factor": REDUCED_FACTOR,
-            "subscription_part_size": SUBSCRIPTION_PART_SIZE,
             "general_exclude_schemes": sorted(GENERAL_EXCLUDE_SCHEMES),
             "low_schemes": sorted(LOW_SCHEMES), "low_schemes_keep": LOW_SCHEMES_KEEP,
             "hysteria2_share": HYSTERIA2_SHARE,
