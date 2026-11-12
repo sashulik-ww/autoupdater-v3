@@ -1,0 +1,302 @@
+# IP -> выбранная страна | голоса источников (cf, ipinfo, countryis — измерены через туннель; ipapi, geojs — по IP)
+102.206.48.248 -> ИСКЛЮЧЁН | cf=DE ipinfo=NL countryis=NL ipapi=ZA geojs=ZA | socks5
+109.122.46.3 -> ИСКЛЮЧЁН | ipapi=US geojs=UA | vless
+109.122.46.3 -> ИСКЛЮЧЁН | ipapi=US geojs=UA | vless
+13.140.92.117 -> ИСКЛЮЧЁН | ipapi=FI geojs=DE | vless
+132.243.173.113 -> ИСКЛЮЧЁН | ipapi=TR geojs=GB | vless
+132.243.173.113 -> ИСКЛЮЧЁН | ipapi=TR geojs=GB | vless
+144.31.50.236 -> ИСКЛЮЧЁН | ipapi=RU geojs=US | vless
+144.31.50.236 -> ИСКЛЮЧЁН | ipapi=RU geojs=US | vless
+144.31.51.81 -> ИСКЛЮЧЁН | ipapi=NL geojs=US | vless
+153.52.255.101 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vmess
+153.52.255.104 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vless
+153.52.255.17 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vless
+153.52.255.32 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vless
+153.52.255.48 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vless
+153.52.255.48 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vmess
+153.52.255.54 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vless
+153.52.255.57 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vless
+153.52.255.98 -> ИСКЛЮЧЁН | ipapi=SG geojs=US | vless
+153.56.228.243 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+153.56.228.243 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+153.56.229.188 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+153.56.229.188 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+153.56.229.188 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+153.56.229.218 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+153.56.229.218 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+153.56.229.218 -> ИСКЛЮЧЁН | ipapi=TR geojs=DE | vless
+157.22.240.224 -> ИСКЛЮЧЁН | ipapi=AL geojs=RU | vless
+162.159.130.234 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+162.159.130.234 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vmess
+162.159.135.234 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+162.159.152.4 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+162.159.153.4 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+162.159.153.4 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+162.159.153.4 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+162.159.153.89 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+162.159.156.214 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+169.40.42.168 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+169.40.42.223 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+169.40.42.232 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+169.40.42.232 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+172.66.0.1 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vmess
+172.66.0.1 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vmess
+172.66.0.1 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vmess
+172.66.1.12 -> ИСКЛЮЧЁН | ipapi=CA geojs=US | vless
+177.202.71.55 -> ИСКЛЮЧЁН | ipapi=DE geojs=US | vless
+177.202.72.141 -> ИСКЛЮЧЁН | ipapi=US geojs=SE | vless
+177.3.252.14 -> ИСКЛЮЧЁН | ipapi=US geojs=PL | vless
+177.3.252.14 -> ИСКЛЮЧЁН | ipapi=US geojs=PL | vless
+177.3.252.179 -> ИСКЛЮЧЁН | ipapi=US geojs=PL | vless
+185.194.190.130 -> ИСКЛЮЧЁН | ipapi=UA geojs=AE | vless
+193.163.203.253 -> ИСКЛЮЧЁН | ipapi=RU geojs=LV | vless
+193.163.203.253 -> ИСКЛЮЧЁН | ipapi=RU geojs=LV | vless
+194.150.220.179 -> ИСКЛЮЧЁН | ipapi=NL geojs=UA | vless
+194.150.220.179 -> ИСКЛЮЧЁН | ipapi=NL geojs=UA | vless
+195.206.235.17 -> ИСКЛЮЧЁН | ipapi=GB geojs=US | vless
+195.206.235.235 -> ИСКЛЮЧЁН | ipapi=GB geojs=US | vless
+195.206.235.235 -> ИСКЛЮЧЁН | ipapi=GB geojs=US | vless
+196.242.3.9 -> ИСКЛЮЧЁН | ipapi=FR geojs=SC | vless
+2.26.129.247 -> ИСКЛЮЧЁН | ipapi=EE geojs=CH | vless
+2.26.187.119 -> ИСКЛЮЧЁН | ipapi=PL geojs=US | vless
+2.26.88.140 -> ИСКЛЮЧЁН | ipapi=LV geojs=US | vless
+201.8.64.253 -> ИСКЛЮЧЁН | ipapi=US geojs=NL | vless
+201.8.64.253 -> ИСКЛЮЧЁН | ipapi=US geojs=NL | vless
+201.8.64.253 -> ИСКЛЮЧЁН | ipapi=US geojs=NL | vless
+201.8.64.254 -> ИСКЛЮЧЁН | ipapi=US geojs=NL | vless
+201.8.64.254 -> ИСКЛЮЧЁН | ipapi=US geojs=NL | vless
+201.8.71.205 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+201.8.71.205 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+201.8.71.205 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+201.8.71.209 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+201.8.71.209 -> ИСКЛЮЧЁН | ipapi=US geojs=DE | vless
+201.8.71.59 -> ИСКЛЮЧЁН | cf=EE ipinfo=EE countryis=DE ipapi=US geojs=DE | hysteria2
+201.8.89.106 -> ИСКЛЮЧЁН | ipapi=DE geojs=US | vless
+201.8.89.106 -> ИСКЛЮЧЁН | ipapi=DE geojs=US | vless
+2a0d:d940:b210:1099::1 -> ИСКЛЮЧЁН | cf=DE ipinfo=EE countryis=EE ipapi=RU geojs=RU | hysteria2
+2a12:5940:5246::2 -> ИСКЛЮЧЁН | cf=NL ipinfo=AT countryis=NL ipapi=GB geojs=GB | vless
+2a12:5940:bdda::2 -> ИСКЛЮЧЁН | cf=DE ipinfo=FI countryis=DE ipapi=GB geojs=GB | http
+31.76.62.126 -> ИСКЛЮЧЁН | ipapi=LV geojs=US | vless
+31.76.93.63 -> ИСКЛЮЧЁН | ipapi=DE geojs=US | vless
+50.7.176.65 -> ИСКЛЮЧЁН | ipapi=NL geojs=US | vless
+50.7.95.229 -> ИСКЛЮЧЁН | ipapi=NL geojs=US | vless
+50.7.95.229 -> ИСКЛЮЧЁН | ipapi=NL geojs=US | vless
+78.159.250.102 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+78.159.250.106 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+78.159.250.107 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+78.159.250.107 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+78.159.250.107 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+78.159.250.200 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+78.159.250.209 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+81.94.148.45 -> ИСКЛЮЧЁН | ipapi=NL geojs=RU | vless
+94.183.164.182 -> ИСКЛЮЧЁН | ipapi=IR geojs=NL | vless
+95.182.85.198 -> ИСКЛЮЧЁН | ipapi=LV geojs=CZ | vless
+95.182.85.198 -> ИСКЛЮЧЁН | ipapi=LV geojs=CZ | vless
+104.222.183.180 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=NL geojs=GB | vless
+104.222.183.180 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=NL geojs=GB | vless
+104.28.158.150 -> SG | cf=SG ipinfo=SG countryis=SG ipapi=CA geojs=SG | vless
+104.28.158.3 -> SG | cf=SG ipinfo=SG countryis=SG ipapi=CA geojs=SG | vless
+104.28.158.3 -> SG | cf=SG ipinfo=SG countryis=SG ipapi=CA geojs=SG | vless
+107.181.151.128 -> FI | cf=FI countryis=FI ipapi=FI geojs=GB | vless
+107.181.151.128 -> FI | cf=FI countryis=FI ipapi=FI geojs=GB | vless
+112.199.233.89 -> SG | cf=SG ipinfo=HK countryis=SG ipapi=SG geojs=SG | vless
+128.90.172.20 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=UA geojs=UA | vless
+13.143.167.154 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=PL geojs=US | vless
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | hysteria2
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | hysteria2
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | hysteria2
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | hysteria2
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | vless
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | vless
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | vless
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | vless
+13.143.188.120 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=BY geojs=US | vless
+13.143.189.100 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.104 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.96 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.96 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.96 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.96 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.96 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.96 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+13.143.189.96 -> PL | cf=PL countryis=PL ipapi=PL geojs=US | hysteria2
+130.49.161.70 -> NL | cf=NL ipinfo=NL ipapi=NL geojs=AE | hysteria2
+138.124.37.220 -> DE | cf=DE countryis=DE ipapi=DE geojs=CH | hysteria2
+138.124.37.220 -> DE | cf=DE countryis=DE ipapi=DE geojs=CH | vless
+138.124.37.220 -> DE | cf=DE countryis=DE ipapi=DE geojs=CH | vless
+138.124.37.220 -> DE | cf=DE countryis=DE ipapi=DE geojs=CH | vless
+138.124.86.230 -> SE | cf=SE ipinfo=SE countryis=SE ipapi=SE geojs=CH | vless
+138.124.86.230 -> SE | cf=SE ipinfo=SE countryis=SE ipapi=SE geojs=CH | vless
+138.124.86.230 -> SE | cf=SE ipinfo=SE countryis=SE ipapi=SE geojs=CH | vless
+141.227.160.61 -> SE | cf=SE ipinfo=SE countryis=SE ipapi=SE geojs=FR | vless
+141.227.160.61 -> SE | cf=SE ipinfo=SE countryis=SE ipapi=SE geojs=FR | vless
+143.246.182.103 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.103 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.103 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.182.199 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+143.246.204.125 -> FR | cf=FR countryis=FR ipapi=MD geojs=MD | vless
+143.246.204.125 -> FR | cf=FR countryis=FR ipapi=MD geojs=MD | vless
+143.246.204.125 -> FR | cf=FR countryis=FR ipapi=MD geojs=MD | vless
+145.239.55.210 -> FR | cf=FR ipinfo=FR countryis=NL ipapi=FR geojs=FR | vmess
+146.59.55.106 -> PL | cf=PL countryis=PL ipapi=PL geojs=FR | vless
+147.45.66.60 -> TR | cf=TR countryis=TR ipapi=DE geojs=DE | vless
+151.241.19.29 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=NL geojs=AE | ss
+151.241.19.36 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=NL geojs=AE | ss
+156.226.168.221 -> HK | cf=HK ipinfo=HK countryis=HK ipapi=HK geojs=SC | vless
+156.226.168.221 -> HK | cf=HK ipinfo=HK countryis=HK ipapi=HK geojs=SC | vless
+156.226.168.221 -> HK | cf=HK ipinfo=HK countryis=HK ipapi=HK geojs=SC | vless
+162.249.125.133 -> RO | cf=RO ipinfo=RO countryis=RO ipapi=DE geojs=RO | hysteria2
+176.65.136.38 -> NL | cf=NL countryis=NL ipapi=NL geojs=DE | vless
+176.65.136.38 -> NL | cf=NL countryis=NL ipapi=NL geojs=DE | vless
+177.202.68.135 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=DE geojs=PL | vless
+177.202.78.129 -> NL | cf=NL countryis=NL ipapi=US geojs=NL | vless
+177.202.78.129 -> NL | cf=NL countryis=NL ipapi=US geojs=NL | vless
+177.202.78.129 -> NL | cf=NL countryis=NL ipapi=US geojs=NL | vless
+185.95.231.156 -> US | cf=US countryis=US ipapi=US geojs=IL | vless
+185.95.231.156 -> US | cf=US countryis=US ipapi=US geojs=IL | vless
+185.95.231.156 -> US | cf=US countryis=US ipapi=US geojs=IL | vless
+192.109.200.234 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=NL geojs=NL | vless
+192.109.200.234 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=NL geojs=NL | vless
+193.223.107.44 -> DE | cf=DE ipapi=DE geojs=TR | vless
+2.31.133.225 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=FI geojs=DE | vless
+200.102.183.16 -> FR | cf=FR countryis=FR ipapi=FR geojs=US | vless
+200.102.183.16 -> FR | cf=FR countryis=FR ipapi=FR geojs=US | vless
+200.102.183.16 -> FR | cf=FR countryis=FR ipapi=FR geojs=US | vless
+2001:41d0:602:d8c:: -> PL | cf=PL ipinfo=PL countryis=PL ipapi=PL geojs=FR | ss
+2001:41d0:721:e900:: -> DE | cf=DE ipinfo=DE countryis=DE ipapi=DE geojs=FR | ss
+2001:41d0:722:5500:: -> DE | cf=DE ipinfo=DE countryis=DE ipapi=DE geojs=FR | ss
+2001:41d0:800:3e81:: -> GB | cf=GB countryis=GB ipapi=GB geojs=FR | ss
+2001:41d0:800:3fd7:: -> GB | cf=GB countryis=GB ipapi=GB geojs=FR | ss
+23.230.52.119 -> NL | cf=NL countryis=NL ipapi=US geojs=US | ss
+23.230.52.119 -> NL | cf=NL countryis=NL ipapi=US geojs=US | ss
+23.238.42.119 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=US geojs=US | socks5
+24.233.8.109 -> HK | cf=HK ipinfo=HK countryis=HK ipapi=US geojs=US | hysteria2
+2400:6180:0:d2:0:3:116e:b000 -> SG | cf=SG ipinfo=SG countryis=SG ipapi=MY geojs=MY | vless
+2400:6180:0:d2:0:3:116e:b000 -> SG | cf=SG ipinfo=SG countryis=SG ipapi=MY geojs=MY | vless
+2a01:4f8:1c1b:1635::1 -> DE | cf=DE countryis=NL ipapi=DE geojs=DE | vless
+2a01:4f8:1c1b:1635::1 -> DE | cf=DE countryis=NL ipapi=DE geojs=DE | vless
+2a01:ecc0:5000:a8a::2 -> FI | cf=FI ipinfo=FI countryis=FI ipapi=FI geojs=GB | vless
+2a01:ecc0:d80:4b::2 -> DE | cf=DE countryis=DE ipapi=IT geojs=GB | vless
+2a01:ecc0:d80:4b::2 -> DE | cf=DE countryis=DE ipapi=IT geojs=GB | vless
+2a01:ecc0:d80:4b::2 -> DE | cf=DE countryis=DE ipapi=IT geojs=GB | vless
+2a0b:4140:aae1::2 -> GB | cf=DE ipinfo=FI ipapi=GB geojs=GB | vless
+2a0b:4140:e690::2 -> GB | cf=DE ipinfo=FI ipapi=GB geojs=GB | vless
+2a0b:4140:e690::2 -> GB | cf=DE ipinfo=FI ipapi=GB geojs=GB | vless
+2a0b:4140:e690::2 -> GB | cf=DE ipinfo=FI ipapi=GB geojs=GB | vless
+2a0b:4141:820:ac::2 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=NL geojs=NL | vless
+2a0b:4141:820:ac::2 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=NL geojs=NL | vless
+2a11:840:67:1b:216:3eff:fe3e:6652 -> SG | cf=SG countryis=SG ipapi=SG geojs=CA | vless
+2a11:840:67:1b:216:3eff:fe3e:6652 -> SG | cf=SG countryis=SG ipapi=SG geojs=CA | vless
+2a11:840:67:1b:216:3eff:fe3e:6652 -> SG | cf=SG countryis=SG ipapi=SG geojs=CA | vless
+2a11:840:67:1b:216:3eff:fe7d:8baa -> SG | cf=SG countryis=SG ipapi=SG geojs=CA | vless
+2a11:840:67:1b:216:3eff:fe7d:8baa -> SG | cf=SG countryis=SG ipapi=SG geojs=CA | vless
+2a11:840:67:1b:216:3eff:fe7d:8baa -> SG | cf=SG countryis=SG ipapi=SG geojs=CA | vless
+2a12:5940:16b3::2 -> DE | cf=DE countryis=DE ipapi=GB geojs=GB | http
+2a12:dec0:caf1:1::2 -> PL | cf=PL ipinfo=PL countryis=PL ipapi=NL geojs=PL | vless
+2a13:7c00:5:19:f816:3eff:fe4f:9ac4 -> FR | cf=FR ipapi=FR geojs=HK | http
+31.76.104.200 -> LV | cf=LV ipinfo=LV countryis=LV ipapi=LV geojs=CH | hysteria2
+31.76.62.140 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=LV geojs=US | hysteria2
+31.76.62.140 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=LV geojs=US | hysteria2
+31.76.62.140 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=LV geojs=US | hysteria2
+31.76.62.140 -> DE | cf=DE ipinfo=DE countryis=DE ipapi=LV geojs=US | hysteria2
+31.77.170.178 -> NL | cf=NL countryis=NL ipapi=NL geojs=US | vless
+31.77.170.178 -> NL | cf=NL countryis=NL ipapi=NL geojs=US | vless
+31.77.18.220 -> FI | cf=FI ipinfo=FI countryis=FI ipapi=SE geojs=SE | vless
+31.77.18.220 -> FI | cf=FI ipinfo=FI countryis=FI ipapi=SE geojs=SE | vless
+31.77.18.220 -> FI | cf=FI ipinfo=FI countryis=FI ipapi=SE geojs=SE | vless
+45.38.143.210 -> LV | cf=LV ipinfo=LV countryis=LV ipapi=FI geojs=LV | vless
+45.38.143.210 -> LV | cf=LV ipinfo=LV countryis=LV ipapi=FI geojs=LV | vless
+45.95.96.198 -> DE | cf=DE ipapi=DE geojs=SC | vless
+45.95.96.198 -> DE | cf=DE ipapi=DE geojs=SC | vless
+45.95.96.198 -> DE | cf=DE ipapi=DE geojs=SC | vless
+45.95.96.198 -> DE | cf=DE ipapi=DE geojs=SC | vless
+45.95.96.198 -> DE | cf=DE ipapi=DE geojs=SC | vless
+45.95.96.198 -> DE | cf=DE ipapi=DE geojs=SC | vless
+45.95.96.198 -> DE | cf=DE ipapi=DE geojs=SC | vless
+46.250.240.80 -> AU | cf=AU ipinfo=AU countryis=AU ipapi=GB geojs=GB | vless
+46.250.240.80 -> AU | cf=AU ipinfo=AU countryis=AU ipapi=GB geojs=GB | vless
+46.250.240.80 -> AU | cf=AU ipinfo=AU countryis=AU ipapi=GB geojs=GB | vless
+46.250.250.149 -> JP | cf=JP countryis=JP ipapi=GB geojs=GB | vless
+46.250.250.149 -> JP | cf=JP countryis=JP ipapi=GB geojs=GB | vless
+46.250.250.149 -> JP | cf=JP countryis=JP ipapi=GB geojs=GB | vless
+46.29.255.123 -> SE | cf=SE ipinfo=SE countryis=SE ipapi=US geojs=US | vless
+46.29.255.123 -> SE | cf=SE ipinfo=SE countryis=SE ipapi=US geojs=US | vless
+5.253.42.164 -> IN | cf=IN countryis=IN ipapi=IN geojs=CY | vless
+5.253.42.164 -> IN | cf=IN countryis=IN ipapi=IN geojs=CY | vless
+5.253.42.164 -> IN | cf=IN countryis=IN ipapi=IN geojs=CY | vless
+5.83.129.236 -> NL | cf=NL countryis=NL ipapi=DE geojs=DE | vless
+5.83.129.236 -> NL | cf=NL countryis=NL ipapi=DE geojs=DE | vless
+50.117.15.225 -> CH | cf=CH countryis=CH ipapi=US geojs=US | vless
+50.117.15.225 -> CH | cf=CH countryis=CH ipapi=US geojs=US | vless
+50.117.15.225 -> CH | cf=CH countryis=CH ipapi=US geojs=US | vless
+50.7.169.213 -> NL | cf=NL countryis=NL ipapi=NL geojs=US | vless
+50.7.169.213 -> NL | cf=NL countryis=NL ipapi=NL geojs=US | vless
+50.7.169.213 -> NL | cf=NL countryis=NL ipapi=NL geojs=US | vless
+50.7.178.184 -> NL | cf=NL countryis=NL ipapi=NL geojs=US | vless
+50.7.178.184 -> NL | cf=NL countryis=NL ipapi=NL geojs=US | vless
+50.7.193.149 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=GB geojs=GB | hysteria2
+50.7.226.186 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+50.7.226.186 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+50.7.226.186 -> GB | cf=GB countryis=GB ipapi=GB geojs=US | vless
+50.7.37.226 -> AT | cf=AT countryis=AT ipapi=AT geojs=US | vless
+50.7.37.226 -> AT | cf=AT countryis=AT ipapi=AT geojs=US | vless
+50.7.37.226 -> AT | cf=AT countryis=AT ipapi=AT geojs=US | vless
+50.7.95.228 -> NL | cf=NL ipinfo=NL ipapi=NL geojs=US | hysteria2
+50.7.95.228 -> NL | cf=NL ipinfo=NL ipapi=NL geojs=US | hysteria2
+50.7.95.228 -> NL | cf=NL ipinfo=NL ipapi=NL geojs=US | hysteria2
+51.68.153.124 -> PL | cf=PL ipapi=PL geojs=FR | vless
+51.89.99.120 -> DE | cf=DE countryis=DE ipapi=GB geojs=GB | vless
+51.89.99.120 -> DE | cf=DE countryis=DE ipapi=GB geojs=GB | vless
+52.128.238.98 -> US | cf=US countryis=US ipapi=HK geojs=US | http
+54.36.175.6 -> PL | cf=PL countryis=PL ipapi=PL geojs=FR | vless
+54.36.175.6 -> PL | cf=PL countryis=PL ipapi=PL geojs=FR | vless
+68.178.165.65 -> SG | cf=SG countryis=SG ipapi=JP geojs=US | socks5
+79.182.70.192 -> NL | cf=NL countryis=NL ipapi=BY geojs=NL | vless
+79.182.70.192 -> NL | cf=NL countryis=NL ipapi=BY geojs=NL | vless
+79.182.70.192 -> NL | cf=NL countryis=NL ipapi=BY geojs=NL | vless
+79.182.70.192 -> NL | cf=NL countryis=NL ipapi=BY geojs=NL | vless
+79.182.70.192 -> NL | cf=NL countryis=NL ipapi=BY geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+79.182.70.220 -> NL | cf=NL countryis=NL ipapi=AL geojs=NL | vless
+83.147.234.163 -> SG | cf=SG ipinfo=HK countryis=SG ipapi=SG geojs=SG | vless
+88.218.42.28 -> FR | cf=FR ipinfo=FR countryis=FR ipapi=DE geojs=RO | vless
+88.218.42.28 -> FR | cf=FR ipinfo=FR countryis=FR ipapi=DE geojs=RO | vless
+89.43.133.116 -> SY | cf=SY ipinfo=SY ipapi=SY geojs=HU | http
+91.107.191.188 -> DE | cf=DE ipinfo=DE countryis=NL ipapi=DE geojs=DE | vless
+91.107.191.188 -> DE | cf=DE ipinfo=DE countryis=NL ipapi=DE geojs=DE | vless
+91.107.191.188 -> DE | cf=DE ipinfo=DE countryis=NL ipapi=DE geojs=DE | vless
+91.107.247.173 -> DE | cf=DE countryis=NL ipapi=DE geojs=DE | vless
+94.183.164.119 -> NL | cf=NL countryis=NL ipapi=IR geojs=NL | vless
+94.183.164.119 -> NL | cf=NL countryis=NL ipapi=IR geojs=NL | vless
+94.183.164.142 -> NL | cf=NL countryis=NL ipapi=IR geojs=NL | vless
+94.183.164.142 -> NL | cf=NL countryis=NL ipapi=IR geojs=NL | vless
+94.183.164.142 -> NL | cf=NL countryis=NL ipapi=IR geojs=NL | vless
+94.183.164.176 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=IR geojs=NL | vless
+94.183.164.96 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=IR geojs=NL | vless
+94.183.164.96 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=IR geojs=NL | vless
+94.249.148.30 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=DE geojs=DE | vless
+94.249.148.30 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=DE geojs=DE | vless
+94.249.148.30 -> NL | cf=NL ipinfo=NL countryis=NL ipapi=DE geojs=DE | vless
