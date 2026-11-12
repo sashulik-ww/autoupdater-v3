@@ -1,11 +1,10 @@
-name: ai-advisor
+name: AI advisor
 
 on:
-  # Автозапуск отключён: сначала проверь вручную (Actions → ai-advisor → Run workflow).
-  # Когда заработает, раскомментируй две строки ниже — будет запускаться раз в неделю.
+  workflow_dispatch:
+  # Автозапуск отключён по умолчанию; при желании включите расписание:
   # schedule:
   #   - cron: "0 6 * * 1"
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,24 +24,22 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: ИИ-анализ рабочих серверов
+      - name: Analyze working configs with Claude
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AI_API_KEY: ${{ secrets.AI_API_KEY }}
-          AI_PROVIDER: ${{ vars.AI_PROVIDER }}    # groq, gemini или mistral (для ключа Mistral обязательно)
-          AI_MODEL: ${{ vars.AI_MODEL }}          # необязательно
-          AI_BASE_URL: ${{ vars.AI_BASE_URL }}    # необязательно (по умолчанию Gemini)
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: python ai_advisor.py
 
-      - name: Закоммитить результат
+      - name: Commit verified suggestions and report
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sources_ai.txt ai_domains.txt out/ai_report.md 2>/dev/null || true
           if git diff --cached --quiet; then
-            echo "Без изменений"
-          else
-            git commit -m "update AI suggestions"
-            git pull --rebase --autostash
-            git push
+            echo "No AI suggestions or report changes"
+            exit 0
           fi
+          git commit -m "Update Claude AI suggestions"
+          git pull --rebase --autostash
+          git push
