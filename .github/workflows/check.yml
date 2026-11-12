@@ -56,19 +56,6 @@ jobs:
           CONCURRENCY: "200"
           XRAY_WORKERS: "100"
           SINGBOX_WORKERS: "100"
-          MAX_PER_COUNTRY: "18"
-          MAX_TOTAL: "1200"
-          MAX_COUNTRY_SHARE: "0.1"
-          REDUCED_COUNTRIES: ""
-          REDUCED_FACTOR: "1"
-          SUBSCRIPTION_PART_SIZE: "600"
-          GEO_STRICT: "true"
-          GEO_MIN_AGREE: "2"
-          GEO_SOURCES: "ipapi,geojs"
-          MIN_SPEED_MBPS: "1.5"
-          MAX_TESTS_PER_IP: "5"
-          TELEGRAM_CHANNELS: "t.me/OutlineReleasedKey,t.me/V2ray_Collector"
-          SOURCE_URLS: "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt, https://raw.githubusercontent.com/igarec/vpn-configs-for-russia/refs/heads/main/Base64/BLAC//raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-SNI-RU-all-base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_SS%2BAll_RUS_base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt, https://raw.githubusercontent.com/barry-far/V2ray-Config/refs/heads/main/All_Configs_base64_Sub.txt"
         run: python checker.py
 
       - name: Commit results
