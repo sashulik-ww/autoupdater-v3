@@ -15,7 +15,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 360
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,37 +38,55 @@ jobs:
       - name: Install sing-box
         env:
           GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          mkdir -p "$HOME/singbox" && cd "$HOME/singbox"
-          URL=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            https://api.github.com/repos/SagerNet/sing-box/releases/latest \
-            | jq -r '.assets[].browser_download_url' | grep -E 'linux-amd64\.tar\.gz$' | head -n1)
-          echo "sing-box: $URL"
-          curl -fsSL --retry 3 -o sb.tar.gz "$URL"
-          tar -xzf sb.tar.gz --strip-components=1
-          chmod +x sing-box
-          ./sing-box version
+          set -euo pipefail
+          mkdir -p "$HOME/singbox"
+          cd "$HOME/singbox"
+
+          API_URL="https://api.github.com/repos/SagerNet/sing-box/releases/latest"
+          RELEASE_JSON=$(curl --fail --silent --show-error --location \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "$API_URL")
+
+          URL=$(printf '%s' "$RELEASE_JSON" | jq -r '
+            [.assets[].browser_download_url
+              | select(test("linux-amd64.*\\.tar\\.gz$"))][0] // empty
+          ')
+          if [[ -z "$URL" || "$URL" == "null" ]]; then
+            echo "Не найден Linux amd64 архив sing-box. Assets релиза:" >&2
+            printf '%s' "$RELEASE_JSON" | jq -r '.assets[].name' >&2 || true
+            exit 1
+          fi
+
+          echo "Downloading sing-box archive"
+          curl --fail --silent --show-error --location --retry 3 -o sb.tar.gz "$URL"
+          mkdir -p extracted
+          tar -xzf sb.tar.gz -C extracted
+          BIN=$(find extracted -type f -name sing-box -print -quit)
+          if [[ -z "$BIN" ]]; then
+            echo "В архиве не найден бинарник sing-box" >&2
+            exit 1
+          fi
+          install -m 0755 "$BIN" "$HOME/singbox/sing-box"
+          "$HOME/singbox/sing-box" version
           echo "SINGBOX_BIN=$HOME/singbox/sing-box" >> "$GITHUB_ENV"
 
       - name: Check proxies
         env:
           TIMEOUT: "8"
           CONCURRENCY: "200"
-          XRAY_WORKERS: "100"
-          SINGBOX_WORKERS: "100"
+          XRAY_WORKERS: "32"
+          SINGBOX_WORKERS: "32"
+          XRAY_TIMEOUT: "6"
+          XRAY_START_TIMEOUT: "6"
+          SPEED_TEST: "false"
           MAX_PER_COUNTRY: "18"
-          MAX_TOTAL: "1200"
-          MAX_COUNTRY_SHARE: "0.1"
-          REDUCED_COUNTRIES: ""
-          REDUCED_FACTOR: "1"
-          SUBSCRIPTION_PART_SIZE: "600"
-          GEO_STRICT: "true"
-          GEO_MIN_AGREE: "2"
-          GEO_SOURCES: "ipapi,geojs"
           MIN_SPEED_MBPS: "1.5"
-          MAX_TESTS_PER_IP: "5"
+          MAX_TESTS_PER_IP: "3"
           TELEGRAM_CHANNELS: "t.me/OutlineReleasedKey,t.me/V2ray_Collector"
-          SOURCE_URLS: "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt, https://raw.githubusercontent.com/igarec/vpn-configs-for-russia/refs/heads/main/Base64/BLAC//raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-SNI-RU-all-base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_SS%2BAll_RUS_base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt, https://raw.githubusercontent.com/barry-far/V2ray-Config/refs/heads/main/All_Configs_base64_Sub.txt"
+          SOURCE_URLS: "https://raw.githubusercontent.com/nikita29a/FreeProxyList/refs/heads/main/mirror/1.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_VLESS_RUS_base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-SNI-RU-all-base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/BLACK_SS%2BAll_RUS_base64.txt, https://raw.githubusercontent.com/igareck/vpn-configs-for-russia/refs/heads/main/Export/Base64/PROXIES_ONLY/WHITE-CIDR-RU-all-base64.txt, https://raw.githubusercontent.com/barry-far/V2ray-Config/refs/heads/main/All_Configs_base64_Sub.txt"
         run: python checker.py
 
       - name: Commit results
@@ -83,7 +101,6 @@ jobs:
           fi
 
           git commit -m "Update proxies: $(date -u +'%Y-%m-%d %H:%M') UTC"
-
           for i in 1 2 3 4 5; do
             echo "Попытка пуша №$i..."
             git fetch origin main
@@ -96,6 +113,5 @@ jobs:
             git rebase --abort 2>/dev/null || true
             sleep $((i * 4))
           done
-
           echo "Не удалось запушить"
           exit 1
