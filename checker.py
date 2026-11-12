@@ -145,8 +145,8 @@ def env_set(name: str, default: str, lower: bool = True) -> set[str]:
 
 # Дополнительный понижающий лимит отключён по умолчанию для всех стран.
 # Можно включить явно через REDUCED_COUNTRIES и REDUCED_FACTOR.
-REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "", lower=False)
-REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "1"))
+REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "US,CA", lower=False)
+REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.2"))
 
 # «Общие» файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
 GENERAL_EXCLUDE_SCHEMES = env_set("GENERAL_EXCLUDE_SCHEMES", "http,https,ss,socks5,socks4")  # не нужны / работают плохо
