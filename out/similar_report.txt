@@ -3,47 +3,47 @@
 Твоих рабочих серверов: 299 (vless 188: reality 163, tls 22; vmess 51, trojan 49, hysteria2 11)
 Ключей Reality (pbk) среди рабочих: 79; семейств доменов: 98; подсетей /24: 107
 
-pool_unusable: 20058
-pool_already_in_working: 698
-pool_candidates: 32276
-matched_before_dns: 1370
-dns_ok: 30662
-similar_found: 1534
-match_pbk: 451
-match_uuid: 379
-match_host: 271
-match_fam: 964
-match_subnet: 441
-match_sni: 294
-tcp_ok: 966
-xray_ok: 136
-dropped_per_ip: 132
-dropped_per_pbk: 22
+pool_unusable: 28183
+pool_already_in_working: 1447
+pool_candidates: 53474
+matched_before_dns: 1978
+dns_ok: 50293
+similar_found: 2004
+match_pbk: 387
+match_uuid: 630
+match_host: 294
+match_fam: 1176
+match_subnet: 685
+match_sni: 559
+tcp_ok: 1147
+xray_ok: 165
+dropped_per_ip: 156
+dropped_per_pbk: 18
 final: 450
 
 Первые 25 серверов и почему они похожи:
   361 ✓ 🇦🇹 Austria, Vienna — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), host=qq.utiltools.site(+45.5)
+  318 ✓ 🇦🇹 Austria, Vienna — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), fam=utiltools.site(+57.0)
   300   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=prime.jarbook.net(+56.0)
+  294 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), host=ca1.fox-lisa.ru(+35.0)
   285   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=fb37d713-0ed3-4146-b085-(+58.0), host=prime.jarbook.net(+56.0)
-  275   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=main.jarbook.net(+35.0)
+  274   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=main.jarbook.net(+35.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
   261 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
+  246 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
   243   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
   243   🇷🇸 Serbia, Belgrade — pbk=X8mPYnsoTd8QCnvFZKSy7Vvp(+65.0), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
   235 ✓ 🇵🇱 Poland, Warsaw — pbk=kLCwYNBhCg68BQah9El1lNg6(+57.5), uuid=f333ac5d-1e0b-4947-a123-(+46.0), host=150.251.112.45(+40.2)
   233   🇷🇸 Serbia, Belgrade — pbk=gHDoSWGWMVZKWNKONWHw-Cpl(+57.5), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
-  226   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+76.0), fam=golangwikito.cfd(+52.5)
-  223 ✓ 🇺🇸 United States, Washington — pbk=6PJlXT9xrgJP8RXfhpWDMKPh(+57.5), uuid=50a87e21-f0e2-4b53-a787-(+58.0), host=gemsubbgem.world(+40.2)
-  217   🇷🇺 Russia, Moscow — pbk=I_0JD13_bJuD6bNhTfb1PFPJ(+65.0), uuid=84a56b88-2f89-4a57-b925-(+52.0), host=dwedfs.whitenw.net(+40.2)
+  217   🇱🇹 Lithuania, Šiauliai — pbk=zZjrHRzULoXKVccVdPqtrtXL(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=betust.net(+55.6)
   216 ✓ 🇳🇱 The Netherlands, Amsterdam — pbk=yyXZsa238GRW90w5DweXAdRT(+50.0), uuid=727a9178-d7f0-4142-8205-(+46.0), host=138.124.245.102(+35.0)
-  212   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+57.0)
-  212   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+57.0)
-  208   🇦🇹 Austria, Liezen District — pbk=zEntiD6D81wY__YHPvIw78e0(+50.0), uuid=db80088c-32a1-4cb8-a907-(+58.0), host=at1.japancase.site(+35.0)
-  204 ✓ 🇺🇸 United States, Orem — pbk=TyuIIquHoesD9YwMQJHda0YZ(+50.0), uuid=50a87e21-f0e2-4b53-a787-(+58.0), host=swedenafteraventura.spac(+35.0)
-  204 ✓ 🇺🇸 United States, Orem — pbk=EEL-yDPBfol_fiEEM8Pd0zue(+50.0), uuid=50a87e21-f0e2-4b53-a787-(+58.0), host=hollandlanzerotte.xyz(+35.0)
-  202 ✓ 🇫🇷 France, Roubaix — pbk=SbVKOEMjK0sIlbwg4akyBg5m(+12.3), uuid=b9bfa54d-bc44-4592-a6d6-(+58.0), host=edge.bookmai.com(+50.8)
-  189   🇷🇺 Russia, Moscow — pbk=qPh1iuwpELosLWTxOXyfCiMg(+57.5), host=13.143.184.226(+40.2), fam=serverslocal.ru(+34.5)
-  189   🇷🇺 Russia, Moscow — pbk=qPh1iuwpELosLWTxOXyfCiMg(+57.5), host=13.143.184.226(+40.2), fam=serverslocal.ru(+34.5)
-  186   🇪🇪 Estonia, Tallinn — pbk=zEntiD6D81wY__YHPvIw78e0(+50.0), uuid=db80088c-32a1-4cb8-a907-(+58.0), fam=japancase.site(+43.5)
-  185   🇺🇸 United States, Orem — pbk=5H_MmyfvF4SkwS84wTbLmtcZ(+57.5), uuid=92b79c22-f68b-4713-8b21-(+52.0), fam=song69.fun(+48.0)
+  215   🇳🇱 The Netherlands, Halfweg — pbk=E12wXXagR8xuql7KlWCLTgMa(+57.5), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
+  214   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+64.7), fam=golangwikito.cfd(+52.5)
+  212   🇷🇺 Russia, Moscow — pbk=I_0JD13_bJuD6bNhTfb1PFPJ(+65.0), uuid=84a56b88-2f89-4a57-b925-(+52.0), host=dwedfs.whitenw.net(+40.2)
+  211   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+55.6)
+  211   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+55.6)
+  210 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=P5RCcSo4SB1D5z7BnpIt9OUy(+50.0), uuid=7af8ad56-33ce-4f3d-ad15-(+40.0), host=31.56.18.191(+35.0)
+  205 ✓ 🇺🇸 United States, Washington — pbk=6PJlXT9xrgJP8RXfhpWDMKPh(+57.5), uuid=50a87e21-f0e2-4b53-a787-(+40.0), host=gemsubbgem.world(+40.2)
+  202   🇷🇺 Russia, Moscow — pbk=LEziyH-E4k9hehGRJkVi1Fad(+65.0), uuid=7ad63b26-bf70-4872-8fab-(+58.0), fam=topp-con.xyz(+43.5)
+  192 ✓ 🇫🇷 France, Roubaix — pbk=SbVKOEMjK0sIlbwg4akyBg5m(+2.4), uuid=b9bfa54d-bc44-4592-a6d6-(+58.0), host=edge.bookmai.com(+50.8)
