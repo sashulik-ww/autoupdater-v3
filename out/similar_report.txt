@@ -1,49 +1,49 @@
 Похожие на рабочие серверы — отчёт
 
-Твоих рабочих серверов: 299 (vless 188: reality 163, tls 22; vmess 51, trojan 49, hysteria2 11)
-Ключей Reality (pbk) среди рабочих: 79; семейств доменов: 98; подсетей /24: 107
+Твоих рабочих серверов: 338 (vless 223: reality 184, tls 36; vmess 54, trojan 49, hysteria2 12)
+Ключей Reality (pbk) среди рабочих: 91; семейств доменов: 110; подсетей /24: 121
 
-pool_unusable: 28183
-pool_already_in_working: 1447
-pool_candidates: 53474
-matched_before_dns: 1978
-dns_ok: 50293
-similar_found: 2004
-match_pbk: 387
-match_uuid: 630
-match_host: 294
-match_fam: 1176
-match_subnet: 685
-match_sni: 559
-tcp_ok: 1147
-xray_ok: 165
-dropped_per_ip: 156
-dropped_per_pbk: 18
+pool_unusable: 25795
+pool_already_in_working: 1755
+pool_candidates: 40960
+matched_before_dns: 2100
+dns_ok: 38904
+similar_found: 2123
+match_pbk: 430
+match_uuid: 762
+match_host: 312
+match_fam: 1307
+match_subnet: 714
+match_sni: 599
+tcp_ok: 1317
+xray_ok: 177
+dropped_per_ip: 187
+dropped_per_pbk: 23
 final: 450
 
 Первые 25 серверов и почему они похожи:
-  361 ✓ 🇦🇹 Austria, Vienna — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), host=qq.utiltools.site(+45.5)
-  318 ✓ 🇦🇹 Austria, Vienna — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), fam=utiltools.site(+57.0)
+  358   🇳🇱 The Netherlands, Amsterdam — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), host=qq.utiltools.site(+50.8)
+  310   🇳🇱 The Netherlands, Amsterdam — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), fam=utiltools.site(+57.0)
   300   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=prime.jarbook.net(+56.0)
-  294 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), host=ca1.fox-lisa.ru(+35.0)
   285   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=fb37d713-0ed3-4146-b085-(+58.0), host=prime.jarbook.net(+56.0)
-  274   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=main.jarbook.net(+35.0)
+  275   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=main.jarbook.net(+35.0)
+  270 ✓ 🇳🇱 The Netherlands, Halfweg — pbk=TXP6hQVE4PdXDEdDk2k_5_f9(+50.0), uuid=2232d904-8e6a-4202-8240-(+70.0), host=50.7.169.242(+35.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
-  261 ✓ 🇨🇦 Canada, Montreal — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
+  267 ✓ 🇳🇱 The Netherlands, Halfweg — pbk=TXP6hQVE4PdXDEdDk2k_5_f9(+50.0), uuid=2232d904-8e6a-4202-8240-(+70.0), host=50.7.169.242(+35.0)
   246 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
-  243   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
+  246 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
   243   🇷🇸 Serbia, Belgrade — pbk=X8mPYnsoTd8QCnvFZKSy7Vvp(+65.0), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
+  243   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
   235 ✓ 🇵🇱 Poland, Warsaw — pbk=kLCwYNBhCg68BQah9El1lNg6(+57.5), uuid=f333ac5d-1e0b-4947-a123-(+46.0), host=150.251.112.45(+40.2)
+  234   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+52.2), host=31.77.28.83(+35.0)
   233   🇷🇸 Serbia, Belgrade — pbk=gHDoSWGWMVZKWNKONWHw-Cpl(+57.5), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
-  217   🇱🇹 Lithuania, Šiauliai — pbk=zZjrHRzULoXKVccVdPqtrtXL(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=betust.net(+55.6)
+  230   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+63.4), uuid=3a7849e7-8ef6-492f-860d-(+52.2), host=191.217.217.81(+35.0)
+  230   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+63.4), uuid=3a7849e7-8ef6-492f-860d-(+52.2), host=nl6.soshelper.space(+35.0)
+  226   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+52.2), host=31.77.28.83(+35.0)
+  226   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+52.2), host=nl2.soshelper.space(+35.0)
+  225   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+63.4), uuid=3a7849e7-8ef6-492f-860d-(+52.2), host=191.217.217.81(+35.0)
+  225   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+63.4), uuid=3a7849e7-8ef6-492f-860d-(+52.2), host=nl6.soshelper.space(+35.0)
+  217   🇳🇱 The Netherlands, Amsterdam — pbk=EEL-yDPBfol_fiEEM8Pd0zue(+57.5), uuid=50a87e21-f0e2-4b53-a787-(+59.5), host=hollandlanzerotte.xyz(+40.2)
+  216   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+66.1), fam=golangwikito.cfd(+52.5)
   216 ✓ 🇳🇱 The Netherlands, Amsterdam — pbk=yyXZsa238GRW90w5DweXAdRT(+50.0), uuid=727a9178-d7f0-4142-8205-(+46.0), host=138.124.245.102(+35.0)
-  215   🇳🇱 The Netherlands, Halfweg — pbk=E12wXXagR8xuql7KlWCLTgMa(+57.5), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
-  214   🇳🇱 The Netherlands, Amsterdam — pbk=QrNs0ew7snHqLfpVXS9RAhlR(+95.0), uuid=f8d52ece-fad4-478d-875d-(+64.7), fam=golangwikito.cfd(+52.5)
-  212   🇷🇺 Russia, Moscow — pbk=I_0JD13_bJuD6bNhTfb1PFPJ(+65.0), uuid=84a56b88-2f89-4a57-b925-(+52.0), host=dwedfs.whitenw.net(+40.2)
-  211   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+55.6)
-  211   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+70.0), fam=betust.net(+55.6)
-  210 ✓ 🇩🇪 Germany, Frankfurt am Main — pbk=P5RCcSo4SB1D5z7BnpIt9OUy(+50.0), uuid=7af8ad56-33ce-4f3d-ad15-(+40.0), host=31.56.18.191(+35.0)
-  205 ✓ 🇺🇸 United States, Washington — pbk=6PJlXT9xrgJP8RXfhpWDMKPh(+57.5), uuid=50a87e21-f0e2-4b53-a787-(+40.0), host=gemsubbgem.world(+40.2)
-  202   🇷🇺 Russia, Moscow — pbk=LEziyH-E4k9hehGRJkVi1Fad(+65.0), uuid=7ad63b26-bf70-4872-8fab-(+58.0), fam=topp-con.xyz(+43.5)
-  192 ✓ 🇫🇷 France, Roubaix — pbk=SbVKOEMjK0sIlbwg4akyBg5m(+2.4), uuid=b9bfa54d-bc44-4592-a6d6-(+58.0), host=edge.bookmai.com(+50.8)

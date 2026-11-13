@@ -1,12 +1,12 @@
 {
  "servers": {
-  "servers": 299,
-  "vless": 188,
-  "vless_reality": 163,
-  "vless_tls": 22,
+  "servers": 338,
+  "vless": 223,
+  "vless_reality": 184,
+  "vless_tls": 36,
+  "hysteria2": 12,
+  "vmess": 54,
   "trojan": 49,
-  "vmess": 51,
-  "hysteria2": 11,
   "vless_none": 3
  },
  "pbk_groups": [
@@ -16,7 +16,7 @@
   ],
   [
    "drY21DHN…",
-   9
+   10
   ],
   [
    "NaCZ-sS4…",
@@ -27,6 +27,10 @@
    9
   ],
   [
+   "1vSZjvhZ…",
+   6
+  ],
+  [
    "TRaUsnzF…",
    6
   ],
@@ -35,12 +39,16 @@
    5
   ],
   [
-   "1vSZjvhZ…",
+   "SbVKOEMj…",
    4
   ],
   [
-   "SbVKOEMj…",
-   4
+   "9UG9zvrD…",
+   3
+  ],
+  [
+   "mEo4kHPp…",
+   3
   ],
   [
    "I_0JD13_…",
@@ -49,24 +57,16 @@
   [
    "HRmmr0Ii…",
    3
-  ],
-  [
-   "xNzdfy4h…",
-   3
-  ],
-  [
-   "fSVfR9NB…",
-   3
   ]
  ],
  "domain_families": [
   [
-   "zestapp778.com",
+   "betust.net",
    18
   ],
   [
-   "betust.net",
-   17
+   "zestapp778.com",
+   18
   ],
   [
    "windowsmsidownloads.com",
@@ -81,19 +81,23 @@
    12
   ],
   [
-   "pythonmakemigreat.wiki",
+   "jarbook.net",
+   10
+  ],
+  [
+   "fastly.com",
    10
   ],
   [
    "utiltools.site",
-   9
+   10
+  ],
+  [
+   "pythonmakemigreat.wiki",
+   10
   ],
   [
    "fox-lisa.ru",
-   9
-  ],
-  [
-   "jarbook.net",
    9
   ],
   [
@@ -102,10 +106,6 @@
   ],
   [
    "yandex.ru",
-   7
-  ],
-  [
-   "windowssearchtools.com",
    7
   ]
  ],
@@ -119,8 +119,12 @@
    12
   ],
   [
+   "accounts.fastly.com",
+   10
+  ],
+  [
    "qq.utiltools.site",
-   9
+   10
   ],
   [
    "yoy-api.bachidze.com",
@@ -147,19 +151,19 @@
    6
   ],
   [
+   "mbr.rkn-pediki.site",
+   5
+  ],
+  [
    "prime.jarbook.net",
-   5
-  ],
-  [
-   "guanwang.awsno.com",
-   5
-  ],
-  [
-   "pl2.nexfile.net",
    5
   ]
  ],
  "subnets_24": [
+  [
+   "151.101.36",
+   10
+  ],
   [
    "13.143.189",
    8
@@ -167,6 +171,10 @@
   [
    "78.159.250",
    6
+  ],
+  [
+   "185.178.208",
+   5
   ],
   [
    "188.114.96",
@@ -179,10 +187,6 @@
   [
    "150.40.126",
    5
-  ],
-  [
-   "185.178.208",
-   4
   ],
   [
    "216.152.147",
@@ -203,16 +207,12 @@
   [
    "104.21.15",
    3
-  ],
-  [
-   "172.67.153",
-   3
   ]
  ],
  "ports": [
   [
    443,
-   142
+   176
   ],
   [
    61374,
@@ -246,55 +246,55 @@
  "transports": [
   [
    "tcp",
-   140
+   156
   ],
   [
    "xhttp",
-   25
+   39
   ],
   [
    "ws",
-   15
+   19
   ],
   [
    "grpc",
-   8
+   9
   ]
  ],
  "flows": [
   [
    "xtls-rprx-vision",
-   134
+   150
   ],
   [
    "",
-   54
+   73
   ]
  ],
  "fingerprints": [
   [
    "chrome",
-   78
+   97
   ],
   [
    "firefox",
-   73
+   79
   ],
   [
    "",
-   16
+   20
+  ],
+  [
+   "qq",
+   6
   ],
   [
    "ios",
    6
   ],
   [
-   "random",
+   "edge",
    5
-  ],
-  [
-   "qq",
-   4
   ]
  ]
 }
