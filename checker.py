@@ -135,7 +135,7 @@ RU_MAX_TOTAL = int(os.getenv("RU_MAX_TOTAL", "250"))
 
 # --- Баланс стран (проверка идёт из США, поэтому США/Канада быстрее всех) ---
 EUROPE_SHARE = float(os.getenv("EUROPE_SHARE", "0"))             # доля Европы в списке, 0 = выкл.
-MAX_COUNTRY_SHARE = float(os.getenv("MAX_COUNTRY_SHARE", "0"))   # одна страна — не более 10% списка
+MAX_COUNTRY_SHARE = float(os.getenv("MAX_COUNTRY_SHARE", "1"))   # одна страна — не более 10% списка
 
 
 def env_set(name: str, default: str, lower: bool = True) -> set[str]:
