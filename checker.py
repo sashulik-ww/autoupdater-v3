@@ -12,7 +12,7 @@
      -> тест скорости (скачивание SPEED_BYTES с speed.cloudflare.com).
 Списки сортируются по скорости, затем по задержке. Страны уравновешены:
 EUROPE_SHARE списка — Европа, одна страна — не более MAX_COUNTRY_SHARE списка,
-для США и Канады лимит уменьшен вдвое.
+(США и Канада по умолчанию без отдельных ограничений).
 
 Страна и город в названии определяются по ВЫХОДНОМУ IP (его показывает Cloudflare через
 туннель) голосованием: Cloudflare (loc) + ip-api + geojs; нужно согласие GEO_MIN_AGREE источников,
@@ -114,11 +114,9 @@ SPEED_CONCURRENCY = int(os.getenv("SPEED_CONCURRENCY", "8"))    # одновре
 SPEED_URL = os.getenv("SPEED_URL", "https://speed.cloudflare.com/__down?bytes={bytes}")
 MIN_SPEED_MBPS = float(os.getenv("MIN_SPEED_MBPS", "3"))        # Мбит/с; 0 = не отсеивать по скорости
 
-# --- основной список и его две непересекающиеся подписки ---
-MAX_PER_COUNTRY = int(os.getenv("MAX_PER_COUNTRY", "18"))
-# Максимум элементов в объединённом списке, из которого берутся первые 600 и следующие 600.
-MAX_TOTAL = int(os.getenv("MAX_TOTAL", "1200"))
-SUBSCRIPTION_PART_SIZE = int(os.getenv("SUBSCRIPTION_PART_SIZE", "600"))
+# --- all.txt (общий список) ---
+MAX_PER_COUNTRY = int(os.getenv("MAX_PER_COUNTRY", "4"))
+MAX_TOTAL = int(os.getenv("MAX_TOTAL", "250"))
 
 # --- by_protocol/*.txt ---
 PROTO_MAX_PER_COUNTRY = int(os.getenv("PROTO_MAX_PER_COUNTRY", "20"))
@@ -126,6 +124,10 @@ PROTO_MAX_TOTAL = int(os.getenv("PROTO_MAX_TOTAL", "500"))
 
 # --- xray_checked.txt: только прошедшие проверку Xray, уникальные IP ---
 XRAY_FILE_MAX_TOTAL = int(os.getenv("XRAY_FILE_MAX_TOTAL", "600"))
+# Сколько файлов делать: первый — самые быстрые, второй (xray_checked_2.txt) — следующие и т.д. с теми же правилами.
+# Если серверов не набирается — файлов меньше. ALL_FILE_PARTS — то же для all.txt (по умолчанию один файл).
+XRAY_FILE_PARTS = int(os.getenv("XRAY_FILE_PARTS", "2"))
+ALL_FILE_PARTS = int(os.getenv("ALL_FILE_PARTS", "1"))
 XRAY_FILE_MAX_PER_COUNTRY = int(os.getenv("XRAY_FILE_MAX_PER_COUNTRY", "600"))  # 600 = без лимита
 
 # --- singbox_checked.txt и ru_servers.txt ---
@@ -134,8 +136,8 @@ RU_MAX_PER_IP = int(os.getenv("RU_MAX_PER_IP", "2"))
 RU_MAX_TOTAL = int(os.getenv("RU_MAX_TOTAL", "250"))
 
 # --- Баланс стран (проверка идёт из США, поэтому США/Канада быстрее всех) ---
-EUROPE_SHARE = float(os.getenv("EUROPE_SHARE", "1"))             # доля Европы в списке, 0 = выкл.
-MAX_COUNTRY_SHARE = float(os.getenv("MAX_COUNTRY_SHARE", "0.3"))   # одна страна — не более 10% списка
+EUROPE_SHARE = float(os.getenv("EUROPE_SHARE", "0.9"))             # доля Европы в списке, 0 = выкл.
+MAX_COUNTRY_SHARE = float(os.getenv("MAX_COUNTRY_SHARE", "0.15"))   # одна страна — не более 10% списка
 
 
 def env_set(name: str, default: str, lower: bool = True) -> set[str]:
@@ -143,10 +145,10 @@ def env_set(name: str, default: str, lower: bool = True) -> set[str]:
     return {x.strip().lower() if lower else x.strip().upper() for x in raw.split(",") if x.strip()}
 
 
-# Дополнительный понижающий лимит отключён по умолчанию для всех стран.
-# Можно включить явно через REDUCED_COUNTRIES и REDUCED_FACTOR.
-REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "US,CA", lower=False)
-REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.2"))
+# Страны с уменьшенным лимитом (в REDUCED_FACTOR раз). По умолчанию пусто: США и Канада без ограничений.
+# Вернуть прежнее: REDUCED_COUNTRIES="US,CA". Доля Европы (EUROPE_SHARE) действует отдельно: EUROPE_SHARE=0 — выкл.
+REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "", lower=False)
+REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.7"))
 
 # «Общие» файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
 GENERAL_EXCLUDE_SCHEMES = env_set("GENERAL_EXCLUDE_SCHEMES", "http,https,ss,socks5,socks4")  # не нужны / работают плохо
@@ -174,7 +176,17 @@ GEO_CACHE_NAME = "geo_cache.json"
 # Страна принимается, если с ней согласны минимум GEO_MIN_AGREE источников.
 GEO_SOURCES = [x.strip() for x in os.getenv("GEO_SOURCES", "ipapi,geojs").split(",") if x.strip()]
 GEO_MIN_AGREE = int(os.getenv("GEO_MIN_AGREE", "2"))
-GEO_PRIORITY = ("cf", "ipapi", "geojs")  # при ничьей побеждает источник левее
+# Источники «со стороны выхода»: запрашиваются ЧЕРЕЗ туннель (как делает само приложение после подключения), поэтому
+# показывают страну именно того IP, куда выходит трафик. Формат переменной: "имя=url,имя=url"; пусто — отключить.
+_DEFAULT_EXIT_URLS = {"ipinfo": "https://ipinfo.io/country", "countryis": "https://api.country.is/"}
+_exit_raw = os.getenv("GEO_EXIT_URLS")
+GEO_EXIT_URLS = (
+    dict(_DEFAULT_EXIT_URLS) if _exit_raw is None
+    else dict(x.split("=", 1) for x in _exit_raw.split(",") if "=" in x)
+)
+# При ничьей побеждает источник левее: сначала то, что измерено на выходе, потом базы по IP
+GEO_PRIORITY = ("cf", "ipinfo", "countryis", "ipapi", "geojs")
+_exit_cache: dict[str, dict] = {}   # выходной IP -> {источник: страна} (из прошлых запусков и текущего)
 
 # XHTTP умеет Xray (v2rayNG), но не sing-box (Karing). False: такие серверы только в xray_checked.txt,
 # в основных списках — лишь те, что открываются в обоих приложениях.
@@ -1248,6 +1260,26 @@ def transfer_mbps(r: dict) -> float | None:
     return round(r["size"] * 8 / 1e6 / duration, 2)
 
 
+def parse_country_reply(body: str) -> str | None:
+    """Ответ сервиса «моя страна»: либо код «DE», либо JSON с полем country / country_code / loc."""
+    text = (body or "").strip()
+    if re.fullmatch(r"[A-Za-z]{2}", text):
+        cc = text.upper()
+    else:
+        try:
+            data = json.loads(text)
+        except ValueError:
+            return None
+        cc = ""
+        if isinstance(data, dict):
+            for key in ("country", "country_code", "countryCode", "country_iso", "loc"):
+                value = data.get(key)
+                if isinstance(value, str) and re.fullmatch(r"[A-Za-z]{2}", value.strip()):
+                    cc = value.strip().upper()
+                    break
+    return cc if cc in COUNTRIES else None
+
+
 async def probe_via(args: list[str], want_speed: bool = True) -> dict | None:
     """gstatic -> cloudflare (выходной IP и страна) -> тест скорости. None — сервер не работает."""
     r = await curl_probe(args, TEST_GSTATIC, XRAY_TIMEOUT)
@@ -1259,6 +1291,17 @@ async def probe_via(args: list[str], want_speed: bool = True) -> dict | None:
         return None
     trace = parse_trace(r["body"])
     exit_ip = trace.get("ip", "")
+    exit_votes: dict[str, str] = {}
+    if GEO_EXIT_URLS and is_ip(exit_ip):  # что про этот выходной IP говорят другие сервисы (один раз на IP)
+        known = _exit_cache.setdefault(exit_ip, {})
+        for name, url in GEO_EXIT_URLS.items():
+            if name not in known:
+                reply = await curl_probe(args, url, XRAY_TIMEOUT, want_body=True)
+                cc = parse_country_reply(reply["body"]) if reply and reply["code"] == 200 else None
+                if cc:
+                    known[name] = cc
+            if name in known:
+                exit_votes[name] = known[name]
     speed = None
     if SPEED_TEST and want_speed:
         async with speed_sem():
@@ -1267,6 +1310,7 @@ async def probe_via(args: list[str], want_speed: bool = True) -> dict | None:
         "latency_ms": latency, "speed_mbps": speed,
         "exit_ip": exit_ip if is_ip(exit_ip) else None,
         "exit_cc": (trace.get("loc") or "").upper() or None,
+        "exit_votes": exit_votes,
     }
 
 
@@ -1309,6 +1353,8 @@ def merge_metrics(item: dict, m: dict) -> None:
     for key in ("exit_ip", "exit_cc"):  # куда на самом деле выходит трафик
         if not item.get(key) and m.get(key):
             item[key] = m[key]
+    if m.get("exit_votes"):
+        item["exit_votes"] = {**item.get("exit_votes", {}), **m["exit_votes"]}
 
 
 async def engine_check_item(engine: str, item: dict, port: int, tmpdir: Path):
@@ -1555,8 +1601,7 @@ def select_servers(
     )
 
     def cap_for(country: str) -> int:
-        factor = REDUCED_FACTOR if country in REDUCED_COUNTRIES else 1.0
-        return max(1, int(cap * factor))
+        return max(1, int(cap * REDUCED_FACTOR)) if country in REDUCED_COUNTRIES else cap
 
     def run(low_quota: int | None) -> list[dict]:
         ip_n: dict[str, int] = defaultdict(int)
@@ -1608,6 +1653,19 @@ def select_servers(
         if low:
             result = run(math.ceil(low * LOW_SCHEMES_KEEP))  # ss/socks — на 80% меньше, место займут другие
     result.sort(key=key)
+    return result
+
+
+def select_parts(items: list[dict], max_per_country: int, max_total: int, parts: int = 1, **kw) -> list[list[dict]]:
+    """Несколько файлов подряд: сначала лучшие max_total, из оставшихся — следующие max_total, и т.д. (те же правила)."""
+    remaining, result = list(items), []
+    for _ in range(max(1, parts)):
+        chosen = select_servers(remaining, max_per_country, max_total, **kw)
+        if not chosen:
+            break
+        result.append(chosen)
+        taken = {id(i) for i in chosen}
+        remaining = [i for i in remaining if id(i) not in taken]
     return result
 
 
@@ -1751,39 +1809,40 @@ GEO_PROVIDERS = {"ipapi": ipapi_lookup, "geojs": geojs_lookup}
 def decide_country(item: dict, entry: dict) -> dict:
     """Голосование: Cloudflare (страна выходного IP через туннель) + источники по IP."""
     votes: list[tuple[str, str, str]] = []
-    exit_cc = str(item.get("exit_cc") or "").upper()
-    if exit_cc in COUNTRIES:
-        votes.append(("cf", exit_cc, ""))
+    if item.get("exit_cc") in COUNTRIES:
+        votes.append(("cf", item["exit_cc"], ""))
+    for name, cc in (entry.get("x") or {}).items():  # сервисы, опрошенные через туннель
+        if cc in COUNTRIES:
+            votes.append((name, cc, ""))
     for source in GEO_SOURCES:
         value = entry.get(source)
-        if value and isinstance(value, (list, tuple)) and value:
-            cc = str(value[0] or "").upper()
-            if cc in COUNTRIES:
-                city_name = str(value[1] or "") if len(value) > 1 else ""
-                votes.append((source, cc, city_name))
+        if value:
+            votes.append((source, value[0], value[1]))
     if not votes:
-        return {"cc": None, "city": "", "agree": 0, "total": 0, "ok": False}
+        return {"cc": None, "city": "", "agree": 0, "total": 0, "ok": False, "votes": []}
 
-    # Каждый источник имеет ровно один голос.
-    unique_votes = {}
-    for source, cc, city_name in votes:
-        unique_votes[source] = (cc, city_name)
-    votes = [(source, cc, city_name) for source, (cc, city_name) in unique_votes.items()]
+    order = {name: n for n, name in enumerate(GEO_PRIORITY)}
     counts = Counter(cc for _, cc, _ in votes)
-    max_votes = max(counts.values())
-    winners = [cc for cc, count in counts.items() if count == max_votes]
-    if len(winners) != 1:
-        return {"cc": None, "city": "", "agree": max_votes, "total": len(votes), "ok": False}
-    top = winners[0]
+    best = {}
+    for source, cc, _ in votes:
+        best[cc] = min(best.get(cc, 99), order.get(source, len(GEO_PRIORITY)))
+    top = min(counts, key=lambda cc: (-counts[cc], best[cc]))
     agree = counts[top]
     city = next((c for source, cc, c in votes if cc == top and c and source != "cf"), "")
-    ok = agree >= GEO_MIN_AGREE
-    return {"cc": top, "city": city, "agree": agree, "total": len(votes), "ok": ok}
+    need = max(min(GEO_MIN_AGREE, len(votes)), math.ceil(len(votes) / 2))  # минимум GEO_MIN_AGREE и не меньше половины
+    return {"cc": top, "city": city, "agree": agree, "total": len(votes), "ok": agree >= need, "votes": votes}
 
 
 def apply_geo(working: list[dict]) -> tuple[list[dict] | None, dict]:
     """Ставит каждому серверу страну и город по ВЫХОДНОМУ IP (если известен), иначе по IP сервера."""
     cache = load_geo_cache()
+    now = int(time.time())
+    for item in working:  # ответы сервисов «со стороны выхода» запоминаем по выходному IP
+        votes, exit_ip = item.get("exit_votes"), item.get("exit_ip")
+        if votes and exit_ip and is_ip(exit_ip):
+            entry = cache.setdefault(exit_ip, {"v": 2})
+            entry["x"] = {**entry.get("x", {}), **votes}
+            entry["ts"] = now
 
     best: dict[str, tuple] = {}  # лучшие серверы определяем первыми
     for item in working:
@@ -1812,7 +1871,6 @@ def apply_geo(working: list[dict]) -> tuple[list[dict] | None, dict]:
                 except Exception as e:
                     print(f"  {name}: сбой {e}")
                     fresh[name] = {}
-    now = int(time.time())
     for name, result in fresh.items():
         for ip, info in result.items():
             entry = cache.setdefault(ip, {"v": 2})
@@ -1823,11 +1881,15 @@ def apply_geo(working: list[dict]) -> tuple[list[dict] | None, dict]:
 
     stats = Counter()
     result_items: list[dict] = []
+    disputes: list[str] = []
     for item in working:
         label = item["country"]
         item["city"] = ""
         entry = cache.get(item["geo_key"], {}) if item["geo_key"] else {}
         d = decide_country(item, entry)
+        if d["total"] > 1 and len({cc for _, cc, _ in d["votes"]}) > 1:  # источники расходятся — пригодится для сверки с приложением
+            who = " ".join(f"{name}={cc}" for name, cc, _ in d["votes"])
+            disputes.append(f"{item['geo_key']} -> {d['cc'] if d['ok'] else 'ИСКЛЮЧЁН'} | {who} | {item['scheme']}")
         if d["total"] == 0:
             stats["no_data"] += 1
             if not GEO_STRICT:
@@ -1852,7 +1914,13 @@ def apply_geo(working: list[dict]) -> tuple[list[dict] | None, dict]:
         item["country"], item["city"] = d["cc"], d["city"]
         result_items.append(item)
 
-    out = {"unique_ips": len(order), "sources": ["cf"] + sources, "min_agree": GEO_MIN_AGREE,
+    disputes.sort(key=lambda line: ("ИСКЛЮЧЁН" not in line, line))
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / "geo_disputes.txt").write_text(
+        "# IP -> выбранная страна | голоса источников (cf, ipinfo, countryis — измерены через туннель; ipapi, geojs — по IP)\n"
+        + "\n".join(disputes[:500]) + "\n", encoding="utf-8")
+    out = {"unique_ips": len(order), "sources": ["cf"] + list(GEO_EXIT_URLS) + sources, "min_agree": GEO_MIN_AGREE,
+           "disputed_sources_total": len(disputes),
            "geo_strict": GEO_STRICT, **dict(stats)}
     print(
         f"Страны по голосованию источников: единогласно {stats['unanimous']}, большинством {stats['majority']}, "
@@ -1872,6 +1940,8 @@ def stats_dict(stats: dict[str, Counter]) -> dict:
 async def main_async() -> int:
     global _speed_sem
     _speed_sem = None
+    _exit_cache.clear()
+    _exit_cache.update({ip: dict(v["x"]) for ip, v in load_geo_cache().items() if v.get("x")})
     t_start = time.monotonic()
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     print(f"[{stamp}] Источников: {len(SOURCE_URLS)} ссылок, {len(TELEGRAM_CHANNELS)} Telegram-каналов")
@@ -1990,29 +2060,19 @@ async def main_async() -> int:
 
     # 6. Списки
     pool = [i for i in working if in_pool(i, sb_required)]
-    main_list = select_servers(pool, MAX_PER_COUNTRY, MAX_TOTAL, general=True)
-    # Повторный отбор по тем же квотам для второй подписки: не допускаем обхода
-    # лимитов страны/IP при разбиении на 2 сегмента.
-    if SUBSCRIPTION_PART_SIZE <= 0:
-        raise ValueError("SUBSCRIPTION_PART_SIZE должен быть больше нуля")
-    # Две части непересекающиеся: второй файл содержит следующий сегмент того же
-    # уже отфильтрованного и ранжированного списка, без повторной выборки/квот.
-    subscription_1 = main_list[:SUBSCRIPTION_PART_SIZE]
-    # Для второй части используем тот же пул и те же фильтры/квоты; затем исключаем
-    # уже выданные конфиги, чтобы подписки не пересекались.
-    selected_ids = {id(i) for i in subscription_1}
-    remaining_pool = [i for i in pool if id(i) not in selected_ids]
-    subscription_2 = select_servers(remaining_pool, MAX_PER_COUNTRY, SUBSCRIPTION_PART_SIZE,
-                                    general=True)
+    all_parts = select_parts(pool, MAX_PER_COUNTRY, MAX_TOTAL, ALL_FILE_PARTS, general=True)
+    main_list = all_parts[0] if all_parts else []
     white_list = smart_filter_white(pool)
-    xray_list = select_servers(
+    xray_parts = select_parts(
         [i for i in working if i["xray_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, XRAY_FILE_MAX_TOTAL,
-        general=True,
+        XRAY_FILE_PARTS, general=True,
     )
-    sb_list = select_servers(
+    sb_parts = select_parts(
         [i for i in working if i["sb_status"] == "ok"], XRAY_FILE_MAX_PER_COUNTRY, SINGBOX_FILE_MAX_TOTAL,
-        general=True,
+        XRAY_FILE_PARTS, general=True,
     )
+    xray_list = xray_parts[0] if xray_parts else []
+    sb_list = sb_parts[0] if sb_parts else []
 
     def ru_key(i: dict) -> tuple:
         cls = 0 if i["sb_status"] == "ok" else 1 if i["method"] == "verified" else 2 if i["method"] != "tcp_only" else 3
@@ -2035,14 +2095,18 @@ async def main_async() -> int:
     for old in by_dir.glob("*.txt"):
         old.unlink()
 
-    write_list(OUT_DIR / "all.txt", subscription_1)
-    write_list(OUT_DIR / "all_2.txt", subscription_2)
-    write_list(OUT_DIR / "working_proxies.txt", subscription_1)
-    write_list(OUT_DIR / "working_proxies_2.txt", subscription_2)
+    write_list(OUT_DIR / "all.txt", main_list)
+    write_list(OUT_DIR / "working_proxies.txt", main_list)
     write_list(OUT_DIR / "white_checked.txt", white_list)
     write_list(OUT_DIR / "xray_checked.txt", xray_list)
     write_list(OUT_DIR / "singbox_checked.txt", sb_list)
     write_list(OUT_DIR / "ru_servers.txt", ru_list)
+    for stem in ("all", "xray_checked", "singbox_checked"):  # старые дополнительные файлы, если их стало меньше
+        for old in OUT_DIR.glob(f"{stem}_[0-9].txt"):
+            old.unlink()
+    for stem, parts in (("all", all_parts), ("xray_checked", xray_parts), ("singbox_checked", sb_parts)):
+        for n, part in enumerate(parts[1:], start=2):
+            write_list(OUT_DIR / f"{stem}_{n}.txt", part)
 
     per_file: dict[str, int] = {}
     for scheme, items in sorted(by_scheme.items()):
@@ -2081,14 +2145,15 @@ async def main_async() -> int:
         "singbox_by_protocol": sb_stats,
         "refuse_fallback_protocols": fallback,
         "files": {
-            "all_txt": len(subscription_1), "all_2_txt": len(subscription_2),
-            "white_checked_txt": len(white_list),
+            "all_txt": len(main_list), "white_checked_txt": len(white_list),
             "xray_checked_txt": len(xray_list), "singbox_checked_txt": len(sb_list),
+            "all_txt_parts": [len(x) for x in all_parts], "xray_checked_parts": [len(x) for x in xray_parts],
+            "singbox_checked_parts": [len(x) for x in sb_parts],
             "ru_servers_txt": len(ru_list), "by_protocol": per_file,
         },
         "all_txt_europe_share": round(europe_n / len(main_list), 2) if main_list else None,
         "all_txt_by_protocol": dict(Counter(i["scheme"] for i in main_list)),
-        "all_txt_us_ca": sum(1 for i in main_list if i["country"] in {"US", "CA"}),
+        "all_txt_us_ca": sum(1 for i in main_list if i["country"] in REDUCED_COUNTRIES),
         "all_txt_speed_mbps_median": speeds[len(speeds) // 2] if speeds else None,
         "limits": {
             "all_txt": {"per_country": MAX_PER_COUNTRY, "total": MAX_TOTAL},
@@ -2098,7 +2163,6 @@ async def main_async() -> int:
             "ru_servers_txt": {"per_ip": RU_MAX_PER_IP, "total": RU_MAX_TOTAL},
             "europe_share": EUROPE_SHARE, "max_country_share": MAX_COUNTRY_SHARE,
             "reduced_countries": sorted(REDUCED_COUNTRIES), "reduced_factor": REDUCED_FACTOR,
-            "subscription_part_size": SUBSCRIPTION_PART_SIZE,
             "general_exclude_schemes": sorted(GENERAL_EXCLUDE_SCHEMES),
             "low_schemes": sorted(LOW_SCHEMES), "low_schemes_keep": LOW_SCHEMES_KEEP,
             "hysteria2_share": HYSTERIA2_SHARE,
