@@ -3,47 +3,47 @@
 Твоих рабочих серверов: 358 (vless 243: reality 204, tls 36; vmess 54, trojan 49, hysteria2 12)
 Ключей Reality (pbk) среди рабочих: 100; семейств доменов: 114; подсетей /24: 132
 
-pool_unusable: 21024
-pool_already_in_working: 1458
-pool_candidates: 36071
-matched_before_dns: 2069
-dns_ok: 34113
-similar_found: 2099
-match_pbk: 523
-match_uuid: 662
-match_host: 289
-match_fam: 1380
-match_subnet: 685
+pool_unusable: 29764
+pool_already_in_working: 1375
+pool_candidates: 52339
+matched_before_dns: 2252
+dns_ok: 49160
+similar_found: 2289
+match_pbk: 550
+match_uuid: 649
+match_host: 341
+match_fam: 1288
+match_subnet: 797
 match_sni: 535
-tcp_ok: 1335
-xray_ok: 97
-dropped_per_ip: 164
-dropped_per_pbk: 27
+tcp_ok: 1425
+xray_ok: 92
+dropped_per_ip: 160
+dropped_per_pbk: 29
 final: 450
 
 Первые 25 серверов и почему они похожи:
   363   🇳🇱 The Netherlands, Amsterdam — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), host=qq.utiltools.site(+56.0)
-  310   🇳🇱 The Netherlands, Amsterdam — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), fam=utiltools.site(+57.0)
+  311   🇳🇱 The Netherlands, Amsterdam — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), fam=utiltools.site(+57.0)
   310   🇳🇱 The Netherlands, Amsterdam — pbk=drY21DHNOr6ezJLA2B10mzTE(+95.0), uuid=4054fdc2-ee80-4419-8a8e-(+76.0), fam=utiltools.site(+57.0)
   285   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=fb37d713-0ed3-4146-b085-(+58.0), host=prime.jarbook.net(+56.0)
-  283 ✓ 🇫🇮 Finland, Helsinki — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
   275   🇳🇱 The Netherlands, Halfweg — pbk=gJoMHh97teLxW92Z_3DI8qdS(+57.5), uuid=95d0e214-eab0-4701-93ed-(+76.0), host=main.jarbook.net(+35.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
   267   🇷🇺 Russia, St Petersburg — pbk=ZJlfiMh4ebjrTl2_kwAk_zXM(+95.0), uuid=3bb97d46-789b-4229-88f6-(+76.0), fam=bachidze.com(+57.0)
-  247   🇬🇧 United Kingdom, Slough — pbk=oAX7soFKfN3xURgCD26trmje(+80.0), uuid=95d0e214-eab0-4701-93ed-(+76.0), fam=jarbook.net(+57.0)
+  247   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=31.77.28.83(+35.0)
   246 ✓ 🇵🇱 Poland, Warsaw — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
   246 ✓ 🇵🇱 Poland, Warsaw — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
-  245   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=31.77.28.83(+35.0)
+  244   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=191.217.217.81(+35.0)
+  244   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=nl6.soshelper.space(+35.0)
   243   🇷🇸 Serbia, Belgrade — pbk=X8mPYnsoTd8QCnvFZKSy7Vvp(+65.0), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
-  242   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=191.217.217.81(+35.0)
-  242   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=nl6.soshelper.space(+35.0)
-  237   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=191.217.217.81(+35.0)
-  237   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=nl6.soshelper.space(+35.0)
-  237   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=31.77.28.83(+35.0)
-  237   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=nl2.soshelper.space(+35.0)
-  233   🇷🇸 Serbia, Belgrade — pbk=gHDoSWGWMVZKWNKONWHw-Cpl(+57.5), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
+  239   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=191.217.217.81(+35.0)
+  239   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=31.77.28.83(+35.0)
+  239   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=nl2.soshelper.space(+35.0)
+  239   🇳🇱 The Netherlands, Eygelshoven — pbk=9UG9zvrDpiPgY_J0dvB-n10y(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=nl6.soshelper.space(+35.0)
+  238   🇬🇧 United Kingdom, Bolton — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
+  238   🇬🇧 United Kingdom, Bolton — pbk=NaCZ-sS4poEbFwKmD7ePAVyc(+95.0), uuid=ccb8ff48-3934-4250-b4ec-(+76.0), fam=fox-lisa.ru(+57.0)
+  234   🇷🇸 Serbia, Belgrade — pbk=gHDoSWGWMVZKWNKONWHw-Cpl(+57.5), uuid=2f35965a-9a9b-45fd-ba32-(+64.0), fam=univesalsrv.com(+48.0)
   218   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+76.0), fam=betust.net(+57.0)
   218   🇳🇱 The Netherlands, Amsterdam — pbk=92lzqaBZnD5IP_subNDLotGM(+57.5), uuid=2232d904-8e6a-4202-8240-(+76.0), fam=betust.net(+57.0)
-  212   🇵🇱 Poland, Warsaw — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), host=pl1-mgmt.soshelper.space(+35.0)
-  210   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+59.5), fam=soshelper.space(+35.0)
-  208   🇦🇹 Austria, Liezen District — pbk=zEntiD6D81wY__YHPvIw78e0(+50.0), uuid=db80088c-32a1-4cb8-a907-(+58.0), host=at1.japancase.site(+35.0)
+  216 ✓ 🇸🇪 Sweden, Stockholm — pbk=BIy6H-jndn24Ukyw83ML8LDB(+50.0), uuid=2232d904-8e6a-4202-8240-(+76.0), fam=jarbook.net(+57.0)
+  214   🇵🇱 Poland, Warsaw — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), host=pl1-mgmt.soshelper.space(+35.0)
+  212   🇳🇱 The Netherlands, Eygelshoven — pbk=mEo4kHPpRns7efJfVW1G-gDE(+65.0), uuid=3a7849e7-8ef6-492f-860d-(+61.0), fam=soshelper.space(+35.6)
