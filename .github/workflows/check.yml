@@ -82,7 +82,7 @@ jobs:
           XRAY_TIMEOUT: "6"
           XRAY_START_TIMEOUT: "6"
           SPEED_TEST: "false"
-          MAX_PER_COUNTRY: "18"
+          MAX_PER_COUNTRY: "12"
           MIN_SPEED_MBPS: "1.5"
           MAX_TESTS_PER_IP: "3"
           TELEGRAM_CHANNELS: "t.me/OutlineReleasedKey,t.me/V2ray_Collector"
