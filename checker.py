@@ -147,7 +147,7 @@ def env_set(name: str, default: str, lower: bool = True) -> set[str]:
 
 # Страны с уменьшенным лимитом (в REDUCED_FACTOR раз). По умолчанию пусто: США и Канада без ограничений.
 # Вернуть прежнее: REDUCED_COUNTRIES="US,CA". Доля Европы (EUROPE_SHARE) действует отдельно: EUROPE_SHARE=0 — выкл.
-REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "", lower=False)
+REDUCED_COUNTRIES = env_set("REDUCED_COUNTRIES", "US,CA", lower=False)
 REDUCED_FACTOR = float(os.getenv("REDUCED_FACTOR", "0.7"))
 
 # «Общие» файлы (all, working_proxies, xray_checked, singbox_checked, ru_servers):
